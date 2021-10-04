@@ -26,7 +26,7 @@ export default function MySearchableSelect({ label, ...props }) {
       boxShadow: state.isFocused
         ? "0 0 5px 2px rgb(194 213 255 / 62%)!important"
         : null,
-      borderColor: state.isFocused ? "#fe0040!important" : null,
+      borderColor: state.isFocused ? "#1b55e2!important" : null,
     }),
   };
 
