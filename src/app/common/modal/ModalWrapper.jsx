@@ -7,6 +7,7 @@ export default function ModalWrapper({ children, size, header,data, footer }) {
 
   return (
     <div
+
       className="modal fade"
       id="exampleModal"
       // tabIndex={-1}

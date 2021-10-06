@@ -8,7 +8,7 @@ import configureStore from './app/store/configureStore';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 
-axios.defaults.baseURL = "http://api.certusbase.com/api/v1/";
+axios.defaults.baseURL = "http://172.16.2.45/api/";
 
 const store =  configureStore();
 const rootEl = document.getElementById("root");

@@ -25,7 +25,7 @@ export default function Header() {
     <div className="header-container fixed-top">
       <header className="header navbar navbar-expand-sm">
         <ul className="navbar-item theme-brand flex-row  text-center">
-          <li className="nav-item theme-logo">
+          {/* <li className="nav-item theme-logo">
             <a href="index.html">
               <img
                 src="https://zairov1905.github.io/certus-deploy/assets/img/apple-touch-icon.png"
@@ -33,11 +33,11 @@ export default function Header() {
                 alt="logo"
               />
             </a>
-          </li>
+          </li> */}
           <li className="nav-item theme-text">
             <a href="index.html" className="nav-link">
               {" "}
-              CERTUS{" "}
+              Mediasiya şurası{" "}
             </a>
           </li>
         </ul>
@@ -349,7 +349,7 @@ export default function Header() {
               aria-haspopup="true"
               aria-expanded="false"
             >
-              <img src="/assets/img/apple-touch-icon.png" alt="avatar" />
+              <img src="/assets/img/90x90.jpg" alt="avatar" />
             </a>
             <div
               className="dropdown-menu position-absolute"
@@ -357,23 +357,67 @@ export default function Header() {
             >
               <div>
                 <div className="dropdown-item">
-                  <a href="user_profile.html">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="feather feather-user"
-                    >
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx={12} cy={7} r={4} />
-                    </svg>{" "}
-                    Admin
+                  <a href="/apply" style={{ padding: "9px 6px" }}>
+                    {auth.currentUser.role === "Citizen" ? (
+                      <div
+                        className="rounded-circle"
+                        style={{
+                          backgroundColor: "#ebedf2",
+
+                          float: "left",
+                          // padding: "2px",
+                          marginRight: "5px",
+                          marginTop: "-7px",
+                          width: "35px",
+                          height: "35px",
+                          overflow: "hidden",
+                          boxShadow: "0px 1px 2px #000",
+                        }}
+                      >
+                        <img
+                          style={{ margin: "0px 3px" }}
+                          width="30px"
+                          className="img-fluid text-center"
+                          src={`data:image/png;base64, ${
+                            auth.currentUser.person &&
+                            auth.currentUser.person.image
+                          }`}
+                          alt="Red dot"
+                        />
+                      </div>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="feather feather-user"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx={12} cy={7} r={4} />
+                      </svg>
+                    )}
+
+                    {auth.currentUser.role === "Citizen"
+                      ? `${
+                          auth.currentUser.person &&
+                          auth.currentUser.person.firstName
+                        }  ${
+                          auth.currentUser.person &&
+                          auth.currentUser.person.lastName
+                        }`
+                      : `${
+                          auth.currentUser.mediatr &&
+                          auth.currentUser.mediatr.firstName
+                        }  ${
+                          auth.currentUser.mediatr &&
+                          auth.currentUser.mediatr.lastName
+                        }`}
                   </a>
                 </div>
                 {/* <div className="dropdown-item">
@@ -418,7 +462,11 @@ export default function Header() {
                 </div>
                 */}
                 <div className="dropdown-item">
-                  <Link to="#" onClick={() => dispatch(signOutUser())}>
+                  <Link
+                    to="#"
+                    onClick={() => dispatch(signOutUser())}
+                    style={{ padding: "9px 6px" }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width={24}

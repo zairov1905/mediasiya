@@ -11,7 +11,7 @@ const getAuthState = () => {
   const auth = localStorage.getItem("currentUser");
   try {
     const authObj = JSON.parse(auth);
-    const jwToken = authObj.currentUser.token;
+    const jwToken = authObj.currentUser.jwToken;
     const decodedToken = jwtDecode(jwToken, {
       complete: true,
     });

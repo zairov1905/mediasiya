@@ -9,6 +9,7 @@ import Footer from "../../features/dashboard/commonPage/Footer";
 import { ToastContainer } from "react-toastify";
 import ModalManager from "../common/modal/ModalManager";
 import React from "react";
+import ApplyPage from "../../features/dashboard/applyPage/ApplyPage";
 function App() {
   // const { initialized } = useSelector((state) => state.async);
   // useScript("../../../public/assets/js/app.js")
@@ -41,7 +42,7 @@ function App() {
 
               {/* BEGIN PAGE CONTENT */}
               <div id="content" className="main-content">
-                {/* <Route exact path="/dashboard" component={HomePage} /> */}
+                <Route exact path="/apply" component={ApplyPage} />
 
                 <Footer />
               </div>

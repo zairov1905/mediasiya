@@ -35,7 +35,7 @@ export default function Login() {
   }, []);
 
   if (authenticated) {
-    return <Redirect to="/dashboard" />;
+    return <Redirect to="/apply" />;
     // return history.push("/dashboard");
   }
   return (
@@ -46,7 +46,7 @@ export default function Login() {
             <div className="form-container">
               <div className="form-content">
                 <h1 className="mb-4">
-                  <span className="brand-name">Mediasiya</span>         Şurası
+                  <span className="brand-name">Mediasiya</span> Şurası
                 </h1>
                 <div className="row mb-4">
                   <div className="col-md-6">
@@ -75,7 +75,7 @@ export default function Login() {
                   <Formik
                     initialValues={{ username: "", password: "" }}
                     validationSchema={Yup.object({
-                      username: Yup.string().required(
+                      login: Yup.string().required(
                         "Bu sahə mütləq doldurulmalıdır."
                       ),
                       password: Yup.string().required(
@@ -85,10 +85,14 @@ export default function Login() {
                     onSubmit={(values, { setSubmitting, setErrors }) => {
                       // console.log('ugurludur')
                       dispatch(
-                        signInUser(history, {
-                          email: values.username,
-                          password: values.password,
-                        })
+                        signInUser(
+                          history,
+                          {
+                            login: values.login,
+                            password: values.password,
+                          },
+                          "user"
+                        )
                       );
                       setSubmitting(false);
                     }}
@@ -116,8 +120,8 @@ export default function Login() {
                               <circle cx="12" cy="7" r="4"></circle>
                             </svg>
                             <MyTextInput
-                              id="username"
-                              name="username"
+                              id="login"
+                              name="login"
                               type="text"
                               className="form-control"
                               placeholder="İstifadəçi adı"
@@ -159,7 +163,7 @@ export default function Login() {
                             />
                           </div>
                           <div className="d-sm-flex justify-content-between">
-                            <div className="field-wrapper toggle-pass">
+                            {/* <div className="field-wrapper toggle-pass">
                               <p className="d-inline-block">Parolu Göstər</p>
                               <label
                                 style={{
@@ -189,7 +193,7 @@ export default function Login() {
                                   className="slider round"
                                 ></span>
                               </label>
-                            </div>
+                            </div> */}
 
                             <div className="">
                               <button
@@ -275,9 +279,11 @@ export default function Login() {
                       // console.log('ugurludur')
                       dispatch(
                         signInUser(history, {
-                          email: values.username,
-                          password: values.password,
-                        })
+                          docSeries: values.docSeries,
+                          docNumber: values.docNumber,
+                          pin: values.pin,
+                          dateOfBirth: values.dateOfBirth,
+                        },"citizen")
                       );
                       setSubmitting(false);
                     }}
@@ -285,7 +291,9 @@ export default function Login() {
                     {({ isSubmitting, isValid, dirty, errors }) => (
                       <Form className="text-left">
                         <div className="form">
-                          <div
+                         <div className="row">
+                           <div className="col-md-6">
+                           <div
                             id="username-field"
                             className="field-wrapper input"
                           >
@@ -312,6 +320,9 @@ export default function Login() {
                               placeholder="Ş/V seriyası"
                             />
                           </div>
+                           </div>
+                           <div className="col-md-6">
+
                           <div
                             id="username-field"
                             className="field-wrapper input"
@@ -340,6 +351,11 @@ export default function Login() {
                               placeholder="Ş/V nömrəsi"
                             />
                           </div>
+                          
+                           </div>
+
+                         </div>
+
                           <div
                             id="username-field"
                             className="field-wrapper input"
@@ -372,7 +388,7 @@ export default function Login() {
                               name="pin"
                               type="text"
                               className="form-control"
-                              placeholder="Ş/V fin"
+                              placeholder="FİN"
                             />
                           </div>
                           <div
@@ -411,7 +427,7 @@ export default function Login() {
                             />
                           </div>
                           <div className="d-sm-flex justify-content-between">
-                            <div className="field-wrapper toggle-pass">
+                            {/* <div className="field-wrapper toggle-pass">
                               <p className="d-inline-block">Parolu Göstər</p>
                               <label
                                 style={{
@@ -441,7 +457,7 @@ export default function Login() {
                                   className="slider round"
                                 ></span>
                               </label>
-                            </div>
+                            </div> */}
 
                             <div className="">
                               <button

@@ -1,9 +1,10 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import ApplyPageModal from "../../../features/dashboard/applyPage/ApplyPageModal";
 
 export default function ModalManager() {
   const modalLookup = {
-
+    ApplyPageModal
   };
   
 

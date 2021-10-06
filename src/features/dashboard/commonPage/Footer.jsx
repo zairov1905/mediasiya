@@ -8,13 +8,13 @@ export default function Footer() {
         <p>
           Copyright © 2021{" "}
           <Link  to="/">
-            Certus
+            Mediasiya Şurası
           </Link>
         </p>
       </div>
       <div className="footer-section f-section-2">
         <p>
-          Certus Hesabat Sistemi{" "}
+          Mediasiya Şurası{" "}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width={24}
