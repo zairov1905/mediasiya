@@ -12,10 +12,11 @@ export function signInUser(history, user, type) {
     dispatch(asyncActionStart());
     await axios
       .post(url, user, {
+        withCredentials: true,
         headers: {
-          'Content-Type': 'application/json',
-          'Accept':'application/json',
-          'Access-Control-Allow-Origin':'http://localhost:3000'
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "Access-Control-Allow-Origin": "http://localhost:3000",
         },
       })
       .then((data) => {

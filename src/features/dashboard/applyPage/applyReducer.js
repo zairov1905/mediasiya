@@ -4,12 +4,19 @@ import {
   FETCH_APPLY,
   FETCH_COURT,
   FETCH_DISTRICT,
+  FETCH_PROFESSION,
+  FETCH_MEDIATOR,
   UPDATE_APPLY,
+  FETCH_OFFICE,
+  FETCH_PRINT,
 } from "./applyConstants";
 
 const initialState = {
   applys: [],
   courts: [],
+  professions: [],
+  mediatrs: [],
+  prints:[]
 };
 
 export default function applyReducer(
@@ -54,7 +61,30 @@ export default function applyReducer(
         courts: payload,
         totalCount: totalCount,
       };
-
+    case FETCH_PROFESSION:
+      return {
+        ...state,
+        professions: payload,
+        totalCount: totalCount,
+      };
+    case FETCH_MEDIATOR:
+      return {
+        ...state,
+        mediatrs: payload,
+        totalCount: totalCount,
+      };
+    case FETCH_OFFICE:
+      return {
+        ...state,
+        offices: payload,
+        totalCount: totalCount,
+      };
+    case FETCH_PRINT:
+      return {
+        ...state,
+        prints: payload,
+        totalCount: totalCount,
+      };
     default:
       return state;
   }

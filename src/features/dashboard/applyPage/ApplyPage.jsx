@@ -1,35 +1,32 @@
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
+import { Redirect } from "react-router";
 import { toast } from "react-toastify";
 import { openModal } from "../../../app/common/modal/modalReducer";
 
-import { deleteApply, loadApply } from "./applyActions";
+import { deleteApply, loadApply, loadPrint } from "./applyActions";
 export default function ApplyPage() {
+  const auth = useSelector((state) => state.auth);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // dispatch(loadApply({ take: 10 }));
-    //   // return () => {
-    //   //   // dispatch(loadOrder())
-    //   // }
+    dispatch(loadApply());
   }, [dispatch]);
   const [perPage, setPerPage] = useState(10);
   const [PageNumber, setPageNumber] = useState(1);
   const { applys, totalCount } = useSelector((state) => state.applys);
+  const print = useSelector((state) => state.applys.prints) ;
   const [hover, sethover] = useState(false);
   const [target, setTarget] = useState({ id: null, name: null });
 
-  const data = [{
-    date:'06/10/2021',
-    mediator:"Teymurzade Abbas",
-    court:"Bakı Apelyasiya Məhkəməsi",
-    status:"İcra edilməkdədir"
-  }];
+  const data = applys;
   const buttonStyle = {
     padding: "9px",
     background: "#ffffff",
-    fontSize:'0.8em',
+    // fontSize: "0.8em",
     borderRadius: "5px",
     cursor: "pointer",
     // marginRight: "35px",
@@ -68,6 +65,11 @@ export default function ApplyPage() {
   const handlePerRowsChange = async (newPerPage, page) => {
     dispatch(loadApply({ s: page, take: newPerPage }));
     setPerPage(newPerPage);
+  };
+  const loadPrintView = async (e) => {
+    await dispatch(loadPrint(2));
+    console.log(`http://172.16.2.45/${print}`)
+    return <Redirect to={`http://172.16.2.45/${print}`}/>
   };
 
   const actions = (
@@ -123,23 +125,59 @@ export default function ApplyPage() {
   const columns = [
     {
       name: "Müraciət tarixi",
-      selector:"date",
+      cell: (apply) => <p>{moment(apply.createdDate).format("DD-MM-YYYY")}</p>,
+      maxWidth: "150px",
       sortable: true,
     },
     {
-      name: "Mediator",
-      selector:"mediator",
+      name: "Mediator / Mediasiya təşkilatı",
+      cell: (apply) => (
+        <p>
+          {apply.mediatrs
+            ? apply.mediatrs.map(
+                (mediatr) =>
+                  `${mediatr.firstName} ${mediatr.lastName} ${mediatr.middleName}, `
+              )
+            : apply.office.officeName}
+        </p>
+      ),
       sortable: true,
     },
     {
       name: "Məhkəmə",
-      selector:"court",
+      selector: "courtName",
       sortable: true,
     },
     {
       name: "Status",
-      selector:"status",
+      selector: "status",
+      maxWidth: "64px",
+
       sortable: true,
+    },
+    {
+      name: "",
+      cell: (apply) => (
+        <svg
+          id={apply.id}
+          type="button"
+          onClick={(e) => loadPrintView(e.target.name)}
+          xmlns="http://www.w3.org/2000/svg"
+          width={24}
+          height={24}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="feather feather-printer"
+        >
+          <polyline points="6 9 6 2 18 2 18 9" />
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+          <rect x={6} y={14} width={12} height={8} />
+        </svg>
+      ),
     },
     // {
     //   name: "",
@@ -254,11 +292,14 @@ export default function ApplyPage() {
         <div className="row layout-top-spacing">
           <div className="col-xl-12 col-lg-12 col-sm-12  layout-spacing">
             <div className="widget-content widget-content-area br-6">
-              
               <DataTable
                 // className="dataTables_wrapper container-fluid dt-bootstrap4 table-responsive"
                 // selectableRows
-                title="Müraciətlərim"
+                title={
+                  auth.currentUser && auth.currentUser.role === "Citizen"
+                    ? "Müraciətlərim"
+                    : "Məktublar"
+                }
                 columns={columns}
                 data={data}
                 pagination
@@ -269,7 +310,7 @@ export default function ApplyPage() {
                 onChangePage={handlePageChange}
                 highlightOnHover
                 Clicked
-                actions={actions}
+                actions={auth.currentUser.role === "Citizen" && actions}
               />
             </div>
           </div>

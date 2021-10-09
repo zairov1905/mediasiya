@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
-// import "react-checkbox-tree/lib/react-checkbox-tree.css";
-// import CheckboxTree from "react-checkbox-tree";
 import $ from "jquery";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 import MyTextInput from "../../../app/common/form/MyTextInput";
 import { Form, Formik } from "formik";
-import { createApply, loadCourt, loadDistrict, updateApply } from "./applyActions";
+import {
+  createApply,
+  loadCourt,
+  loadDistrict,
+  loadMediatr,
+  loadOffice,
+  loadProfession,
+  updateApply,
+} from "./applyActions";
 import { closeModal } from "../../../app/common/modal/modalReducer";
 import MySearchableSelect from "../../../app/common/form/MySearchableSelect";
 import MyTextArea from "../../../app/common/form/MyTextArea";
@@ -14,13 +20,23 @@ import moment from "moment";
 import ModalWrapper from "../../../app/common/modal/ModalWrapper";
 
 export default function ApplyPageModal({ apply }) {
+  const [modal, setModal] = useState(false);
+
+  useEffect(() => {
+    if (modal) {
+      $("#closeModal").click();
+    }
+  });
+  const [check, setCheck] = useState();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(loadDistrict());
     dispatch(loadCourt());
+    dispatch(loadProfession());
+    dispatch(loadMediatr());
+    dispatch(loadOffice());
   }, [dispatch]);
   const applys = useSelector((state) => state.applys);
-
   const districtsOptions =
     applys.districts &&
     applys.districts.map((district) => {
@@ -37,40 +53,100 @@ export default function ApplyPageModal({ apply }) {
         label: `${court.courtName}`,
       };
     });
-  const specialtyOfMeadiator = [
-    { label: "Ümumi (o cümlədən mülki, kommersiya, inzibati və s.)", value: 0 },
-    { label: "İstehlakçı münasibətləri üzrə", value: 1 },
-    { label: "Aliə münasibətləri üzrə", value: 2 },
-    { label: "Əmək münasibətləri üzrə", value: 3 },
-  ];
+  const professionOptions =
+    applys.professions &&
+    applys.professions.map((profession) => {
+      return {
+        value: parseInt(profession.id),
+        label: `${profession.professionName}`,
+      };
+    });
+
+  const mediatorOptions =
+    applys.mediatrs &&
+    applys.mediatrs.map((mediatr) => {
+      return {
+        value: parseInt(mediatr.id),
+        label: `${mediatr.firstName} ${mediatr.lastName} ${mediatr.middleName}`,
+        ids: mediatr.mediatrProfessions.map((medik) => medik.id),
+      };
+    });
+  const officeOptions =
+    applys.offices &&
+    applys.offices.map((office) => {
+      return {
+        value: parseInt(office.id),
+        label: `${office.officeName}`,
+      };
+    });
+
   const languageKnowledgeOptions = [
-    { label: "Azərbaycan", value: 0 },
-    { label: "Rus", value: 1 },
-    { label: "İngilis", value: 2 }
+    { label: "Azərbaycan", value: "AZE" },
+    { label: "Rus", value: "RU" },
+    { label: "İngilis", value: "ENG" },
   ];
   const datesOptions = [
-    { label: "9:00 - 9:30", value: 0 },
-    { label: "10:00 - 10:30", value: 1 },
-    { label: "11:00 - 11:30", value: 2 },
-    { label: "12:00 - 12:30", value: 3 },
-    { label: "13:00 - 13:30", value: 4 },
-    { label: "14:00 - 14:30", value: 5 },
-    { label: "15:00 - 15:30", value: 6 },
-    { label: "16:00 - 16:30", value: 7 },
-    { label: "17:00 - 17:30", value: 8 },
-
-    
+    { label: "9:00 - 9:30", value: "9:00 - 9:30" },
+    { label: "10:00 - 10:30", value: "10:00 - 10:30" },
+    { label: "11:00 - 11:30", value: "11:00 - 11:30" },
+    { label: "12:00 - 12:30", value: "12:00 - 12:30" },
+    { label: "13:00 - 13:30", value: "13:00 - 13:30" },
+    { label: "14:00 - 14:30", value: "14:00 - 14:30" },
+    { label: "15:00 - 15:30", value: "15:00 - 15:30" },
+    { label: "16:00 - 16:30", value: "16:00 - 16:30" },
+    { label: "17:00 - 17:30", value: "17:00 - 17:30" },
   ];
 
-  const [modal, setModal] = useState(false);
-
-  useEffect(() => {
-    if (modal) {
-      $("#closeModal").click();
+  const [sides, setSides] = useState(
+    apply
+      ? JSON.parse(apply.sides)
+      : [
+          {
+            fullName: "",
+            advocateFullName: "",
+            organizationName: "",
+            address: "",
+            phone: "",
+            email: "",
+          },
+        ]
+  );
+  const handleAddSide = () => {
+    setSides([
+      ...sides,
+      {
+        fullName: "",
+        advocateFullName: "",
+        organizationName: "",
+        address: "",
+        phone: "",
+        email: "",
+      },
+    ]);
+  };
+  const handleRemoveSide = () => {
+    if (sides.length > 1) {
+      let lastIndex = sides.length - 1;
+      let values = [...sides];
+      values.splice(lastIndex, 1);
+      setSides(values);
     }
-  });
-
-  const initialValues = apply ? {} : {};
+  };
+  const initialValues = apply
+    ? {}
+    : {
+        professionId: "",
+        districtIds: [],
+        mediatrIds: [],
+        officeId: "",
+        courtId: "",
+        sides: sides,
+        conflictInfo: "",
+        courtCaseInfo: "",
+        prefferedSessionTime: "",
+        requiredLangs: "",
+        caseInAction: true,
+      };
   const validationSchema = Yup.object({});
 
   return (
@@ -87,7 +163,22 @@ export default function ApplyPageModal({ apply }) {
                     id: apply.id,
                   })
                 )
-              : await dispatch(createApply({ ...values }));
+              : await dispatch(
+                  createApply({
+                    professionId: values.professionId,
+                    districtIds: values.districtIds,
+                    mediatrIds: values.mediatrIds,
+                    officeId: values.officeId,
+                    courtId: values.courtId,
+                    sides: values.sides,
+                    conflictInfo: values.conflictInfo,
+                    courtCaseInfo: values.courtCaseInfo,
+                    prefferedSessionTime:
+                      values.prefferedSessionTime.toString(),
+                    requiredLangs: values.requiredLangs.toString(),
+                    caseInAction: values.caseInAction,
+                  })
+                );
             setSubmitting(false);
             setModal(true);
             dispatch(closeModal());
@@ -98,9 +189,10 @@ export default function ApplyPageModal({ apply }) {
           }
         }}
       >
-        {({ isSubmitting, isValid, dirty, errors }) => (
+        {({ isSubmitting, isValid, dirty, errors, values }) => (
           <Form id="emp">
             <div id="iconsAccordion" className="accordion-icons">
+              {console.log(values.sides)}
               <div className="card">
                 <div className="card-header" id="headingTwo3">
                   <section className="mb-0 mt-0">
@@ -160,10 +252,10 @@ export default function ApplyPageModal({ apply }) {
                     <div className="row mb-4">
                       <div className="col-md-12">
                         <MySearchableSelect
-                          id="specialtyOfMeadiator"
-                          name="specialtyOfMeadiator"
+                          id="professionId"
+                          name="professionId"
                           type="text"
-                          options={specialtyOfMeadiator}
+                          options={professionOptions}
                           // className="form-control"
                           placeholder="İxtisas seçin"
                           label={"Mediatorun ixtisası *"}
@@ -173,8 +265,8 @@ export default function ApplyPageModal({ apply }) {
                     <div className="row mb-4">
                       <div className="col-md-12">
                         <MySearchableSelect
-                          id="locationOfMeadiation"
-                          name="locationOfMeadiation"
+                          id="districtIds"
+                          name="districtIds"
                           type="text"
                           options={districtsOptions}
                           isMulti
@@ -189,8 +281,8 @@ export default function ApplyPageModal({ apply }) {
                     <div className="row mb-4">
                       <div className="col-md-12">
                         <MySearchableSelect
-                          id="locationOfCourt"
-                          name="locationOfCourt"
+                          id="courtId"
+                          name="courtId"
                           type="text"
                           options={courtsOptions}
                           // className="form-control"
@@ -264,26 +356,11 @@ export default function ApplyPageModal({ apply }) {
                       <div className="col-md-12">
                         <div className="form-check mb-2">
                           <div className="custom-control custom-radio classic-radio-info">
-                            <MyTextInput
-                              type="radio"
-                              id="hRadio1"
-                              name="classicRadio"
-                              className="custom-control-input"
-                            />
-                            <label
-                              className="custom-control-label"
-                              htmlFor="hRadio1"
-                            >
-                              Fərdi qaydada fəaliyyət göstərən mediatorlar
-                            </label>
-                          </div>
-                        </div>
-                        <div className="form-check mb-2">
-                          <div className="custom-control custom-radio classic-radio-info">
-                            <MyTextInput
+                            <input
                               type="radio"
                               id="hRadio2"
                               name="classicRadio"
+                              onClick={() => setCheck("office")}
                               className="custom-control-input"
                             />
                             <label
@@ -294,27 +371,64 @@ export default function ApplyPageModal({ apply }) {
                             </label>
                           </div>
                         </div>
+                        <div className="form-check mb-2">
+                          <div className="custom-control custom-radio classic-radio-info">
+                            <input
+                              type="radio"
+                              id="hRadio1"
+                              name="classicRadio"
+                              onClick={() => setCheck("mediator")}
+                              className="custom-control-input"
+                            />
+                            <label
+                              className="custom-control-label"
+                              htmlFor="hRadio1"
+                            >
+                              Fərdi qaydada fəaliyyət göstərən mediatorlar
+                            </label>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="row mb-4">
-                      <div className="col-md-12">
-                        <MySearchableSelect
-                          id="mediator"
-                          name="mediator"
-                          type="text"
-                          // options={legalStatusOptions}
-                          isMulti
-                          // className="form-control"
-                          placeholder="Mediator seçin"
-                          label={"Mediatorlar*"}
-                        />
+                    {check === "office" && (
+                      <div className="row mb-4">
+                        <div className="col-md-12">
+                          <MySearchableSelect
+                            id="officeId"
+                            name="officeId"
+                            type="text"
+                            options={officeOptions}
+                            isMulti
+                            // className="form-control"
+                            placeholder="Mediator təşkilatı seçin"
+                            label={"Mediator təşkilatları*"}
+                          />
+                        </div>
                       </div>
-                    </div>
+                    )}
+                    {check === "mediator" && (
+                      <div className="row mb-4">
+                        <div className="col-md-12">
+                          <MySearchableSelect
+                            id="mediatrIds"
+                            name="mediatrIds"
+                            type="text"
+                            options={mediatorOptions.filter((medik) =>
+                              medik.ids.includes(values.professionId)
+                            )}
+                            isMulti
+                            // className="form-control"
+                            placeholder="Mediator seçin"
+                            label={"Mediatorlar*"}
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
               <div className="card">
-                <div className="card-header" id="headingTwo3">
+                <div className="card-header " id="headingTwo3">
                   <section className="mb-0 mt-0">
                     <div
                       role="menu"
@@ -368,79 +482,164 @@ export default function ApplyPageModal({ apply }) {
                 >
                   <div className="card-body">
                     <div className="row mb-4">
-                      <div className="col-md-12">
-                        <MyTextInput
-                          id="fullName"
-                          name="fullName"
-                          type="text"
-                          className="form-control"
-                          placeholder="Ad soyad daxil edin"
-                          label={"Soyadı, adı*"}
-                        />
+                      <div className="col-md-2 offset-10 text-right">
+                        <div className="icon-container">
+                          <button
+                            type="button"
+                            className="close"
+                            onClick={() => handleAddSide()}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="feather feather-plus-circle"
+                            >
+                              <circle cx={12} cy={12} r={10} />
+                              <line x1={12} y1={8} x2={12} y2={16} />
+                              <line x1={8} y1={12} x2={16} y2={12} />
+                            </svg>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSide()}
+                            className="close"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width={24}
+                              height={24}
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="feather feather-minus-circle"
+                            >
+                              <circle cx={12} cy={12} r={10} />
+                              <line x1={8} y1={12} x2={16} y2={12} />
+                            </svg>
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="row mb-4">
-                      <div className="col-md-12">
-                        <MyTextInput
-                          id="lawFullName"
-                          name="lawFullName"
-                          type="text"
-                          className="form-control"
-                          placeholder="Nümayəndənin/vəkilin adı, soyadı və atasının adı"
-                          label={"Ad, soyad, ata adı*"}
-                        />
-                      </div>
-                    </div>
-                    <div className="row mb-4">
-                      <div className="col-md-12">
-                        <MyTextInput
-                          id="lawCompany"
-                          name="lawCompany"
-                          type="text"
-                          className="form-control"
-                          label="Hüquq şirkəti"
-                          placeholder={"Hüquq şirkət adı daxil edin*"}
-                        />
-                      </div>
-                    </div>
-                    <div className="row mb-4">
-                      <div className="col-md-12">
-                        <MyTextInput
-                          id="address"
-                          name="address"
-                          type="text"
-                          className="form-control"
-                          label="Ünvan"
-                          placeholder={"Ünval daxil edin*"}
-                        />
-                      </div>
-                    </div>
-                    <div className="row mb-4">
-                      <div className="col-md-6">
-                        <MyTextInput
-                          id="phone"
-                          name="phone"
-                          type="text"
-                          className="form-control"
-                          label="Telefon"
-                          placeholder={"Telefon nömrəsi daxil edin*"}
-                        />
-                      </div>
-                      <div className="col-md-6">
-                        <MyTextInput
-                          id="email"
-                          name="email"
-                          type="text"
-                          className="form-control"
-                          label="E-mail"
-                          placeholder={"e-mail daxil edin*"}
-                        />
-                      </div>
-                    </div>
+                    {sides.map((side, index) => (
+                      <React.Fragment key={index}>
+                        <div className="row">
+                          <div className="col-xl-12 col-md-12 col-sm-12 col-12">
+                            <div className="infobox-3 mb-4" style={{width: "100%"}}>
+                              <div className="info-icon">
+                              <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width={24}
+                          height={24}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="feather feather-user"
+                        >
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                          <circle cx={12} cy={7} r={4} />
+                        </svg>
+                              </div>
+                              <h5 className="info-heading">Tərəf : {`${index + 1} - ${values.sides[index] ? values.sides[index].fullName: ""}`} </h5>
+                              <p className="info-text">
+                                <div className="row mb-4">
+                                  <div className="col-md-12">
+                                    <MyTextInput
+                                      id={`sides[${index}].fullName`}
+                                      name={`sides[${index}].fullName`}
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Ad soyad daxil edin"
+                                      label={"Soyadı, adı*"}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="row mb-4">
+                                  <div className="col-md-12">
+                                    <MyTextInput
+                                      id={`sides[${index}].advocateFullName`}
+                                      name={`sides[${index}].advocateFullName`}
+                                      type="text"
+                                      className="form-control"
+                                      placeholder="Nümayəndənin/vəkilin adı, soyadı və atasının adı"
+                                      label={"Ad, soyad, ata adı*"}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="row mb-4">
+                                  <div className="col-md-12">
+                                    <MyTextInput
+                                      id={`sides[${index}].organizationName`}
+                                      name={`sides[${index}].organizationName`}
+                                      type="text"
+                                      className="form-control"
+                                      label="Hüquq şirkəti"
+                                      placeholder={
+                                        "Hüquq şirkət adı daxil edin*"
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                                <div className="row mb-4">
+                                  <div className="col-md-12">
+                                    <MyTextInput
+                                      id={`sides[${index}].address`}
+                                      name={`sides[${index}].address`}
+                                      type="text"
+                                      className="form-control"
+                                      label="Ünvan"
+                                      placeholder={"Ünval daxil edin*"}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="row mb-4">
+                                  <div className="col-md-6">
+                                    <MyTextInput
+                                      id={`sides[${index}].phone`}
+                                      name={`sides[${index}].phone`}
+                                      type="text"
+                                      className="form-control"
+                                      label="Telefon"
+                                      placeholder={
+                                        "Telefon nömrəsi daxil edin*"
+                                      }
+                                    />
+                                  </div>
+                                  <div className="col-md-6">
+                                    <MyTextInput
+                                      id={`sides[${index}].email`}
+                                      name={`sides[${index}].email`}
+                                      type="text"
+                                      className="form-control"
+                                      label="E-mail"
+                                      placeholder={"e-mail daxil edin*"}
+                                    />
+                                  </div>
+                                </div>
+                              </p>
+                              {/* <a class="info-link" href="">
+                                Discover <svg> ... </svg>
+                              </a> */}
+                            </div>
+                          </div>
+                        </div>
+                      </React.Fragment>
+                    ))}
                   </div>
                 </div>
               </div>
-
               <div className="card">
                 <div className="card-header" id="headingTwo3">
                   <section className="mb-0 mt-0">
@@ -501,8 +700,8 @@ export default function ApplyPageModal({ apply }) {
                     <div className="row mb-4">
                       <div className="col-md-12">
                         <MyTextArea
-                          id="discuss"
-                          name="discuss"
+                          id="conflictInfo"
+                          name="conflictInfo"
                           type="text"
                           className="form-control"
                           label="Mübahisənin qısa məzmunu və mediasiyadan gözlənilən nəticələr*"
@@ -517,14 +716,14 @@ export default function ApplyPageModal({ apply }) {
                             <MyTextInput
                               type="checkbox"
                               className="custom-control-input"
-                              id="sChkbox"
-                              name="sChkbox"
+                              id="caseInAction"
+                              name="caseInAction"
                             />
                             <label
                               className="custom-control-label"
-                              htmlFor="sChkbox"
+                              htmlFor="caseInAction"
                             >
-                              Bu məhkəmə hazırda məhkəmə icraatındadır?
+                              Bu mübahisə hazırda məhkəmə icraatındadır?
                             </label>
                           </div>
                         </div>
@@ -533,8 +732,8 @@ export default function ApplyPageModal({ apply }) {
                     <div className="row mb-4">
                       <div className="col-md-12">
                         <MyTextArea
-                          id="aboutCourt"
-                          name="aboutCourt"
+                          id="courtCaseInfo"
+                          name="courtCaseInfo"
                           type="text"
                           className="form-control"
                           label="Məhkəmə və iş barədə mulamatlar*"
@@ -547,12 +746,11 @@ export default function ApplyPageModal({ apply }) {
                     <div className="row mb-4">
                       <div className="col-md-6">
                         <MySearchableSelect
-                          id="date"
-                          name="date"
+                          id="prefferedSessionTime"
+                          name="prefferedSessionTime"
                           type="text"
                           isMulti
                           options={datesOptions}
-                          
                           // className="form-control"
                           label="Mediasiya sessiyalarının keçirilməsi üçün üstünlük verilən vaxt*"
                           placeholder={"Sizə uyğun vaxtı daxil edin"}
@@ -560,8 +758,8 @@ export default function ApplyPageModal({ apply }) {
                       </div>
                       <div className="col-md-6">
                         <MySearchableSelect
-                          id="lang"
-                          name="lang"
+                          id="requiredLangs"
+                          name="requiredLangs"
                           type="text"
                           isMulti
                           options={languageKnowledgeOptions}
@@ -607,6 +805,17 @@ export default function ApplyPageModal({ apply }) {
                 </svg>
               )}
               Göndər
+            </button>
+            <button
+              style={{ display: "none" }}
+              id="closeModal"
+              onClick={() => {
+                dispatch(closeModal());
+              }}
+              className="btn btn-lg float-right mt-3 mr-2"
+              data-dismiss="modal"
+            >
+              <i className="flaticon-cancel-12" /> Ləğv et
             </button>
             {/* <button
             style={{position:"fixed",bottom:"12%",right:"12%"}}

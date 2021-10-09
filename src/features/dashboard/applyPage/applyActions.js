@@ -5,20 +5,31 @@ import {
   asyncActionFinish,
   asyncActionStart,
 } from "../../../app/async/asyncReducer";
-import { CREATE_APPLY, DELETE_APPLY, FETCH_APPLY,FETCH_DISTRICT,FETCH_COURT, UPDATE_APPLY } from "./applyConstants";
+import {
+  CREATE_APPLY,
+  DELETE_APPLY,
+  FETCH_APPLY,
+  FETCH_DISTRICT,
+  FETCH_COURT,
+  FETCH_PROFESSION,
+  UPDATE_APPLY,
+  FETCH_MEDIATOR,
+  FETCH_OFFICE,
+  FETCH_PRINT
+} from "./applyConstants";
 const url = "customer";
 export function loadApply(data) {
   return async function (dispatch) {
     dispatch(asyncActionStart());
     await axios
-      .get(`/${url}`, {
+      .get(`/${"Request/citizens/all"}`, {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas)
+        console.log(datas.data.data.data, "MURACIET");
         dispatch({
           type: FETCH_APPLY,
-          payload: datas.data.data,
+          payload: datas.data.data.data,
           totalCount: datas.data.message,
         });
         dispatch(asyncActionFinish());
@@ -38,7 +49,7 @@ export function loadDistrict(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data)
+        console.log(datas.data.data);
         dispatch({
           type: FETCH_DISTRICT,
           payload: datas.data.data,
@@ -60,7 +71,7 @@ export function loadCourt(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data)
+        console.log(datas.data.data);
         dispatch({
           type: FETCH_COURT,
           payload: datas.data.data,
@@ -74,6 +85,96 @@ export function loadCourt(data) {
       });
   };
 }
+export function loadProfession(data) {
+  return async function (dispatch) {
+    dispatch(asyncActionStart());
+    await axios
+      .get(`/${"Data/professions"}`, {
+        params: { ...data },
+      })
+      .then((datas) => {
+        console.log(datas.data.data, "profession");
+        dispatch({
+          type: FETCH_PROFESSION,
+          payload: datas.data.data,
+          totalCount: datas.data.message,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
+      });
+  };
+}
+
+export function loadMediatr(data) {
+  return async function (dispatch) {
+    dispatch(asyncActionStart());
+    await axios
+      .get(`/${"Data/mediatrs"}`, {
+        params: { ...data },
+      })
+      .then((datas) => {
+        console.log(datas.data.data, "profession");
+        dispatch({
+          type: FETCH_MEDIATOR,
+          payload: datas.data.data,
+          totalCount: datas.data.message,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
+      });
+  };
+}
+export function loadOffice(data) {
+  return async function (dispatch) {
+    dispatch(asyncActionStart());
+    await axios
+      .get(`/${"Data/offices"}`, {
+        params: { ...data },
+      })
+      .then((datas) => {
+        console.log(datas.data.data, "offices");
+        dispatch({
+          type: FETCH_OFFICE,
+          payload: datas.data.data,
+          totalCount: datas.data.message,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
+      });
+  };
+}
+
+export function loadPrint(data) {
+  return async function (dispatch) {
+    dispatch(asyncActionStart());
+    await axios
+      .get(`/Request/print/${data}`, {
+        params: { ...data },
+      })
+      .then((datas) => {
+        dispatch({
+          type: FETCH_PRINT,
+          payload: datas.data.data,
+          totalCount: datas.data.message,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
+      });
+  };
+}
+
 export function listenToApply(data) {
   return {
     type: FETCH_APPLY,
@@ -85,7 +186,7 @@ export function createApply(createdData) {
   return async function (dispatch) {
     dispatch(asyncActionStart());
     await axios
-      .post(`${url}/create`, createdData, {
+      .post(`/${"Request/new"}`, createdData, {
         withCredentials: true,
       })
       .then((data) => {
@@ -95,7 +196,7 @@ export function createApply(createdData) {
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
-        toast.info("Xəta baş verdi, yenidən cəht edin.");
+        toast.info("Xəta baş verdi, yenidən cəhd edin.");
       });
   };
 }

@@ -1,7 +1,12 @@
 export const CREATE_APPLY = "CREATE_APPLY";
 export const UPDATE_APPLY = "UPDATE_APPLY";
-export const FETCH_APPLY  = "FETCH_APPLY";
+export const FETCH_APPLY = "FETCH_APPLY";
 export const FETCH_DISTRICT = "FETCH_DISTRICT";
 export const FETCH_COURT = "FETCH_COURT";
+export const FETCH_PROFESSION = "FETCH_PROFESSION";
+export const FETCH_MEDIATOR = "FETCH_MEDIATOR";
+export const FETCH_OFFICE = "FETCH_OFFICE";
+export const FETCH_PRINT = "FETCH_PRINT";
+
 export const DELETE_APPLY = "DELETE_APPLY";
 
