@@ -9,13 +9,14 @@ import {
   CREATE_APPLY,
   DELETE_APPLY,
   FETCH_APPLY,
+  LISTEN_APPLY,
   FETCH_DISTRICT,
   FETCH_COURT,
   FETCH_PROFESSION,
   UPDATE_APPLY,
   FETCH_MEDIATOR,
   FETCH_OFFICE,
-  FETCH_PRINT
+  FETCH_PRINT,
 } from "./applyConstants";
 const url = "customer";
 export function loadApply(data) {
@@ -26,10 +27,32 @@ export function loadApply(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data.data, "MURACIET");
         dispatch({
           type: FETCH_APPLY,
           payload: datas.data.data.data,
+          totalCount: datas.data.message,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
+      });
+  };
+}
+export function listenToApply(data) {
+  // console.log(data)
+  return async function (dispatch) {
+    dispatch(asyncActionStart('listenApply'));
+    await axios
+      .get(`/Request/${data}`, {
+        params: { ...data },
+      })
+      .then((datas) => {
+        console.log(datas.data.data, " 1 MURACIET");
+        dispatch({
+          type: LISTEN_APPLY,
+          payload: datas.data.data,
           totalCount: datas.data.message,
         });
         dispatch(asyncActionFinish());
@@ -49,7 +72,6 @@ export function loadDistrict(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data);
         dispatch({
           type: FETCH_DISTRICT,
           payload: datas.data.data,
@@ -71,7 +93,6 @@ export function loadCourt(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data);
         dispatch({
           type: FETCH_COURT,
           payload: datas.data.data,
@@ -93,7 +114,6 @@ export function loadProfession(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data, "profession");
         dispatch({
           type: FETCH_PROFESSION,
           payload: datas.data.data,
@@ -116,7 +136,6 @@ export function loadMediatr(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data, "profession");
         dispatch({
           type: FETCH_MEDIATOR,
           payload: datas.data.data,
@@ -138,7 +157,6 @@ export function loadOffice(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data, "offices");
         dispatch({
           type: FETCH_OFFICE,
           payload: datas.data.data,
@@ -154,31 +172,38 @@ export function loadOffice(data) {
 }
 
 export function loadPrint(data) {
-  return async function (dispatch) {
-    dispatch(asyncActionStart());
+  return async function (dispatch, getState) {
+    dispatch(asyncActionStart("print"));
     await axios
       .get(`/Request/print/${data}`, {
         params: { ...data },
       })
       .then((datas) => {
+        if (datas.data.Succeeded === false) {
+          dispatch(asyncActionError(datas.data.Message));
+        }
         dispatch({
           type: FETCH_PRINT,
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
-        dispatch(asyncActionFinish());
+        dispatch(asyncActionFinish("print"));
+        const loadedPrint = getState().applys.prints;
+        const err = getState().async.error;
+
+        if (loadedPrint) {
+          window.open(`http://172.16.2.45/${loadedPrint}`);
+          // console.log(`http://172.16.2.45/${loadedPrint}`)
+          // // return <Redirect to={`http://172.16.2.45/${print}`} />;
+        } else {
+          // console.log(error)
+          toast.info(`${err}`);
+        }
       })
       .catch((err) => {
-        dispatch(asyncActionError(err.message));
+        dispatch(asyncActionError(err.Message));
         toast.info("Xəta baş verdi");
       });
-  };
-}
-
-export function listenToApply(data) {
-  return {
-    type: FETCH_APPLY,
-    payload: data,
   };
 }
 

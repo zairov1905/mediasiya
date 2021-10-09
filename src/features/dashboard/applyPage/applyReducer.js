@@ -9,6 +9,7 @@ import {
   UPDATE_APPLY,
   FETCH_OFFICE,
   FETCH_PRINT,
+  LISTEN_APPLY,
 } from "./applyConstants";
 
 const initialState = {
@@ -16,7 +17,8 @@ const initialState = {
   courts: [],
   professions: [],
   mediatrs: [],
-  prints:[]
+  prints: [],
+  listenedApply: [],
 };
 
 export default function applyReducer(
@@ -47,6 +49,12 @@ export default function applyReducer(
       return {
         ...state,
         applys: payload,
+        totalCount: totalCount,
+      };
+    case LISTEN_APPLY:
+      return {
+        ...state,
+        listenedApply: payload,
         totalCount: totalCount,
       };
     case FETCH_DISTRICT:
