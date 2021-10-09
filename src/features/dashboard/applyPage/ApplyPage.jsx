@@ -15,7 +15,7 @@ export default function ApplyPage() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(loadApply({ pageSize: 20 }));
+    dispatch(loadApply({ pageSize: 20 },"Citizen"));
   }, [dispatch]);
   const [perPage, setPerPage] = useState(10);
   const [PageNumber, setPageNumber] = useState(1);
@@ -314,7 +314,7 @@ export default function ApplyPage() {
                 onChangePage={handlePageChange}
                 highlightOnHover
                 Clicked
-                actions={auth.currentUser.role === "Citizen" && actions}
+                actions={auth.currentUser && auth.currentUser.role === "Citizen" && actions}
               />
             </div>
           </div>

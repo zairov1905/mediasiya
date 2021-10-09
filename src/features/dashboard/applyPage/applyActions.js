@@ -19,14 +19,26 @@ import {
   FETCH_PRINT,
 } from "./applyConstants";
 const url = "customer";
-export function loadApply(data) {
+export function loadApply(data,type) {
   return async function (dispatch) {
+    let url;
+    switch (type) {
+      case "Citizen":
+     url = "citizens";
+     break;
+       
+    
+      default:
+        break;
+    }
+    console.log(url,'tam zaman');
     dispatch(asyncActionStart());
     await axios
-      .get(`/${"Request/citizens/all"}`, {
+      .get(`/Request/${url}/all`, {
         params: { ...data },
       })
       .then((datas) => {
+
         console.log(datas.data.data, " All");
 
         dispatch({
