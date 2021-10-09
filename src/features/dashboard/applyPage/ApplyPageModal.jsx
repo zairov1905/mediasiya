@@ -24,16 +24,13 @@ export default function ApplyPageModal({ apply }) {
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
   const async = useSelector((state) => state.async);
-  const { listenedApply } = useSelector((state) => state.applys);
 
   useEffect(() => {
     if (modal) {
       $("#closeModal").click();
     }
   });
-  const [check, setCheck] = useState(
-    apply && listenedApply.mediatrs ? "mediator" : "office"
-  );
+  const [check, setCheck] = useState();
   useEffect(async () => {
     apply && (await dispatch(listenToApply(apply.id)));
     dispatch(loadDistrict());
@@ -43,6 +40,7 @@ export default function ApplyPageModal({ apply }) {
     dispatch(loadOffice());
   }, [dispatch]);
   const applys = useSelector((state) => state.applys);
+  const { listenedApply } = useSelector((state) => state.applys);
   console.log(listenedApply);
   const districtsOptions =
     applys.districts &&
@@ -286,6 +284,18 @@ export default function ApplyPageModal({ apply }) {
                             id="professionId"
                             name="professionId"
                             type="text"
+                            defaultValue={
+                              apply && {
+                                value: parseInt(
+                                  listenedApply.profession &&
+                                    listenedApply.profession.id
+                                ),
+                                label: listenedApply.profession
+                                  ? listenedApply.profession.professionName
+                                  : "Təyin edilməyib",
+                              }
+                            }
+                            isDisabled={apply ? true : false}
                             options={professionOptions}
                             // className="form-control"
                             placeholder="İxtisas seçin"
@@ -299,6 +309,16 @@ export default function ApplyPageModal({ apply }) {
                             id="districtIds"
                             name="districtIds"
                             type="text"
+                            isDisabled={apply ? true : false}
+                            defaultValue={
+                              apply &&
+                              listenedApply.districts &&
+                              listenedApply.districts.map((district) => {
+                                return {
+                                  label: `${district.districtName}`,
+                                };
+                              })
+                            }
                             options={districtsOptions}
                             isMulti
                             // className="form-control"
@@ -314,9 +334,19 @@ export default function ApplyPageModal({ apply }) {
                           <MySearchableSelect
                             id="courtId"
                             name="courtId"
+                            isDisabled={apply ? true : false}
                             type="text"
                             options={courtsOptions}
-                            // className="form-control"
+                            defaultValue={
+                              apply && {
+                                value: parseInt(
+                                  listenedApply.court && listenedApply.court.id
+                                ),
+                                label: listenedApply.court
+                                  ? listenedApply.court.courtName
+                                  : "Təyin edilməyib",
+                              }
+                            }
                             placeholder="Məhkəmə seçin"
                             label={
                               "Mübahisə həll olunmazsa mübahisənin baxılacağı yer*"
@@ -380,58 +410,69 @@ export default function ApplyPageModal({ apply }) {
                     className="collapse"
                     aria-labelledby="headingOne3"
                     data-parent="#iconsAccordion"
-                    style={{}}
                   >
                     <div className="card-body">
                       <div className="row mb-4">
-                        <div className="col-md-12">
-                          <div className="form-check mb-2">
-                            <div className="custom-control custom-radio classic-radio-info">
-                              <input
-                                type="radio"
-                                // checked={apply && listenedApply. }
-                                id="hRadio2"
-                                name="classicRadio"
-                                onClick={() => setCheck("office")}
-                                className="custom-control-input"
-                              />
-                              <label
-                                className="custom-control-label"
-                                htmlFor="hRadio2"
-                              >
-                                Mediasiya təşkilatları
-                              </label>
+                        {apply ? (
+                          ""
+                        ) : (
+                          <div className="col-md-12">
+                            <div className="form-check mb-2">
+                              <div className="custom-control custom-radio classic-radio-info">
+                                <input
+                                  type="radio"
+                                  // checked={apply && listenedApply. }
+                                  id="hRadio2"
+                                  name="classicRadio"
+                                  onClick={() => setCheck("office")}
+                                  className="custom-control-input"
+                                />
+                                <label
+                                  className="custom-control-label"
+                                  htmlFor="hRadio2"
+                                >
+                                  Mediasiya təşkilatları
+                                </label>
+                              </div>
+                            </div>
+                            <div className="form-check mb-2">
+                              <div className="custom-control custom-radio classic-radio-info">
+                                <input
+                                  type="radio"
+                                  id="hRadio1"
+                                  name="classicRadio"
+                                  onClick={() => setCheck("mediator")}
+                                  className="custom-control-input"
+                                />
+                                <label
+                                  className="custom-control-label"
+                                  htmlFor="hRadio1"
+                                >
+                                  Fərdi qaydada fəaliyyət göstərən mediatorlar
+                                </label>
+                              </div>
                             </div>
                           </div>
-                          <div className="form-check mb-2">
-                            <div className="custom-control custom-radio classic-radio-info">
-                              <input
-                                type="radio"
-                                id="hRadio1"
-                                checked={
-                                  apply && listenedApply.mediatrs && "checked"
-                                }
-                                name="classicRadio"
-                                onClick={() => setCheck("mediator")}
-                                className="custom-control-input"
-                              />
-                              <label
-                                className="custom-control-label"
-                                htmlFor="hRadio1"
-                              >
-                                Fərdi qaydada fəaliyyət göstərən mediatorlar
-                              </label>
-                            </div>
-                          </div>
-                        </div>
+                        )}
                       </div>
-                      {check === "office" && (
+                      {(check === "office" || listenedApply.office) && (
                         <div className="row mb-4">
                           <div className="col-md-12">
                             <MySearchableSelect
                               id="officeId"
                               name="officeId"
                               type="text"
+                              defaultValue={
+                                apply && {
+                                  value: parseInt(
+                                    listenedApply.office &&
+                                      listenedApply.office.id
+                                  ),
+                                  label: listenedApply.office
+                                    ? listenedApply.office.officeName
+                                    : "Təyin edilməyib",
+                                }
+                              }
                               options={officeOptions}
                               isMulti
                               // className="form-control"
@@ -441,7 +482,7 @@ export default function ApplyPageModal({ apply }) {
                           </div>
                         </div>
                       )}
-                      {check === "mediator" && (
+                      {(check === "mediator" || listenedApply.mediatrs) && (
                         <div className="row mb-4">
                           <div className="col-md-12">
                             <MySearchableSelect
@@ -451,6 +492,15 @@ export default function ApplyPageModal({ apply }) {
                               options={mediatorOptions.filter((medik) =>
                                 medik.ids.includes(values.professionId)
                               )}
+                              defaultValue={
+                                apply &&
+                                listenedApply.mediatrs.map((medik) => {
+                                  return {
+                                    label: `${medik.firstName} ${medik.lastName} ${medik.middleName}`,
+                                  };
+                                })
+                              }
+                              isDisabled={apply ? true : false}
                               isMulti
                               // className="form-control"
                               placeholder="Mediator seçin"
@@ -516,55 +566,58 @@ export default function ApplyPageModal({ apply }) {
                     data-parent="#iconsAccordion"
                   >
                     <div className="card-body">
-                      <div className="row mb-4">
-                        <div className="col-md-2 offset-10 text-right">
-                          <div className="icon-container">
-                            <button
-                              type="button"
-                              className="close"
-                              onClick={() => handleAddSide()}
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width={24}
-                                height={24}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="feather feather-plus-circle"
+                      {!apply && (
+                        <div className="row mb-4">
+                          <div className="col-md-2 offset-10 text-right">
+                            <div className="icon-container">
+                              <button
+                                type="button"
+                                className="close"
+                                onClick={() => handleAddSide()}
                               >
-                                <circle cx={12} cy={12} r={10} />
-                                <line x1={12} y1={8} x2={12} y2={16} />
-                                <line x1={8} y1={12} x2={16} y2={12} />
-                              </svg>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveSide()}
-                              className="close"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width={24}
-                                height={24}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth={2}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className="feather feather-minus-circle"
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="feather feather-plus-circle"
+                                >
+                                  <circle cx={12} cy={12} r={10} />
+                                  <line x1={12} y1={8} x2={12} y2={16} />
+                                  <line x1={8} y1={12} x2={16} y2={12} />
+                                </svg>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSide()}
+                                className="close"
                               >
-                                <circle cx={12} cy={12} r={10} />
-                                <line x1={8} y1={12} x2={16} y2={12} />
-                              </svg>
-                            </button>
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="feather feather-minus-circle"
+                                >
+                                  <circle cx={12} cy={12} r={10} />
+                                  <line x1={8} y1={12} x2={16} y2={12} />
+                                </svg>
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
+
                       {!sides && (
                         <div className="row">
                           <div className="col-md-12">
@@ -612,6 +665,7 @@ export default function ApplyPageModal({ apply }) {
                                     <div className="row mb-4">
                                       <div className="col-md-12">
                                         <MyTextInput
+                                          disabled={apply ? true : false}
                                           id={`sides[${index}].fullName`}
                                           name={`sides[${index}].fullName`}
                                           type="text"
@@ -626,6 +680,7 @@ export default function ApplyPageModal({ apply }) {
                                         <MyTextInput
                                           id={`sides[${index}].advocateFullName`}
                                           name={`sides[${index}].advocateFullName`}
+                                          disabled={apply ? true : false}
                                           type="text"
                                           className="form-control"
                                           placeholder="Nümayəndənin / Vəkilin adı, soyadı və atasının adı"
@@ -638,6 +693,7 @@ export default function ApplyPageModal({ apply }) {
                                         <MyTextInput
                                           id={`sides[${index}].organizationName`}
                                           name={`sides[${index}].organizationName`}
+                                          disabled={apply ? true : false}
                                           type="text"
                                           className="form-control"
                                           label="Hüquq şirkəti"
@@ -652,6 +708,7 @@ export default function ApplyPageModal({ apply }) {
                                         <MyTextInput
                                           id={`sides[${index}].address`}
                                           name={`sides[${index}].address`}
+                                          disabled={apply ? true : false}
                                           type="text"
                                           className="form-control"
                                           label="Ünvan"
@@ -664,6 +721,7 @@ export default function ApplyPageModal({ apply }) {
                                         <MyTextInput
                                           id={`sides[${index}].phone`}
                                           name={`sides[${index}].phone`}
+                                          disabled={apply ? true : false}
                                           type="text"
                                           className="form-control"
                                           label="Telefon"
@@ -676,6 +734,7 @@ export default function ApplyPageModal({ apply }) {
                                         <MyTextInput
                                           id={`sides[${index}].email`}
                                           name={`sides[${index}].email`}
+                                          disabled={apply ? true : false}
                                           type="text"
                                           className="form-control"
                                           label="E-mail"
@@ -759,6 +818,7 @@ export default function ApplyPageModal({ apply }) {
                             id="conflictInfo"
                             name="conflictInfo"
                             type="text"
+                            disabled={apply ? true : false}
                             className="form-control"
                             label="Mübahisənin qısa məzmunu və mediasiyadan gözlənilən nəticələr*"
                             placeholder={"Qısa məlumat daxil edin"}
@@ -772,6 +832,7 @@ export default function ApplyPageModal({ apply }) {
                               <MyTextInput
                                 type="checkbox"
                                 className="custom-control-input"
+                                disabled={apply ? true : false}
                                 id="caseInAction"
                                 name="caseInAction"
                               />
@@ -790,6 +851,7 @@ export default function ApplyPageModal({ apply }) {
                           <MyTextArea
                             id="courtCaseInfo"
                             name="courtCaseInfo"
+                            disabled={apply ? true : false}
                             type="text"
                             className="form-control"
                             label="Məhkəmə və iş barədə mulamatlar*"
@@ -807,9 +869,14 @@ export default function ApplyPageModal({ apply }) {
                             type="text"
                             isMulti
                             options={datesOptions}
+                            isDisabled={apply ? true : false}
                             // className="form-control"
                             label="Mediasiya sessiyalarının keçirilməsi üçün üstünlük verilən vaxt*"
-                            placeholder={"Sizə uyğun vaxtı daxil edin"}
+                            placeholder={
+                              apply && listenedApply.prefferedSessionTime
+                                ? listenedApply.prefferedSessionTime
+                                : "Sizə uyğun vaxtı daxil edin"
+                            }
                           />
                         </div>
                         <div className="col-md-6">
@@ -818,11 +885,17 @@ export default function ApplyPageModal({ apply }) {
                             name="requiredLangs"
                             type="text"
                             isMulti
+                            isDisabled={apply ? true : false}
                             options={languageKnowledgeOptions}
                             // className="form-control"
                             label="Mediatordan tələb olunan dil biliyi*"
                             placeholder={
                               "Mediatordan tələb etdiyiniz dil biliyi"
+                            }
+                            placeholder={
+                              apply && listenedApply.requiredLangs
+                                ? listenedApply.requiredLangs
+                                : "Mediatordan tələb etdiyiniz dil biliyi"
                             }
                           />
                         </div>
@@ -831,39 +904,41 @@ export default function ApplyPageModal({ apply }) {
                   </div>
                 </div>
               </div>
+              {!apply && (
+                <button
+                  style={{ position: "fixed", bottom: "11.8%", right: "12%" }}
+                  disabled={!isValid || !dirty || isSubmitting}
+                  type="submit"
+                  // name="time"
+                  className="btn btn-primary float-right  btn-lg mt-3"
+                >
+                  {isSubmitting && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="feather feather-loader spin mr-2"
+                    >
+                      <line x1={12} y1={2} x2={12} y2={6} />
+                      <line x1={12} y1={18} x2={12} y2={22} />
+                      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
+                      <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
+                      <line x1={2} y1={12} x2={6} y2={12} />
+                      <line x1={18} y1={12} x2={22} y2={12} />
+                      <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
+                      <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
+                    </svg>
+                  )}
+                  Göndər
+                </button>
+              )}
 
-              <button
-                style={{ position: "fixed", bottom: "11.8%", right: "12%" }}
-                disabled={!isValid || !dirty || isSubmitting}
-                type="submit"
-                // name="time"
-                className="btn btn-primary float-right  btn-lg mt-3"
-              >
-                {isSubmitting && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={24}
-                    height={24}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="feather feather-loader spin mr-2"
-                  >
-                    <line x1={12} y1={2} x2={12} y2={6} />
-                    <line x1={12} y1={18} x2={12} y2={22} />
-                    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-                    <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-                    <line x1={2} y1={12} x2={6} y2={12} />
-                    <line x1={18} y1={12} x2={22} y2={12} />
-                    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
-                    <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
-                  </svg>
-                )}
-                Göndər
-              </button>
               <button
                 style={{ display: "none" }}
                 id="closeModal"

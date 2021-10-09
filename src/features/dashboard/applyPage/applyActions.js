@@ -27,6 +27,8 @@ export function loadApply(data) {
         params: { ...data },
       })
       .then((datas) => {
+        console.log(datas.data.data, " All");
+
         dispatch({
           type: FETCH_APPLY,
           payload: datas.data.data.data,
@@ -49,7 +51,7 @@ export function listenToApply(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data, " 1 MURACIET");
+        // console.log(datas.data.data, " 1 MURACIET");
         dispatch({
           type: LISTEN_APPLY,
           payload: datas.data.data,

@@ -178,7 +178,7 @@ export default function ApplyPage() {
               dispatch(
                 openModal({
                   modalType: "ApplyPageModal",
-                  modalProps: {apply},
+                  modalProps: { apply },
                 })
               );
             }}
@@ -217,7 +217,7 @@ export default function ApplyPage() {
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx={12} cy={12} r={3} />
           </svg>
-          {(async.kind === "print"  && target.id === `${apply.id}`) ? (
+          {async.kind === "print" && target.id === `${apply.id}` ? (
             <svg
               style={buttonStyle1}
               xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +241,10 @@ export default function ApplyPage() {
               <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
             </svg>
           ) : (
+            
             <svg
+            type="button"
+
               data-name="print"
               id={apply.id}
               onClick={(e) => dispatch(loadPrint(apply.id))}
