@@ -10,6 +10,9 @@ import {
   FETCH_OFFICE,
   FETCH_PRINT,
   LISTEN_APPLY,
+  REJECT_APPLY,
+  APPROVE_APPLY,
+  ASSING_MEADIATR,
 } from "./applyConstants";
 
 const initialState = {
@@ -19,6 +22,9 @@ const initialState = {
   mediatrs: [],
   prints: [],
   listenedApply: [],
+  rejectedApply: [],
+  approvedApply: [],
+  assignedMediatr: [],
 };
 
 export default function applyReducer(
@@ -55,6 +61,24 @@ export default function applyReducer(
       return {
         ...state,
         listenedApply: payload,
+        totalCount: totalCount,
+      };
+    case REJECT_APPLY:
+      return {
+        ...state,
+        rejectedApply: payload,
+        totalCount: totalCount,
+      };
+    case APPROVE_APPLY:
+      return {
+        ...state,
+        approvedApply: payload,
+        totalCount: totalCount,
+      };
+    case ASSING_MEADIATR:
+      return {
+        ...state,
+        assignedMediatr: payload,
         totalCount: totalCount,
       };
     case FETCH_DISTRICT:

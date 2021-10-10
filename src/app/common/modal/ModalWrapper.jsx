@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import Button from "./Button";
 import { closeModal } from "./modalReducer";
 
 export default function ModalWrapper({ children, size, header,data, footer }) {
@@ -65,12 +66,7 @@ export default function ModalWrapper({ children, size, header,data, footer }) {
           </div>
           <div className="modal-body">{children}</div>
           {/* <div className="modal-footer">
-            <button onClick={()=>{dispatch(closeModal())}} className="btn" data-dismiss="modal">
-              <i className="flaticon-cancel-12" /> Ləğv et
-            </button>
-            <button type="button" className="btn btn-primary">
-              Yadda saxla 
-            </button>
+            <Button/>
           </div> */}
         </div>
       </div>

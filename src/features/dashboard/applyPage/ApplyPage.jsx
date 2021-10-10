@@ -11,12 +11,10 @@ import { deleteApply, loadApply, loadPrint } from "./applyActions";
 export default function ApplyPage() {
   const auth = useSelector((state) => state.auth);
   const async = useSelector((state) => state.async);
-
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(loadApply({ pageSize: 20 },"Citizen"));
-  }, [dispatch]);
+  useEffect( () => {
+    dispatch(loadApply({ pageSize: 20 }));
+  }, dispatch);
   const [perPage, setPerPage] = useState(10);
   const [PageNumber, setPageNumber] = useState(1);
   const { applys, totalCount } = useSelector((state) => state.applys);
@@ -159,8 +157,11 @@ export default function ApplyPage() {
     },
     {
       name: "Status",
-      selector: "status",
-      maxWidth: "64px",
+      // selector: "status",
+      cell:(apply)=>(
+        <p>{apply.status.statusName}</p>
+      ),
+      maxWidth: "164px",
 
       sortable: true,
     },
@@ -241,10 +242,8 @@ export default function ApplyPage() {
               <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
             </svg>
           ) : (
-            
             <svg
-            type="button"
-
+              type="button"
               data-name="print"
               id={apply.id}
               onClick={(e) => dispatch(loadPrint(apply.id))}
@@ -288,6 +287,15 @@ export default function ApplyPage() {
       ),
     },
   ];
+  // let title;
+  // // switch (auth.currentUser.role) {
+  // //   case "Citizen":
+  // //     title = "Müraciətlər"
+  // //     break;
+  // //   case ""
+  // //   default:
+  // //     break;
+  // // }
 
   return (
     <React.Fragment>
@@ -299,11 +307,7 @@ export default function ApplyPage() {
               <DataTable
                 // className="dataTables_wrapper container-fluid dt-bootstrap4 table-responsive"
                 // selectableRows
-                title={
-                  auth.currentUser && auth.currentUser.role === "Citizen"
-                    ? "Müraciətlərim"
-                    : "Məktublar"
-                }
+                title={"Müraciətlər"}
                 columns={columns}
                 data={data}
                 pagination
@@ -314,7 +318,11 @@ export default function ApplyPage() {
                 onChangePage={handlePageChange}
                 highlightOnHover
                 Clicked
-                actions={auth.currentUser && auth.currentUser.role === "Citizen" && actions}
+                actions={
+                  auth.currentUser &&
+                  auth.currentUser.role === "Citizen" &&
+                  actions
+                }
               />
             </div>
           </div>

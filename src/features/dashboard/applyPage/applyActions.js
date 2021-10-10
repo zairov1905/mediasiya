@@ -10,6 +10,7 @@ import {
   DELETE_APPLY,
   FETCH_APPLY,
   LISTEN_APPLY,
+  REJECT_APPLY,
   FETCH_DISTRICT,
   FETCH_COURT,
   FETCH_PROFESSION,
@@ -17,24 +18,21 @@ import {
   FETCH_MEDIATOR,
   FETCH_OFFICE,
   FETCH_PRINT,
+  APPROVE_APPLY,
+  ASSING_MEADIATR
 } from "./applyConstants";
 const url = "customer";
 export function loadApply(data,type) {
-  return async function (dispatch) {
-    let url;
-    switch (type) {
-      case "Citizen":
-     url = "citizens";
-     break;
-       
-    
-      default:
-        break;
+  return async function (dispatch,getState) {
+    let url = getState().auth.currentUser.role.toLowerCase();
+    console.log(url);
+    if(url==="council"){
+      url = "office"
     }
-    console.log(url,'tam zaman');
+    console.log(url)
     dispatch(asyncActionStart());
     await axios
-      .get(`/Request/${url}/all`, {
+      .get(`/Request/${url}s/all`, {
         params: { ...data },
       })
       .then((datas) => {
@@ -66,6 +64,78 @@ export function listenToApply(data) {
         // console.log(datas.data.data, " 1 MURACIET");
         dispatch({
           type: LISTEN_APPLY,
+          payload: datas.data.data,
+          totalCount: datas.data.message,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
+      });
+  };
+}
+export function rejectApply(data,text) {
+  // console.log(data)
+  return async function (dispatch) {
+    dispatch(asyncActionStart('reject'));
+    await axios
+      .post(`/Request/reject/${data}`, {
+        // params: { body:text },
+      })
+      .then((datas) => {
+        // console.log(datas.data.data, " 1 MURACIET");
+        dispatch({
+          type: REJECT_APPLY,
+          payload: datas.data.data,
+          totalCount: datas.data.message,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
+      });
+  };
+}
+
+export function approveApply(data) {
+  return async function (dispatch) {
+    console.log(data)
+
+    dispatch(asyncActionStart('approve'));
+    await axios
+      .get(`/Request/approve/${data}`, {
+        params: { ...data },
+      })
+      .then((datas) => {
+        console.log(datas.data.data, "1 Tesdiqle");
+        dispatch({
+          type: APPROVE_APPLY,
+          payload: datas.data.data,
+          totalCount: datas.data.message,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
+      });
+  };
+}
+export function assignMediator(data) {
+  return async function (dispatch) {
+    console.log(data)
+
+    dispatch(asyncActionStart('approve'));
+    await axios
+      .get(`/Request/approve/${data}`, {
+        params: { ...data },
+      })
+      .then((datas) => {
+        console.log(datas.data.data, "1 Tesdiqle");
+        dispatch({
+          type: ASSING_MEADIATR,
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
