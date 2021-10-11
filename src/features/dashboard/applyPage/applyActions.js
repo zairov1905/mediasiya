@@ -310,8 +310,9 @@ export function createApply(createdData) {
       })
       .then((data) => {
         dispatch({ type: CREATE_APPLY, payload: data.data.data });
+        dispatch(loadApply())
         dispatch(asyncActionFinish());
-        toast.success("Uğurla əlavə edildi");
+        toast.success("Müraciətiniz uğurla qeydə alındı");
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));

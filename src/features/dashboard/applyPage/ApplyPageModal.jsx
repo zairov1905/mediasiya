@@ -8,6 +8,7 @@ import {
   approveApply,
   createApply,
   listenToApply,
+  loadApply,
   loadCourt,
   loadDistrict,
   loadMediatr,
@@ -31,7 +32,8 @@ export default function ApplyPageModal({ apply }) {
   const [rejectForm, setRejectForm] = useState(false);
 
   const async = useSelector((state) => state.async);
-  const { auth } = useSelector((state) => state.auth);
+  const auth = useSelector((state) => state.auth);
+  console.log(auth.currentUser.role, "auth");
 
   useEffect(() => {
     if (modal) {
@@ -981,123 +983,127 @@ export default function ApplyPageModal({ apply }) {
               </Form>
             )}
           </Formik>
-          {apply && apply.status.id === 1 && (
-            <div className="row">
-              {!rejectForm && (
-                <div className="col-md-12">
-                  <div className="button-setting">
-                    <Button
-                      onClick={() => setRejectForm(true)}
-                      className="btn btn-danger float-right  btn-lg mr-1 ml-2 mt-2 mb-4"
-                    >
-                      İmtina et
-                    </Button>
+          {apply &&
+            apply.status.id === 1 &&
+            !auth.currentUser.role === "Citizen" && (
+              <div className="row">
+                {!rejectForm && (
+                  <div className="col-md-12">
+                    <div className="button-setting">
+                      <Button
+                        onClick={() => setRejectForm(true)}
+                        className="btn btn-danger float-right  btn-lg mr-1 ml-2 mt-2 mb-4"
+                      >
+                        İmtina et
+                      </Button>
 
-                    <Button
-                      onClick={() => {
-                        dispatch(approveApply(apply.id));
-                        dispatch(closeModal());
-                        toast.info("Müraciət qəbul edildi.");
-                      }}
-                      className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4"
-                    >
-                      {" "}
-                      {async.kind === "approve" && (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width={24}
-                          height={24}
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="feather feather-loader spin mr-2"
-                        >
-                          <line x1={12} y1={2} x2={12} y2={6} />
-                          <line x1={12} y1={18} x2={12} y2={22} />
-                          <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-                          <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-                          <line x1={2} y1={12} x2={6} y2={12} />
-                          <line x1={18} y1={12} x2={22} y2={12} />
-                          <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
-                          <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
-                        </svg>
-                      )}
-                      Qəbul et
-                    </Button>
-                  </div>
-                </div>
-              )}
-              <div className="col-md-12">
-                {rejectForm === true && (
-                  <div className="row">
-                    <div className="col-md-12">
-                      <Formik
-                        initialValues={{ username: "", password: "" }}
-                        validationSchema={Yup.object({
-                          reasonOfReject: Yup.string().required(
-                            "Bu sahə mütləq doldurulmalıdır."
-                          ),
-                        })}
-                        onSubmit={(values, { setSubmitting, setErrors }) => {
-                          // console.log('ugurludur')
-                          dispatch(
-                            rejectApply(apply.id, {
-                              rejectText: values.reasonOfReject,
-                            })
-                          );
+                      <Button
+                        onClick={() => {
+                          dispatch(approveApply(apply.id));
                           setModal(true);
                           dispatch(closeModal());
-                          setSubmitting(false);
-                          toast.info("Müraciət ləğv edildi.");
-                        }}
-                      >
-                        {({ isSubmitting, isValid, dirty, errors }) => (
-                          <Form className="text-left mt-4">
-                            <div className="form">
-                              <div
-                                id="username-field"
-                                className="field-wrapper input"
-                              >
-                                <MyTextArea
-                                  id="reasonOfReject"
-                                  name="reasonOfReject"
-                                  type="text"
-                                  className="form-control"
-                                  placeholder="İmtina səbəbini daxil edin"
-                                  label="İmtina səbəbi"
-                                />
-                              </div>
 
-                              <div
-                                style={{ float: "right" }}
-                                className="d-sm-flex text-right justify-content-between"
-                              >
-                                <div className="">
-                                  <button
-                                    disabled={
-                                      !isValid || !dirty || isSubmitting
-                                    }
-                                    type="submit"
-                                    // name="time"
-                                    className="btn btn-danger text-right  btn-lg mt-3 "
-                                  >
-                                    İmtina et
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </Form>
+                          toast.info("Müraciət qəbul edildi.");
+                        }}
+                        className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4"
+                      >
+                        {" "}
+                        {async.kind === "approve" && (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width={24}
+                            height={24}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="feather feather-loader spin mr-2"
+                          >
+                            <line x1={12} y1={2} x2={12} y2={6} />
+                            <line x1={12} y1={18} x2={12} y2={22} />
+                            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
+                            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
+                            <line x1={2} y1={12} x2={6} y2={12} />
+                            <line x1={18} y1={12} x2={22} y2={12} />
+                            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
+                            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
+                          </svg>
                         )}
-                      </Formik>
+                        Qəbul et
+                      </Button>
                     </div>
                   </div>
                 )}
+                <div className="col-md-12">
+                  {rejectForm === true && (
+                    <div className="row">
+                      <div className="col-md-12">
+                        <Formik
+                          initialValues={{ username: "", password: "" }}
+                          validationSchema={Yup.object({
+                            reasonOfReject: Yup.string().required(
+                              "Bu sahə mütləq doldurulmalıdır."
+                            ),
+                          })}
+                          onSubmit={(values, { setSubmitting, setErrors }) => {
+                            // console.log('ugurludur')
+                            dispatch(
+                              rejectApply(apply.id, {
+                                rejectText: values.reasonOfReject,
+                              })
+                            );
+                            setModal(true);
+                            dispatch(closeModal());
+                            setSubmitting(false);
+                            toast.info("Müraciət ləğv edildi.");
+                          }}
+                        >
+                          {({ isSubmitting, isValid, dirty, errors }) => (
+                            <Form className="text-left mt-4">
+                              <div className="form">
+                                <div
+                                  id="username-field"
+                                  className="field-wrapper input"
+                                >
+                                  <MyTextArea
+                                    id="reasonOfReject"
+                                    name="reasonOfReject"
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="İmtina səbəbini daxil edin"
+                                    label="İmtina səbəbi"
+                                  />
+                                </div>
+
+                                <div
+                                  style={{ float: "right" }}
+                                  className="d-sm-flex text-right justify-content-between"
+                                >
+                                  <div className="">
+                                    <button
+                                      disabled={
+                                        !isValid || !dirty || isSubmitting
+                                      }
+                                      type="submit"
+                                      // name="time"
+                                      className="btn btn-danger text-right  btn-lg mt-3 "
+                                    >
+                                      İmtina et
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </Form>
+                          )}
+                        </Formik>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </React.Fragment>
       )}
     </ModalWrapper>
