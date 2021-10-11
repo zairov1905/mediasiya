@@ -7,13 +7,18 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { openModal } from "../../../app/common/modal/modalReducer";
 
-import { deleteApply, loadApply, loadPrint } from "./applyActions";
+import {
+  assignMediator,
+  deleteApply,
+  loadApply,
+  loadPrint,
+} from "./applyActions";
 export default function ApplyPage() {
   const auth = useSelector((state) => state.auth);
   const async = useSelector((state) => state.async);
   const dispatch = useDispatch();
-  useEffect( () => {
-    dispatch(loadApply({ pageSize: 20 }));
+  useEffect(() => {
+    dispatch(loadApply({ pageSize: 100 }));
   }, dispatch);
   const [perPage, setPerPage] = useState(10);
   const [PageNumber, setPageNumber] = useState(1);
@@ -137,17 +142,40 @@ export default function ApplyPage() {
       sortable: true,
     },
     {
-      name: "Mediator / Mediasiya təşkilatı",
-      cell: (apply) => (
-        <p>
-          {apply.mediatrs
-            ? apply.mediatrs.map(
-                (mediatr) =>
-                  `${mediatr.firstName} ${mediatr.lastName} ${mediatr.middleName}, `
-              )
-            : apply.office.officeName}
-        </p>
-      ),
+      name:
+        auth.currentUser && auth.currentUser.mediatr
+          ? "Müraciət edən şəxs"
+          : "Mediator / Mediasiya təşkilatı",
+      cell: (apply) => {
+        // for user
+        if (apply.selectedMediatr && auth.currentUser.person) {
+          return `${apply.selectedMediatr.firstName} ${apply.selectedMediatr.lastName}`;
+        } else if (apply.mediatrs.length > 0 && auth.currentUser.person) {
+          let medArr = [];
+          apply.mediatrs.forEach((item) => {
+            medArr.push(`${item.firstName} ${item.lastName}`);
+          });
+          return (
+            <p>
+                {medArr.join(", ")}
+            </p>
+          );
+        } else if (apply.office && auth.currentUser.person) {
+          return <p>{apply.office.officeName}</p>;
+        }
+        // for office
+        else if (apply.selectedMediatr && auth.currentUser.office) {
+          return `${apply.selectedMediatr.firstName} ${apply.selectedMediatr.lastName}`;
+        } else if (!apply.selectedMediatr > 0 && auth.currentUser.office) {
+          return <p>Mediator təyin edilməyib</p>;
+        }
+        // for mediator
+        else if (auth.currentUser.mediatr && apply.person) {
+          return `${apply.person.firstName} ${apply.person.lastName} ${apply.person.middleName}`;
+        } else if (!apply.selectedMediatr > 0 && auth.currentUser.office) {
+          return <p>Mediator təyin edilməyib</p>;
+        }
+      },
       sortable: true,
     },
     {
@@ -158,9 +186,7 @@ export default function ApplyPage() {
     {
       name: "Status",
       // selector: "status",
-      cell:(apply)=>(
-        <p>{apply.status.statusName}</p>
-      ),
+      cell: (apply) => <p>{apply.status.statusName}</p>,
       maxWidth: "164px",
 
       sortable: true,
@@ -218,6 +244,68 @@ export default function ApplyPage() {
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx={12} cy={12} r={3} />
           </svg>
+          {auth.currentUser && auth.currentUser.role === "Office" && (
+            <svg
+              type="button"
+              data-toggle="modal"
+              data-target="#exampleModal"
+              data-name="assignMediatr"
+              id={apply.id}
+              onClick={() => {
+                if (apply.selectedMediatr) {
+                  let mediatorName = `${apply.selectedMediatr.firstName} ${apply.selectedMediatr.lastName}`;
+                  toast.error(
+                    <p>
+                      Bu muraciətə artıq <b>{mediatorName}</b> mediator kimi
+                      təyin edilmişdir
+                    </p>
+                  );
+                } else {
+                  dispatch(
+                    openModal({
+                      modalType: "SelectMediatorModal",
+                      modalProps: { auth, apply },
+                    })
+                  );
+                }
+              }}
+              onMouseEnter={(e) => {
+                sethover(true);
+                setTarget({
+                  ...target,
+                  id: e.target.id,
+                  name: e.target.getAttribute("data-name"),
+                });
+                // console.log(e.target.getAttribute('data-name'))
+              }}
+              onMouseLeave={() => {
+                sethover(false);
+                setTarget();
+              }}
+              style={{
+                ...buttonStyle1,
+                ...(hover &&
+                  target.id === `${apply.id}` &&
+                  target.name === "assignMediatr" &&
+                  buttonHover),
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+              width={24}
+              height={24}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-user-plus"
+            >
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="8.5" cy={7} r={4} />
+              <line x1={20} y1={8} x2={20} y2={14} />
+              <line x1={23} y1={11} x2={17} y2={11} />
+            </svg>
+          )}
           {async.kind === "print" && target.id === `${apply.id}` ? (
             <svg
               style={buttonStyle1}
@@ -246,7 +334,15 @@ export default function ApplyPage() {
               type="button"
               data-name="print"
               id={apply.id}
-              onClick={(e) => dispatch(loadPrint(apply.id))}
+              onClick={(e) => {
+                if (apply.selectedMediatr) {
+                  dispatch(loadPrint(apply.id));
+                } else {
+                  toast.error(
+                    "Seçdiyiniz müraciətə mediator təyin olunmadığı üçün çap versiyası mövcud deyildir."
+                  );
+                }
+              }}
               onMouseEnter={(e) => {
                 sethover(true);
                 setTarget({

@@ -6,75 +6,24 @@ export default function SubHeader() {
   console.log(location);
   let currentLocation;
   switch (location.pathname) {
-    case "/crm":
-      currentLocation = "Müştərilər";
+    case "/apply":
+      currentLocation = "Müraciətlər";
       break;
-    case "/employees":
-      currentLocation = "İşçilər";
+    case "/doc":
+      currentLocation = "Daxil olan sənədlər";
       break;
-    case "/orders":
-      currentLocation = "Sifarişlər";
+    case "/information":
+      currentLocation = "Xəbərdarlıq və məlumatlandırma";
       break;
     case "/operation":
       currentLocation = "Əməliyyatlər";
       break;
-    case "/labs":
-      currentLocation = "Laboratoriyalər";
-      break;
-    case "/documents":
-      currentLocation = "Sənədlər";
-      break;
-    case "/expense":
-      currentLocation = "Gəlir-Xərclər";
-      break;
-    case "/settings/documentTypes":
-      currentLocation = "Tənzimləmələr / Sənəd Növləri";
-      break;
-    case "/settings/departments":
-      currentLocation = "Tənzimləmələr / Struktur Bölmələr";
-      break;
-    case "/settings/duties":
-      currentLocation = "Tənzimləmələr / Vəzifələr";
-      break;
-    case "/settings/counterparties":
-      currentLocation = "Tənzimləmələr / Kontragenlər";
-      break;
-    case "/settings/expenseGroups":
-      currentLocation = "Tənzimləmələr / Gəlir Xərc Qrupları";
-      break;
-    case "/settings/expenseTypes":
-      currentLocation = "Tənzimləmələr / Gəlir Xərc Növləri";
-      break;
-    case "/settings/serviceTypes":
-      currentLocation = "Tənzimləmələr / Xidmət Növləri";
-      break;
-    case "/settings/orderSources":
-      currentLocation = "Tənzimləmələr / Sifariş Mənbəyi";
-      break;
-    case "/settings/references":
-      currentLocation = "Tənzimləmələr / Referanslar";
-      break;
-    case "/settings/signOfLegalAct":
-      currentLocation = "Tənzimləmələr / Texniki Aktlar";
-      break;
-    case "/settings/trainings":
-      currentLocation = "Tənzimləmələr / Təlimlər";
-      break;
-    case "/settings/skills":
-      currentLocation = "Tənzimləmələr / Sərtiştələr";
-      break;
-    case "/certificates/productService":
-      currentLocation = "Sertifikatlar / Məhsul Xidmət Sertifikatları";
-      break;
-    case "/certificates/personal":
-      currentLocation = "Sertifikatlar / Personal Sertifikatları";
-      break;
-    case "/certificates/controlSystem":
-      currentLocation = "Sertifikatlar / İdarəetmə Sistemləri Sertifikatı";
+    case "/legislation":
+      currentLocation = "Qanunvericilik";
       break;
 
     default:
-      break;
+      return "Ana səhifə";
   }
   return (
     <div className="sub-header-container">

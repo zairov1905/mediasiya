@@ -402,22 +402,32 @@ export default function Header() {
                         <circle cx={12} cy={7} r={4} />
                       </svg>
                     )}
-
-                    {auth.currentUser.role === "Citizen"
-                      ? `${
-                          auth.currentUser.person &&
-                          auth.currentUser.person.firstName
-                        }  ${
-                          auth.currentUser.person &&
-                          auth.currentUser.person.lastName
-                        }`
-                      : `${
-                          auth.currentUser.mediatr &&
-                          auth.currentUser.mediatr.firstName
-                        }  ${
-                          auth.currentUser.mediatr &&
-                          auth.currentUser.mediatr.lastName
-                        }`}
+                    {auth.currentUser.role === "Council" &&
+                      `${
+                        auth.currentUser &&
+                        "Admin"
+                      }`}
+                    {auth.currentUser.role === "Citizen" &&
+                      `${
+                        auth.currentUser.person &&
+                        auth.currentUser.person.firstName
+                      }  ${
+                        auth.currentUser.person &&
+                        auth.currentUser.person.lastName
+                      }`}
+                    {auth.currentUser.role === "Mediatr" &&
+                      `${
+                        auth.currentUser.mediatr &&
+                        auth.currentUser.mediatr.firstName
+                      }  ${
+                        auth.currentUser.mediatr &&
+                        auth.currentUser.mediatr.lastName
+                      }`}
+                    {auth.currentUser.role === "Office" &&
+                      `${
+                        auth.currentUser.office &&
+                        auth.currentUser.office.officeName
+                      }`}
                   </a>
                 </div>
                 {/* <div className="dropdown-item">

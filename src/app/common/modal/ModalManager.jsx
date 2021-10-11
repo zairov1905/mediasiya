@@ -1,13 +1,16 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import ApplyPageModal from "../../../features/dashboard/applyPage/ApplyPageModal";
+import SelectMediatorModal from "../../../features/dashboard/applyPage/SelectMediatorModal";
 
 export default function ModalManager() {
   const modalLookup = {
-    ApplyPageModal
+    ApplyPageModal,
+    SelectMediatorModal
   };
   
-
+  
+  
   const currenModal = useSelector((state) => state.modals);
   let renderedModal;
   if (currenModal) {

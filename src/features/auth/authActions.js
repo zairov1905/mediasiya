@@ -13,11 +13,6 @@ export function signInUser(history, user, type) {
     await axios
       .post(url, user, {
         withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
       })
       .then((data) => {
         dispatch({ type: SIGN_IN_USER, payload: data.data.data });

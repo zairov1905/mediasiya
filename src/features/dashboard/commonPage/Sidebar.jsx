@@ -44,7 +44,7 @@ export default function Sidebar() {
           </li>
           <li className="menu">
             <NavLink
-              to="/crm"
+              to="/doc"
               aria-expanded="false"
               className="dropdown-toggle"
               activeStyle={{
@@ -78,7 +78,7 @@ export default function Sidebar() {
           </li>
           <li className="menu">
             <NavLink
-              to="/orders"
+              to="/information"
               aria-expanded="false"
               className="dropdown-toggle"
               activeStyle={{
@@ -114,7 +114,7 @@ export default function Sidebar() {
           </li>
           <li className="menu">
             <NavLink
-              to="/operation"
+              to="/legislation"
               aria-expanded="false"
               className="dropdown-toggle"
               activeStyle={{

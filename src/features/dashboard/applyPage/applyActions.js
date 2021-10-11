@@ -24,11 +24,8 @@ import {
 const url = "customer";
 export function loadApply(data,type) {
   return async function (dispatch,getState) {
-    let url = getState().auth.currentUser.role.toLowerCase();
+    let url = getState().auth && getState().auth.currentUser.role.toLowerCase();
     console.log(url);
-    if(url==="council"){
-      url = "office"
-    }
     console.log(url)
     dispatch(asyncActionStart());
     await axios
@@ -109,12 +106,13 @@ export function approveApply(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data, "1 Tesdiqle");
+        // console.log(datas.message, "1 Tesdiqle");
         dispatch({
           type: APPROVE_APPLY,
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
+        toast.success(datas.message);
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
@@ -123,22 +121,19 @@ export function approveApply(data) {
       });
   };
 }
-export function assignMediator(data) {
+export function assignMediator(requestId,mediatrId) {
   return async function (dispatch) {
-    console.log(data)
-
     dispatch(asyncActionStart('approve'));
     await axios
-      .get(`/Request/approve/${data}`, {
-        params: { ...data },
-      })
+      .get(`/Request/assign-mediatr/${requestId}/${mediatrId}`)
       .then((datas) => {
-        console.log(datas.data.data, "1 Tesdiqle");
+        console.log(datas.data, "1 Tesdiqle");
         dispatch({
           type: ASSING_MEADIATR,
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
+        toast.success(datas.message);
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
@@ -212,14 +207,29 @@ export function loadProfession(data) {
   };
 }
 
-export function loadMediatr(data) {
-  return async function (dispatch) {
+export function loadMediatr(officeId) {
+  return async function (dispatch,getState) {
+    const modalType = getState().modals.modalType;
+    let officeIdModal;
+    if(modalType==="SelectMediatorModal"){
+     officeIdModal = getState().auth.currentUser.office.id
+
+      officeId = officeIdModal;
+    }
+
+    let url;
+    if(officeIdModal){
+      url = `Data/mediatrs/${officeId}`
+    }else{
+      url = `Data/mediatrs`
+    }
     dispatch(asyncActionStart());
     await axios
-      .get(`/${"Data/mediatrs"}`, {
-        params: { ...data },
+      .get(url, {
+        params: { ...officeId },
       })
       .then((datas) => {
+        console.log(datas)
         dispatch({
           type: FETCH_MEDIATOR,
           payload: datas.data.data,
