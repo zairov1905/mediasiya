@@ -41,6 +41,7 @@ export function loadApply(data,type) {
           payload: datas.data.data.data,
           totalCount: datas.data.message,
         });
+        // dispatch(loadApply())
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
@@ -87,11 +88,15 @@ export function rejectApply(data,text) {
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
+        dispatch(loadApply())
+
+        toast.error(datas.message)
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
-        toast.info("Xəta baş verdi");
+        dispatch(loadApply())
+        toast.info("Siz daha öncə müraciətdən imtina etmisiniz");
       });
   };
 }
@@ -112,8 +117,8 @@ export function approveApply(data) {
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
-        toast.success(datas.message);
         dispatch(asyncActionFinish());
+        toast.success(datas.message);
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
@@ -133,12 +138,13 @@ export function assignMediator(requestId,mediatrId) {
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
+        dispatch(loadApply())
         toast.success(datas.message);
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
-        toast.info("Xəta baş verdi");
+        toast.info(err.message);
       });
   };
 }

@@ -984,8 +984,7 @@ export default function ApplyPageModal({ apply }) {
             )}
           </Formik>
           {apply &&
-            apply.status.id === 1 &&
-            !auth.currentUser.role === "Citizen" && (
+            apply.status.id === 1  &&  auth.currentUser.role === "Mediatr" &&(
               <div className="row">
                 {!rejectForm && (
                   <div className="col-md-12">
@@ -1002,8 +1001,6 @@ export default function ApplyPageModal({ apply }) {
                           dispatch(approveApply(apply.id));
                           setModal(true);
                           dispatch(closeModal());
-
-                          toast.info("Müraciət qəbul edildi.");
                         }}
                         className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4"
                       >
@@ -1057,7 +1054,6 @@ export default function ApplyPageModal({ apply }) {
                             setModal(true);
                             dispatch(closeModal());
                             setSubmitting(false);
-                            toast.info("Müraciət ləğv edildi.");
                           }}
                         >
                           {({ isSubmitting, isValid, dirty, errors }) => (
