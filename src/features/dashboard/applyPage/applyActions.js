@@ -19,21 +19,20 @@ import {
   FETCH_OFFICE,
   FETCH_PRINT,
   APPROVE_APPLY,
-  ASSING_MEADIATR
+  ASSING_MEADIATR,
 } from "./applyConstants";
 const url = "customer";
-export function loadApply(data,type) {
-  return async function (dispatch,getState) {
+export function loadApply(data, type) {
+  return async function (dispatch, getState) {
     let url = getState().auth && getState().auth.currentUser.role.toLowerCase();
     console.log(url);
-    console.log(url)
+    console.log(url);
     dispatch(asyncActionStart());
     await axios
       .get(`/Request/${url}s/all`, {
         params: { ...data },
       })
       .then((datas) => {
-
         console.log(datas.data.data, " All");
 
         dispatch({
@@ -53,7 +52,7 @@ export function loadApply(data,type) {
 export function listenToApply(data) {
   // console.log(data)
   return async function (dispatch) {
-    dispatch(asyncActionStart('listenApply'));
+    dispatch(asyncActionStart("listenApply"));
     await axios
       .get(`/Request/${data}`, {
         params: { ...data },
@@ -73,10 +72,10 @@ export function listenToApply(data) {
       });
   };
 }
-export function rejectApply(data,text) {
+export function rejectApply(data, text) {
   // console.log(data)
   return async function (dispatch) {
-    dispatch(asyncActionStart('reject'));
+    dispatch(asyncActionStart("reject"));
     await axios
       .post(`/Request/reject/${data}`, {
         // params: { body:text },
@@ -88,14 +87,14 @@ export function rejectApply(data,text) {
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
-        dispatch(loadApply())
+        dispatch(loadApply());
 
-        toast.error(datas.message)
+        toast.error(datas.message);
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
-        dispatch(loadApply())
+        dispatch(loadApply());
         toast.info("Siz daha öncə müraciətdən imtina etmisiniz");
       });
   };
@@ -103,9 +102,9 @@ export function rejectApply(data,text) {
 
 export function approveApply(data) {
   return async function (dispatch) {
-    console.log(data)
+    console.log(data);
 
-    dispatch(asyncActionStart('approve'));
+    dispatch(asyncActionStart("approve"));
     await axios
       .get(`/Request/approve/${data}`, {
         params: { ...data },
@@ -126,11 +125,17 @@ export function approveApply(data) {
       });
   };
 }
-export function assignMediator(requestId,mediatrId) {
+export function assignMediator(requestId, mediatrId) {
   return async function (dispatch) {
-    dispatch(asyncActionStart('approve'));
+    dispatch(asyncActionStart("approve"));
+    let url;
+    if (!mediatrId) {
+      url = `/Request/assign-mediatr/${requestId}`;
+    } else {
+      url = `/Request/assign-mediatr/${requestId}/${mediatrId}`;
+    }
     await axios
-      .get(`/Request/assign-mediatr/${requestId}/${mediatrId}`)
+      .get(url)
       .then((datas) => {
         console.log(datas.data, "1 Tesdiqle");
         dispatch({
@@ -138,8 +143,9 @@ export function assignMediator(requestId,mediatrId) {
           payload: datas.data.data,
           totalCount: datas.data.message,
         });
-        dispatch(loadApply())
         toast.success(datas.message);
+        dispatch(loadApply());
+
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
@@ -213,29 +219,29 @@ export function loadProfession(data) {
   };
 }
 
-export function loadMediatr(officeId) {
-  return async function (dispatch,getState) {
+export function loadMediatr(data) {
+  return async function (dispatch, getState) {
     const modalType = getState().modals.modalType;
     let officeIdModal;
-    if(modalType==="SelectMediatorModal"){
-     officeIdModal = getState().auth.currentUser.office.id
+    if (modalType === "SelectMediatorModal") {
+      officeIdModal = getState().auth.currentUser.office.id;
 
-      officeId = officeIdModal;
+      data = officeIdModal;
     }
 
     let url;
-    if(officeIdModal){
-      url = `Data/mediatrs/${officeId}`
-    }else{
-      url = `Data/mediatrs`
+    if (officeIdModal) {
+      url = `Data/mediatrs/${data}`;
+    } else {
+      url = `Data/district-mediatrs`;
     }
     dispatch(asyncActionStart());
     await axios
       .get(url, {
-        params: { ...officeId },
+        params: { ...data },
       })
       .then((datas) => {
-        console.log(datas)
+        console.log(datas);
         dispatch({
           type: FETCH_MEDIATOR,
           payload: datas.data.data,
@@ -316,7 +322,7 @@ export function createApply(createdData) {
       })
       .then((data) => {
         dispatch({ type: CREATE_APPLY, payload: data.data.data });
-        dispatch(loadApply())
+        dispatch(loadApply());
         dispatch(asyncActionFinish());
         toast.success("Müraciətiniz uğurla qeydə alındı");
       })

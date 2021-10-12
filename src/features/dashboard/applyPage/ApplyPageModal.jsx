@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, CSSProperties } from "react";
 import $ from "jquery";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
@@ -17,6 +17,7 @@ import {
   rejectApply,
   updateApply,
 } from "./applyActions";
+
 import { closeModal } from "../../../app/common/modal/modalReducer";
 import MySearchableSelect from "../../../app/common/form/MySearchableSelect";
 import MyTextArea from "../../../app/common/form/MyTextArea";
@@ -77,15 +78,7 @@ export default function ApplyPageModal({ apply }) {
       };
     });
 
-  const mediatorOptions =
-    applys.mediatrs &&
-    applys.mediatrs.map((mediatr) => {
-      return {
-        value: parseInt(mediatr.id),
-        label: `${mediatr.firstName} ${mediatr.lastName} ${mediatr.middleName}`,
-        ids: mediatr.mediatrProfessions.map((medik) => medik.id),
-      };
-    });
+
   const officeOptions =
     applys.offices &&
     applys.offices.map((office) => {
@@ -99,6 +92,10 @@ export default function ApplyPageModal({ apply }) {
     { label: "Azərbaycan", value: "Azərbaycan" },
     { label: "Rus", value: "Rus" },
     { label: "İngilis", value: "İngilis" },
+  ];
+  const genderOptions = [
+    { label: "Kişi", value: 1 },
+    { label: "Qadın", value: 2 },
   ];
   const datesOptions = [
     { label: "9:00 - 9:30", value: "9:00 - 9:30" },
@@ -117,8 +114,13 @@ export default function ApplyPageModal({ apply }) {
       ? listenedApply.sides
       : [
           {
-            fullName: "",
-            advocateFullName: "",
+            sideFirstName: "",
+            sideLastName: "",
+            sideMiddleName: "",
+            sideGender: "",
+            advocateFirstName: "",
+            advocateLastName: "",
+            advocateMiddleName: "",
             organizationName: "",
             address: "",
             phone: "",
@@ -181,6 +183,75 @@ export default function ApplyPageModal({ apply }) {
       };
   const validationSchema = Yup.object({});
 
+  // const [professionId, setProfessionId] = useState();
+  // const [courtId, setCourtId] = useState();
+  const onChangeProfId = async (profId, courtId) => {
+    dispatch(loadMediatr({ professionId: profId, courtId: courtId }));
+  };
+  const groupStyles = {
+    display: "flex",
+    alignItems: "center",
+    fontWeight: "bold",
+    fontSize: "1.7em",
+    justifyContent: "space-between",
+    borderBottom: "1px solid #1b53e2",
+  };
+  const groupBadgeStyles = {
+    backgroundColor: "#1b53e2",
+    borderRadius: "2em",
+    color: "#fff",
+    display: "inline-block",
+    fontSize: 12,
+    marginLeft: "10px",
+    fontWeight: "bold",
+    lineHeight: "1",
+    minWidth: 1,
+    padding: "0.16666666666667em 0.5em",
+    textAlign: "center",
+  };
+
+
+   
+    // const mediatorOptions =
+  //   applys.mediatrs &&
+  //   applys.mediatrs.map((mediatr) => {
+  //     return {
+  //       value: parseInt(mediatr.id),
+  //       label: `${mediatr.firstName} ${mediatr.lastName} ${mediatr.middleName}`,
+  //       ids: mediatr.mediatrProfessions.map((medik) => medik.id),
+  //     };
+  //   });
+  const groupedOptions = check ==="mediator" && 
+      applys.mediatrs.map((mediatr) => {
+      return {
+        // value: parseInt(mediatr.id),
+        label: `${mediatr.districtName}`,
+        options:mediatr.mediatrs.map(medik=>{
+          return {
+            label:`- ${medik.firstName} ${medik.lastName} ${medik.middleName}`,
+            value:parseInt(medik.id)
+          }
+        })
+        // ids: mediatr.mediatrProfessions.map((medik) => medik.id),
+      };
+    });
+  // [
+  //   {
+  //     label: "Colours",
+  //     options: colourOptions,
+  //   },
+  //   {
+  //     label: "Flavours",
+  //     options: flavourOptions,
+  //   },
+  // ];
+
+  const formatGroupLabel = (groupedOptions) => (
+    <div style={groupStyles}>
+      <span>{groupedOptions.label}</span>
+      <span style={groupBadgeStyles}>{groupedOptions.options.length}</span>
+    </div>
+  );
   return (
     <ModalWrapper
       size="modal-xl"
@@ -302,6 +373,12 @@ export default function ApplyPageModal({ apply }) {
                               id="professionId"
                               name="professionId"
                               type="text"
+                              // loadOptions={onChangeProfId}
+                              // onInputChange={(values) => {
+
+                              //     onChangeProfId(values.professionId);
+
+                              // }}
                               defaultValue={
                                 apply && {
                                   value: parseInt(
@@ -460,7 +537,13 @@ export default function ApplyPageModal({ apply }) {
                                     type="radio"
                                     id="hRadio1"
                                     name="classicRadio"
-                                    onClick={() => setCheck("mediator")}
+                                    onClick={() => {
+                                      setCheck("mediator");
+                                      onChangeProfId(
+                                        values.professionId,
+                                        values.courtId
+                                      );
+                                    }}
                                     className="custom-control-input"
                                   />
                                   <label
@@ -508,17 +591,19 @@ export default function ApplyPageModal({ apply }) {
                                 id="mediatrIds"
                                 name="mediatrIds"
                                 type="text"
-                                options={mediatorOptions.filter((medik) =>
-                                  medik.ids.includes(values.professionId)
-                                )}
-                                defaultValue={
-                                  apply &&
-                                  listenedApply.mediatrs.map((medik) => {
-                                    return {
-                                      label: `${medik.firstName} ${medik.lastName} ${medik.middleName}`,
-                                    };
-                                  })
-                                }
+                                options={groupedOptions}
+                                formatGroupLabel={formatGroupLabel}
+                                // options={mediatorOptions.filter((medik) =>
+                                //   medik.ids.includes(values.professionId)
+                                // )}
+                                // defaultValue={
+                                //   apply &&
+                                //   listenedApply.mediatrs.map((medik) => {
+                                //     return {
+                                //       label: `${medik.firstName} ${medik.lastName} ${medik.middleName}`,
+                                //     };
+                                //   })
+                                // }
                                 isDisabled={apply ? true : false}
                                 isMulti
                                 // className="form-control"
@@ -685,31 +770,97 @@ export default function ApplyPageModal({ apply }) {
                                     </h5>
                                     <p className="info-text">
                                       <div className="row mb-4">
-                                        <div className="col-md-12">
+                                        <div className="col-md-3">
                                           <MyTextInput
                                             disabled={apply ? true : false}
-                                            id={`sides[${index}].fullName`}
-                                            name={`sides[${index}].fullName`}
+                                            id={`sides[${index}].sideFirstName`}
+                                            name={`sides[${index}].sideFirstName`}
                                             type="text"
                                             className="form-control"
-                                            placeholder="Ad soyad daxil edin"
-                                            label={"Soyadı, adı*"}
+                                            placeholder="Adın daxil edin"
+                                            label={"Qarşı tərəfin adı*"}
+                                          />
+                                        </div>
+                                        <div className="col-md-3">
+                                          <MyTextInput
+                                            disabled={apply ? true : false}
+                                            id={`sides[${index}].sideLastName`}
+                                            name={`sides[${index}].sideLastName`}
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Soyadın daxil edin"
+                                            label={"Qarşı tərəfin soyadı*"}
+                                          />
+                                        </div>
+                                        <div className="col-md-3">
+                                          <MyTextInput
+                                            disabled={apply ? true : false}
+                                            id={`sides[${index}].sideMiddleName`}
+                                            name={`sides[${index}].sideMiddleName`}
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Ata adın daxil edin"
+                                            label={"Qarşı tərəfin ata adı*"}
+                                          />
+                                        </div>
+                                        <div className="col-md-3">
+                                          <MySearchableSelect
+                                            isDisabled={apply ? true : false}
+                                            id={`sides[${index}].sideGender`}
+                                            name={`sides[${index}].sideGender`}
+                                            type="text"
+                                            // className="form-control"
+                                            defaultValue={
+                                              apply && {
+                                                label:
+                                                  side[index] &&
+                                                  side[index].sideGender === 1
+                                                    ? "Kişi"
+                                                    : "Qadın",
+                                              }
+                                            }
+                                            options={genderOptions}
+                                            placeholder="Cinsin daxil edin"
+                                            label={"Qarşı tərəf cinsi*"}
                                           />
                                         </div>
                                       </div>
                                       <div className="row mb-4">
-                                        <div className="col-md-12">
+                                        <div className="col-md-4">
                                           <MyTextInput
-                                            id={`sides[${index}].advocateFullName`}
-                                            name={`sides[${index}].advocateFullName`}
                                             disabled={apply ? true : false}
+                                            id={`sides[${index}].advocateFirstName`}
+                                            name={`sides[${index}].advocateFirstName`}
                                             type="text"
                                             className="form-control"
-                                            placeholder="Nümayəndənin / Vəkilin adı, soyadı və atasının adı"
-                                            label={"Ad, soyad, ata adı*"}
+                                            placeholder="Adın daxil edin"
+                                            label={"Nümayəndənin adı*"}
+                                          />
+                                        </div>
+                                        <div className="col-md-4">
+                                          <MyTextInput
+                                            disabled={apply ? true : false}
+                                            id={`sides[${index}].advocateLastName`}
+                                            name={`sides[${index}].advocateLastName`}
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Soyadın daxil edin"
+                                            label={"Nümayəndənin soyadı*"}
+                                          />
+                                        </div>
+                                        <div className="col-md-4">
+                                          <MyTextInput
+                                            disabled={apply ? true : false}
+                                            id={`sides[${index}].advocateMiddleName`}
+                                            name={`sides[${index}].advocateMiddleName`}
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Ata adın daxil edin"
+                                            label={"Nümayəndənin ata adı*"}
                                           />
                                         </div>
                                       </div>
+
                                       <div className="row mb-4">
                                         <div className="col-md-12">
                                           <MyTextInput
@@ -984,7 +1135,8 @@ export default function ApplyPageModal({ apply }) {
             )}
           </Formik>
           {apply &&
-            apply.status.id === 1  &&  auth.currentUser.role === "Mediatr" &&(
+            apply.status.id === 1 &&
+            auth.currentUser.role === "Mediatr" && (
               <div className="row">
                 {!rejectForm && (
                   <div className="col-md-12">
@@ -998,9 +1150,9 @@ export default function ApplyPageModal({ apply }) {
 
                       <Button
                         onClick={() => {
-                          dispatch(approveApply(apply.id));
-                          setModal(true);
                           dispatch(closeModal());
+                          setModal(true);
+                          dispatch(approveApply(apply.id));
                         }}
                         className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4"
                       >
@@ -1030,6 +1182,17 @@ export default function ApplyPageModal({ apply }) {
                         )}
                         Qəbul et
                       </Button>
+                      <button
+                        style={{ display: "none" }}
+                        id="closeModal"
+                        onClick={() => {
+                          dispatch(closeModal());
+                        }}
+                        className="btn btn-lg float-right mt-3 mr-2"
+                        data-dismiss="modal"
+                      >
+                        <i className="flaticon-cancel-12" /> Ləğv et
+                      </button>
                     </div>
                   </div>
                 )}

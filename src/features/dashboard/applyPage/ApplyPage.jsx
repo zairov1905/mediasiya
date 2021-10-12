@@ -155,11 +155,7 @@ export default function ApplyPage() {
           apply.mediatrs.forEach((item) => {
             medArr.push(`${item.firstName} ${item.lastName}`);
           });
-          return (
-            <p>
-                {medArr.join(", ")}
-            </p>
-          );
+          return <p>{medArr.join(", ")}</p>;
         } else if (apply.office && auth.currentUser.person) {
           return <p>{apply.office.officeName}</p>;
         }
@@ -173,6 +169,12 @@ export default function ApplyPage() {
         else if (auth.currentUser.mediatr && apply.person) {
           return `${apply.person.firstName} ${apply.person.lastName} ${apply.person.middleName}`;
         } else if (!apply.selectedMediatr > 0 && auth.currentUser.office) {
+          return <p>Mediator təyin edilməyib</p>;
+        }
+        // for council
+        else if (apply.selectedMediatr) {
+          return `${apply.person.firstName} ${apply.person.lastName} ${apply.person.middleName}`;
+        } else {
           return <p>Mediator təyin edilməyib</p>;
         }
       },
@@ -244,6 +246,62 @@ export default function ApplyPage() {
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx={12} cy={12} r={3} />
           </svg>
+          {auth.currentUser && auth.currentUser.role === "Council" && (
+                        <svg
+                        type="button"
+                        id={apply.id}
+                        onClick={() => {
+                          if (apply.selectedMediatr) {
+                            let mediatorName = `${apply.selectedMediatr.firstName} ${apply.selectedMediatr.lastName}`;
+                            toast.error(
+                              <p>
+                                Bu muraciətə artıq <b>{mediatorName}</b> mediator kimi
+                                təyin edilmişdir
+                              </p>
+                            );
+                          } else {
+                            dispatch(
+                              assignMediator(apply.id)
+                            );
+                          }
+                        }}
+                        onMouseEnter={(e) => {
+                          sethover(true);
+                          setTarget({
+                            ...target,
+                            id: e.target.id,
+                            name: e.target.getAttribute("data-name"),
+                          });
+                          // console.log(e.target.getAttribute('data-name'))
+                        }}
+                        onMouseLeave={() => {
+                          sethover(false);
+                          setTarget();
+                        }}
+                        style={{
+                          ...buttonStyle1,
+                          ...(hover &&
+                            target.id === `${apply.id}` &&
+                            target.name === "assignMediatr" &&
+                            buttonHover),
+                        }}
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={24}
+                        height={24}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="feather feather-user-plus"
+                      >
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="8.5" cy={7} r={4} />
+                        <line x1={20} y1={8} x2={20} y2={14} />
+                        <line x1={23} y1={11} x2={17} y2={11} />
+                      </svg>
+          )}
           {auth.currentUser && auth.currentUser.role === "Office" && (
             <svg
               type="button"
