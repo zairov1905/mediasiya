@@ -78,7 +78,6 @@ export default function ApplyPageModal({ apply }) {
       };
     });
 
-
   const officeOptions =
     applys.offices &&
     applys.offices.map((office) => {
@@ -210,9 +209,7 @@ export default function ApplyPageModal({ apply }) {
     textAlign: "center",
   };
 
-
-   
-    // const mediatorOptions =
+  // const mediatorOptions =
   //   applys.mediatrs &&
   //   applys.mediatrs.map((mediatr) => {
   //     return {
@@ -221,17 +218,18 @@ export default function ApplyPageModal({ apply }) {
   //       ids: mediatr.mediatrProfessions.map((medik) => medik.id),
   //     };
   //   });
-  const groupedOptions = check ==="mediator" && 
-      applys.mediatrs.map((mediatr) => {
+  const groupedOptions =
+    check === "mediator" &&
+    applys.mediatrs.map((mediatr) => {
       return {
         // value: parseInt(mediatr.id),
         label: `${mediatr.districtName}`,
-        options:mediatr.mediatrs.map(medik=>{
+        options: mediatr.mediatrs.map((medik) => {
           return {
-            label:`- ${medik.firstName} ${medik.lastName} ${medik.middleName}`,
-            value:parseInt(medik.id)
-          }
-        })
+            label: `${medik.firstName} ${medik.lastName} ${medik.middleName}`,
+            value: parseInt(medik.mediatrId),
+          };
+        }),
         // ids: mediatr.mediatrProfessions.map((medik) => medik.id),
       };
     });
@@ -1148,38 +1146,106 @@ export default function ApplyPageModal({ apply }) {
                         İmtina et
                       </Button>
 
-                      <Button
-                        onClick={() => {
-                          dispatch(closeModal());
-                          setModal(true);
+                      <Formik
+                        initialValues={{ id: apply.id }}
+                        validationSchema={Yup.object({
+                          id: Yup.number().required(
+                            "Bu sahə mütləq doldurulmalıdır."
+                          ),
+                        })}
+                        onSubmit={(values, { setSubmitting, setErrors }) => {
+                          // console.log('ugurludur')
                           dispatch(approveApply(apply.id));
+                          setModal(true);
+                          dispatch(closeModal());
+                          setSubmitting(false);
+                        }}
+                      >
+                        {({ isSubmitting, isValid, dirty, errors }) => (
+                          <Form className="text-left mt-4">
+                            <div className="form">
+
+                                <MyTextArea
+                                  id="id"
+                                  name="id"
+                                  type="text"
+                                  className="form-control"
+                                  value={apply.id}
+                                  style={{ display: "none" }}
+                                  // placeholder="İmtina səbəbini daxil edin"
+                                  // label="İmtina səbəbi"
+                                />
+                              
+                              <div
+                                style={{ float: "right" }}
+                                className="d-sm-flex text-right justify-content-between"
+                              >
+                                <div className="">
+                                  <button
+                                    disabled={
+                                      isSubmitting
+                                    }
+                                    type="submit"
+                                    // name="time"
+                                    className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4 "
+                                  >
+                                    {async.kind === "approve" && (
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width={24}
+                                        height={24}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="feather feather-loader spin mr-2"
+                                      >
+                                        <line x1={12} y1={2} x2={12} y2={6} />
+                                        <line x1={12} y1={18} x2={12} y2={22} />
+                                        <line
+                                          x1="4.93"
+                                          y1="4.93"
+                                          x2="7.76"
+                                          y2="7.76"
+                                        />
+                                        <line
+                                          x1="16.24"
+                                          y1="16.24"
+                                          x2="19.07"
+                                          y2="19.07"
+                                        />
+                                        <line x1={2} y1={12} x2={6} y2={12} />
+                                        <line x1={18} y1={12} x2={22} y2={12} />
+                                        <line
+                                          x1="4.93"
+                                          y1="19.07"
+                                          x2="7.76"
+                                          y2="16.24"
+                                        />
+                                        <line
+                                          x1="16.24"
+                                          y1="7.76"
+                                          x2="19.07"
+                                          y2="4.93"
+                                        />
+                                      </svg>
+                                    )}
+                                    Qəbul et
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </Form>
+                        )}
+                      </Formik>
+                      {/* <Button
+                        onClick={() => {
                         }}
                         className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4"
                       >
                         {" "}
-                        {async.kind === "approve" && (
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width={24}
-                            height={24}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="feather feather-loader spin mr-2"
-                          >
-                            <line x1={12} y1={2} x2={12} y2={6} />
-                            <line x1={12} y1={18} x2={12} y2={22} />
-                            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-                            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-                            <line x1={2} y1={12} x2={6} y2={12} />
-                            <line x1={18} y1={12} x2={22} y2={12} />
-                            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
-                            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
-                          </svg>
-                        )}
                         Qəbul et
                       </Button>
                       <button
@@ -1192,7 +1258,7 @@ export default function ApplyPageModal({ apply }) {
                         data-dismiss="modal"
                       >
                         <i className="flaticon-cancel-12" /> Ləğv et
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 )}

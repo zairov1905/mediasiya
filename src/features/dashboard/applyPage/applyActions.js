@@ -36,7 +36,7 @@ export function loadApply(data, type) {
         dispatch({
           type: FETCH_APPLY,
           payload: datas.data.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         // dispatch(loadApply())
         dispatch(asyncActionFinish());
@@ -60,7 +60,7 @@ export function listenToApply(data) {
         dispatch({
           type: LISTEN_APPLY,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         dispatch(asyncActionFinish());
       })
@@ -83,15 +83,15 @@ export function rejectApply(data, text) {
         dispatch({
           type: REJECT_APPLY,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         dispatch(loadApply());
 
-        toast.error(datas.message);
+        toast.error(datas.data.message);
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
-        dispatch(asyncActionError(err.message));
+        dispatch(asyncActionError(err.data.message));
         dispatch(loadApply());
         toast.info("Siz daha öncə müraciətdən imtina etmisiniz");
       });
@@ -112,10 +112,14 @@ export function approveApply(data) {
         dispatch({
           type: APPROVE_APPLY,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
+        dispatch(loadApply());
+
         dispatch(asyncActionFinish());
-        toast.success(datas.message);
+        // window.location.reload();
+        toast.success(datas.data.message);
+
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
@@ -141,7 +145,7 @@ export function assignMediator(requestId, mediatrId) {
           payload: datas.data.data,
           totalCount: datas.data.totalCount,
         });
-        toast.success(datas.data.message);
+        toast.success(datas.data.totalCount);
         dispatch(loadApply());
 
         dispatch(asyncActionFinish());
@@ -164,7 +168,7 @@ export function loadDistrict(data) {
         dispatch({
           type: FETCH_DISTRICT,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         dispatch(asyncActionFinish());
       })
@@ -185,7 +189,7 @@ export function loadCourt(data) {
         dispatch({
           type: FETCH_COURT,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         dispatch(asyncActionFinish());
       })
@@ -206,7 +210,7 @@ export function loadProfession(data) {
         dispatch({
           type: FETCH_PROFESSION,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         dispatch(asyncActionFinish());
       })
@@ -243,7 +247,7 @@ export function loadMediatr(data) {
         dispatch({
           type: FETCH_MEDIATOR,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         dispatch(asyncActionFinish());
       })
@@ -264,7 +268,7 @@ export function loadOffice(data) {
         dispatch({
           type: FETCH_OFFICE,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         dispatch(asyncActionFinish());
       })
@@ -289,7 +293,7 @@ export function loadPrint(data) {
         dispatch({
           type: FETCH_PRINT,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
         dispatch(asyncActionFinish("print"));
         const loadedPrint = getState().applys.prints;
