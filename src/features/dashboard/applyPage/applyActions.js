@@ -24,9 +24,7 @@ import {
 const url = "customer";
 export function loadApply(data, type) {
   return async function (dispatch, getState) {
-    let url = getState().auth && getState().auth.currentUser.role.toLowerCase();
-    console.log(url);
-    console.log(url);
+    let url = getState().auth.currentUser.role ? getState().auth.currentUser.role.toLowerCase():null;
     dispatch(asyncActionStart());
     await axios
       .get(`/Request/${url}s/all`, {
@@ -141,9 +139,9 @@ export function assignMediator(requestId, mediatrId) {
         dispatch({
           type: ASSING_MEADIATR,
           payload: datas.data.data,
-          totalCount: datas.data.message,
+          totalCount: datas.data.totalCount,
         });
-        toast.success(datas.message);
+        toast.success(datas.data.message);
         dispatch(loadApply());
 
         dispatch(asyncActionFinish());

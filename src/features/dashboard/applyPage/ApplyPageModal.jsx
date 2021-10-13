@@ -1,4 +1,4 @@
-import React, { useEffect, useState, CSSProperties } from "react";
+import React, { useEffect, useState } from "react";
 import $ from "jquery";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
@@ -192,12 +192,12 @@ export default function ApplyPageModal({ apply }) {
     display: "flex",
     alignItems: "center",
     fontWeight: "bold",
-    fontSize: "1.7em",
+    fontSize: "1.2em",
     justifyContent: "space-between",
-    borderBottom: "1px solid #1b53e2",
+    borderBottom: "1px dotted #7091e6",
   };
   const groupBadgeStyles = {
-    backgroundColor: "#1b53e2",
+    backgroundColor: "#7091e6",
     borderRadius: "2em",
     color: "#fff",
     display: "inline-block",
