@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import $ from "jquery";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
+// import ScriptTag from 'react-script-tag';
 import MyTextInput from "../../../app/common/form/MyTextInput";
-import { Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik } from "formik";
 import {
   approveApply,
   createApply,
@@ -17,20 +18,35 @@ import {
   rejectApply,
   updateApply,
 } from "./applyActions";
-
+// import './tree.css'
 import { closeModal } from "../../../app/common/modal/modalReducer";
 import MySearchableSelect from "../../../app/common/form/MySearchableSelect";
 import MyTextArea from "../../../app/common/form/MyTextArea";
-import moment from "moment";
+
 import ModalWrapper from "../../../app/common/modal/ModalWrapper";
 import Button from "../../../app/common/modal/Button";
-import { applyMiddleware } from "redux";
+import MyCheckbox from "../../../app/common/form/MyCheckbox";
 import { toast } from "react-toastify";
 
+// const Demo = props => (
+//   <ScriptTag type="text/javascript" src="/custom-jstree.js" />
+//   )
 export default function ApplyPageModal({ apply }) {
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
   const [rejectForm, setRejectForm] = useState(false);
+  const nodes = [
+    {
+      value: "mars",
+      label: "Mars",
+      children: [
+        { value: "phobos", label: "Phobos" },
+        { value: "deimos", label: "Deimos" },
+      ],
+    },
+  ];
+  const [checked, setChecked] = useState([]);
+  const [expanded, setExpanded] = useState([]);
 
   const async = useSelector((state) => state.async);
   const auth = useSelector((state) => state.auth);
@@ -41,6 +57,7 @@ export default function ApplyPageModal({ apply }) {
       $("#closeModal").click();
     }
   });
+
   const [check, setCheck] = useState();
   useEffect(async () => {
     apply && (await dispatch(listenToApply(apply.id)));
@@ -179,6 +196,7 @@ export default function ApplyPageModal({ apply }) {
         prefferedSessionTime: "",
         requiredLangs: "",
         caseInAction: true,
+        mediatorNames: [],
       };
   const validationSchema = Yup.object({});
 
@@ -222,9 +240,9 @@ export default function ApplyPageModal({ apply }) {
     check === "mediator" &&
     applys.mediatrs.map((mediatr) => {
       return {
-        // value: parseInt(mediatr.id),
+        value: parseInt(mediatr.districtId),
         label: `${mediatr.districtName}`,
-        options: mediatr.mediatrs.map((medik) => {
+        mediatrs: mediatr.mediatrs.map((medik) => {
           return {
             label: `${medik.firstName} ${medik.lastName} ${medik.middleName}`,
             value: parseInt(medik.mediatrId),
@@ -233,6 +251,37 @@ export default function ApplyPageModal({ apply }) {
         // ids: mediatr.mediatrProfessions.map((medik) => medik.id),
       };
     });
+
+  useEffect(() => {
+    var toggler = document.getElementsByClassName("caret");
+    var i;
+
+    for (i = 0; i < toggler.length; i++) {
+      toggler[i].addEventListener("click", function () {
+        this.parentElement.querySelector(".nested").classList.toggle("active");
+        this.classList.toggle("caret-down");
+      });
+    }
+  }, []);
+  // let medik =
+  // if(medik[0] !== undefined){
+  //   let mediator = medik[0]
+  //   console.log(mediator.map(medi=>medi.label))
+  // }
+  //medik[0].forEach(med => console.log(med))
+  //console.log(medik[0])
+
+  // const groupByRegion =
+  //   check === "mediator" &&
+  //   apply.mediatrs.map((mediatrs) => {
+  //     mediatrs.map((mediatr) => {
+  //       return {
+  //         label: `${mediatr.firstName} ${mediatr.lastName} ${mediatr.middleName}`,
+  //         value: parseInt(mediatr.mediatrId),
+  //       };
+  //     });
+  //   });
+  // console.log(groupByRegion);
   // [
   //   {
   //     label: "Colours",
@@ -250,6 +299,8 @@ export default function ApplyPageModal({ apply }) {
       <span style={groupBadgeStyles}>{groupedOptions.options.length}</span>
     </div>
   );
+
+  const [mediatorName, setMediatorName] = useState([]);
   return (
     <ModalWrapper
       size="modal-xl"
@@ -479,7 +530,9 @@ export default function ApplyPageModal({ apply }) {
                               <circle cx={12} cy={7} r={4} />
                             </svg>
                           </div>
-                          Mediator seçimi
+                          Mediator seçimi:{" "}
+                          {mediatorName &&
+                            mediatorName.map((medik) => ` ${medik}`)}
                           <div className="icons">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -506,6 +559,7 @@ export default function ApplyPageModal({ apply }) {
                       data-parent="#iconsAccordion"
                     >
                       <div className="card-body">
+                        <div className="row"></div>
                         <div className="row mb-4">
                           {apply ? (
                             ""
@@ -585,30 +639,101 @@ export default function ApplyPageModal({ apply }) {
                         {(check === "mediator" || listenedApply.mediatrs) && (
                           <div className="row mb-4">
                             <div className="col-md-12">
-                              <MySearchableSelect
-                                id="mediatrIds"
-                                name="mediatrIds"
-                                type="text"
-                                options={groupedOptions}
-                                formatGroupLabel={formatGroupLabel}
-                                // options={mediatorOptions.filter((medik) =>
-                                //   medik.ids.includes(values.professionId)
-                                // )}
-                                // defaultValue={
-                                //   apply &&
-                                //   listenedApply.mediatrs.map((medik) => {
-                                //     return {
-                                //       label: `${medik.firstName} ${medik.lastName} ${medik.middleName}`,
-                                //     };
-                                //   })
-                                // }
-                                isDisabled={apply ? true : false}
-                                isMulti
-                                // className="form-control"
-                                placeholder="Mediator seçin"
-                                label={"Mediatorlar*"}
-                              />
+                              <div id="toggleAccordion">
+                                {applys &&
+                                  applys.mediatrs.map((tree, index) => (
+                                    <div className="card">
+                                      <div className="card-header" id="...">
+                                        <section className="mb-0 mt-0">
+                                          <div
+                                            role="menu"
+                                            className="collapsed"
+                                            data-toggle="collapse"
+                                            data-target={`#defaultAccordion${index}`}
+                                            aria-expanded="true"
+                                            aria-controls={`#defaultAccordion${index}`}
+                                          >
+                                            {tree.districtName}
+                                            <div className="icons">
+                                              <svg> ... </svg>
+                                            </div>
+                                          </div>
+                                        </section>
+                                      </div>
+                                      <div
+                                        id={`defaultAccordion${index}`}
+                                        className="collapse"
+                                        aria-labelledby="..."
+                                        data-parent="#toggleAccordion"
+                                      >
+                                        <div className="card-body">
+                                          <div className="row">
+                                            {tree.mediatrs.map((name) => (
+                                              <div className="col-md-12">
+                                                <MyCheckbox
+                                                  name="mediatrIds"
+                                                  value={name.mediatrId}
+                                                  label={`${name.firstName} ${name.lastName}`}
+                                                  onClick={(e) => {
+                                                    if (
+                                                      e.target.checked ===
+                                                        true &&
+                                                      !mediatorName.includes(
+                                                        `${name.firstName} ${name.lastName}`
+                                                      )
+                                                    ) {
+                                                      setMediatorName(
+                                                        (state) => [
+                                                          ...state,
+                                                          `${name.firstName} ${name.lastName}`,
+                                                        ]
+                                                      );
+                                                    } else if (
+                                                      e.target.checked ===
+                                                        false &&
+                                                      mediatorName.includes(
+                                                        `${name.firstName} ${name.lastName}`
+                                                      )
+                                                    ) {
+                                                      setMediatorName(
+                                                        (state) => [
+                                                          ...state.filter(
+                                                            (medik) =>
+                                                              medik !==
+                                                              `${name.firstName} ${name.lastName}`
+                                                          ),
+                                                        ]
+                                                      );
+                                                      console.log(
+                                                        values.mediatrIds.find(
+                                                          (name) =>
+                                                            name ===
+                                                            e.target.value
+                                                        ),
+                                                        "medname"
+                                                      );
+                                                    }
+                                                  }}
+                                                />
+                                                {/* {console.log(
+                                                  mediatorName.find(
+                                                    (mediator) =>
+                                                      mediator ===
+                                                      `${name.firstName} ${name.lastName}`
+                                                  )
+                                                )} */}
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                              </div>
                             </div>
+                            {/* <div className="col-md-12">
+                              <p>medikler</p>
+                            </div> */}
                           </div>
                         )}
                       </div>
@@ -676,6 +801,7 @@ export default function ApplyPageModal({ apply }) {
                             <div className="col-md-2 offset-10 text-right">
                               <div className="icon-container">
                                 <button
+                                  title="Tərəf əlavə et"
                                   type="button"
                                   className="close"
                                   onClick={() => handleAddSide()}
@@ -701,6 +827,7 @@ export default function ApplyPageModal({ apply }) {
                                   type="button"
                                   onClick={() => handleRemoveSide()}
                                   className="close"
+                                  title="Tərəfi sil"
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -759,12 +886,27 @@ export default function ApplyPageModal({ apply }) {
                                       </svg>
                                     </div>
                                     <h5 className="info-heading">
-                                      {/* Tərəf :
-                                {`${index + 2} - ${
-                                  values.sides[index]
-                                    ? values.sides[index].fullName
-                                    : ""
-                                }`}{" "} */}
+                                      Tərəf :
+                                       { !apply && `${index + 2} - ${
+                                        values.sides[index]
+                                          ? `${
+                                              values.sides[index].sideFirstName
+                                                ? values.sides[index]
+                                                    .sideFirstName
+                                                : ""
+                                            } ${
+                                              values.sides[index].sideLastName
+                                                ? values.sides[index]
+                                                    .sideLastName
+                                                : ""
+                                            } ${
+                                              values.sides[index].sideMiddleName
+                                                ? values.sides[index]
+                                                    .sideMiddleName
+                                                : ""
+                                            }`
+                                          : ""
+                                      }`}{" "}
                                     </h5>
                                     <p className="info-text">
                                       <div className="row mb-4">
@@ -808,15 +950,15 @@ export default function ApplyPageModal({ apply }) {
                                             name={`sides[${index}].sideGender`}
                                             type="text"
                                             // className="form-control"
-                                            defaultValue={
-                                              apply && {
-                                                label:
-                                                  side[index] &&
-                                                  side[index].sideGender === 1
-                                                    ? "Kişi"
-                                                    : "Qadın",
-                                              }
-                                            }
+                                            // defaultValue={
+                                            //   apply && {
+                                            //     label:
+                                            //       sides[index] &&
+                                            //       sides[index].sideGender === 1
+                                            //         ? "Kişi"
+                                            //         : "Qadın",
+                                            //   }
+                                            // }
                                             options={genderOptions}
                                             placeholder="Cinsin daxil edin"
                                             label={"Qarşı tərəf cinsi*"}
@@ -1070,6 +1212,32 @@ export default function ApplyPageModal({ apply }) {
                       </div>
                     </div>
                   </div>
+                  {/* <ul className="file-tree">
+                    <li className="file-tree-folder">
+                      CSS
+                      <ul>
+                        <li>style.css</li>
+                      </ul>
+                    </li>
+                    <li className="file-tree-folder empty">Images</li>
+                    <li className="file-tree-folder">
+                      HTML
+                      <ul>
+                        <li className="file-tree-folder">
+                          PAGES
+                          <ul>
+                            <li>file name </li>
+                            <li>file name </li>
+                            <li>file name </li>
+                          </ul>
+                        </li>
+                        <li>file name </li>
+                        <li>file name </li>
+                      </ul>
+                    </li>
+                    <li>index.html </li>
+                    <li>components.html </li>
+                  </ul> */}
                 </div>
 
                 {!apply && (
@@ -1140,7 +1308,12 @@ export default function ApplyPageModal({ apply }) {
                   <div className="col-md-12">
                     <div className="button-setting">
                       <Button
-                        onClick={() => setRejectForm(true)}
+                        onClick={() => {
+                          setRejectForm(true);
+                          toast.info(
+                            "İmtina etmək üçün səbəb daxil edilməlidir."
+                          );
+                        }}
                         className="btn btn-danger float-right  btn-lg mr-1 ml-2 mt-2 mb-4"
                       >
                         İmtina et
@@ -1164,27 +1337,24 @@ export default function ApplyPageModal({ apply }) {
                         {({ isSubmitting, isValid, dirty, errors }) => (
                           <Form className="text-left mt-4">
                             <div className="form">
+                              <MyTextArea
+                                id="id"
+                                name="id"
+                                type="text"
+                                className="form-control"
+                                value={apply.id}
+                                style={{ display: "none" }}
+                                // placeholder="İmtina səbəbini daxil edin"
+                                // label="İmtina səbəbi"
+                              />
 
-                                <MyTextArea
-                                  id="id"
-                                  name="id"
-                                  type="text"
-                                  className="form-control"
-                                  value={apply.id}
-                                  style={{ display: "none" }}
-                                  // placeholder="İmtina səbəbini daxil edin"
-                                  // label="İmtina səbəbi"
-                                />
-                              
                               <div
                                 style={{ float: "right" }}
                                 className="d-sm-flex text-right justify-content-between"
                               >
                                 <div className="">
                                   <button
-                                    disabled={
-                                      isSubmitting
-                                    }
+                                    disabled={isSubmitting}
                                     type="submit"
                                     // name="time"
                                     className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4 "

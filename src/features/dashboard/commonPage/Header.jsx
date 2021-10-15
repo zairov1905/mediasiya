@@ -37,7 +37,8 @@ export default function Header() {
           <li className="nav-item theme-text">
             <a href="index.html" className="nav-link">
               {" "}
-              Mediasiya şurası{" "}
+              {/* Mediasiya şurası{" "} */}
+              Şəxsi kabinet
             </a>
           </li>
         </ul>

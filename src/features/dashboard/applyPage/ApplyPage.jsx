@@ -134,8 +134,8 @@ export default function ApplyPage() {
     </span>
   );
 
-  const columns = (auth.currentUser &&
-    auth.currentUser.role === "Council")
+  const columns =
+    auth.currentUser && auth.currentUser.role === "Council"
       ? [
           {
             name: "Müraciət tarixi",
@@ -267,13 +267,25 @@ export default function ApplyPage() {
                     width={24}
                     height={24}
                     viewBox="0 0 24 24"
+                    title="Mediator təyin et"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth={2}
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="feather feather-user-plus"
+                    className="feather feather-user-plus bs-tooltip"
                   >
+                    <rect style={{
+                        width: "100%",
+                        height: "100%",
+                        // fill: "#69c",
+                        stroke: "rgb(255 255 255 / 0%)",
+                        strokeWidth: "5px",
+                        opacity: 0.5,
+                        outline:"none",background:'none'
+                    }}>
+                      <title>Mediator təyin et</title>
+                    </rect>
                     <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="8.5" cy={7} r={4} />
                     <line x1={20} y1={8} x2={20} y2={14} />
