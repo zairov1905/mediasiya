@@ -110,8 +110,8 @@ export default function ApplyPageModal({ apply }) {
     { label: "İngilis", value: "İngilis" },
   ];
   const genderOptions = [
-    { label: "Kişi", value: 1 },
-    { label: "Qadın", value: 2 },
+    { label: "Kişi", value: parseInt(1) },
+    { label: "Qadın", value:parseInt (20) },
   ];
   const datesOptions = [
     { label: "9:00 - 9:30", value: "9:00 - 9:30" },
@@ -848,7 +848,8 @@ export default function ApplyPageModal({ apply }) {
                               </div>
                             </div>
                           </div>
-                        )}
+                       
+                       )}
 
                         {!sides && (
                           <div className="row">
@@ -887,40 +888,34 @@ export default function ApplyPageModal({ apply }) {
                                     </div>
                                     <h5 className="info-heading">
                                       Tərəf :
-                                       { !apply && `${index + 2} - ${
-                                        values.sides[index]
-                                          ? `${
+                                      {!apply &&
+                                        `${index + 2} - ${
+                                          values.sides[index]
+                                            ? `
+                                            ${
+                                              values.sides[index].sideLastName
+                                                ? values.sides[index]
+                                                    .sideLastName
+                                                : ""
+                                            } 
+                                            ${
                                               values.sides[index].sideFirstName
                                                 ? values.sides[index]
                                                     .sideFirstName
                                                 : ""
                                             } ${
-                                              values.sides[index].sideLastName
-                                                ? values.sides[index]
-                                                    .sideLastName
-                                                : ""
-                                            } ${
-                                              values.sides[index].sideMiddleName
-                                                ? values.sides[index]
-                                                    .sideMiddleName
-                                                : ""
-                                            }`
-                                          : ""
-                                      }`}{" "}
+                                                values.sides[index]
+                                                  .sideMiddleName
+                                                  ? values.sides[index]
+                                                      .sideMiddleName
+                                                  : ""
+                                              }`
+                                            : ""
+                                        }`}{" "}
                                     </h5>
+                                    {/* {console.log(values,'cins')} */}
                                     <p className="info-text">
                                       <div className="row mb-4">
-                                        <div className="col-md-3">
-                                          <MyTextInput
-                                            disabled={apply ? true : false}
-                                            id={`sides[${index}].sideFirstName`}
-                                            name={`sides[${index}].sideFirstName`}
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Adın daxil edin"
-                                            label={"Qarşı tərəfin adı*"}
-                                          />
-                                        </div>
                                         <div className="col-md-3">
                                           <MyTextInput
                                             disabled={apply ? true : false}
@@ -930,6 +925,17 @@ export default function ApplyPageModal({ apply }) {
                                             className="form-control"
                                             placeholder="Soyadın daxil edin"
                                             label={"Qarşı tərəfin soyadı*"}
+                                          />
+                                        </div>
+                                        <div className="col-md-3">
+                                          <MyTextInput
+                                            disabled={apply ? true : false}
+                                            id={`sides[${index}].sideFirstName`}
+                                            name={`sides[${index}].sideFirstName`}
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Adın daxil edin"
+                                            label={"Qarşı tərəfin adı*"}
                                           />
                                         </div>
                                         <div className="col-md-3">

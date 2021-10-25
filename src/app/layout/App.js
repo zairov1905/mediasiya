@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import ModalManager from "../common/modal/ModalManager";
 import React from "react";
 import ApplyPage from "../../features/dashboard/applyPage/ApplyPage";
+import FormPage from "../../features/form/FormPage";
 function App() {
   // const { initialized } = useSelector((state) => state.async);
   // useScript("../../../public/assets/js/app.js")
@@ -26,8 +27,11 @@ function App() {
       <ModalManager />
 
       <Route exact path="/" component={Login} />
+      <Route exact path="/form" component={FormPage} />
+
+      
       <Route
-        path={"/(.+)"}
+        path={"/dashboard/(.+)"}
         render={() => (
           <React.Fragment>
             <Header />
@@ -42,7 +46,8 @@ function App() {
 
               {/* BEGIN PAGE CONTENT */}
               <div id="content" className="main-content">
-                <Route exact path="/apply" component={ApplyPage} />
+
+                <Route exact path="dashboard/apply" component={ApplyPage} />
 
                 <Footer />
               </div>

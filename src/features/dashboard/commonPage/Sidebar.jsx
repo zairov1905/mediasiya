@@ -6,7 +6,6 @@ import { openModal } from "../../../app/common/modal/modalReducer";
 export default function Sidebar() {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
-  
 
   return (
     <div className="sidebar-wrapper sidebar-theme">
@@ -16,51 +15,56 @@ export default function Sidebar() {
           className="list-unstyled menu-categories ps ps--active-y"
           id="accordionExample"
         >
-          {auth.currentUser && auth.currentUser.person &&  (
-          <li className="menu">
-          <a
-            type="button"
-            data-toggle="modal"
-            data-target="#exampleModal"
-            data-name="add"
-            onClick={() => {
-              dispatch(
-                openModal({
-                  modalType: "ApplyPageModal",
-                  modalProps: null,
-                })
-              );
-            }}
-            activeStyle={{
-              background: "#bfc9d4",
-              boxShadow:
-                "0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%)",
-              borderRadius: " 6px",
-            }}
-            aria-expanded="false"
-            className="dropdown-toggle"
-          >
-            <div>
-              <svg
-                viewBox="0 0 24 24"
-                width={24}
-                height={24}
-                stroke="currentColor"
-                strokeWidth={2}
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="css-i6dzq1"
+          {auth.currentUser && auth.currentUser.person && (
+            <li className="menu">
+              <a
+                type="button"
+                style={{
+                  background: "rgb(27, 85, 226)",
+                  color: "white",
+                  borderRadius: " 6px",
+                }}
+                data-toggle="modal"
+                data-target="#exampleModal"
+                data-name="add"
+                onClick={() => {
+                  dispatch(
+                    openModal({
+                      modalType: "ApplyPageModal",
+                      modalProps: null,
+                    })
+                  );
+                }}
+                activeStyle={{
+                  background: "#bfc9d4",
+                  boxShadow:
+                    "0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%)",
+                  borderRadius: " 6px",
+                }}
+                aria-expanded="false"
+                className="dropdown-toggle"
               >
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                <polyline points="15 3 21 3 21 9" />
-                <line x1={10} y1={14} x2={21} y2={3} />
-              </svg>
-              <span>Mediatora müraciət et</span>
-            </div>
-          </a>
-        </li>
-       
+                <div>
+                  <svg
+                    viewBox="0 0 24 24"
+                    width={24}
+                    height={24}
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    fill="#fff"
+                    style={{ color: "rgb(233 233 233)" }}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="css-i6dzq1"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                    <polyline points="15 3 21 3 21 9" />
+                    <line x1={10} y1={14} x2={21} y2={3} />
+                  </svg>
+                  <span>Mediatora müraciət et</span>
+                </div>
+              </a>
+            </li>
           )}
 
           <li className="menu">

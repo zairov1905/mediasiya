@@ -38,7 +38,25 @@ export default function Header() {
             <a href="index.html" className="nav-link">
               {" "}
               {/* Mediasiya şurası{" "} */}
-              Şəxsi kabinet
+              Şəxsi kabinet -{" "}
+              {auth.currentUser.role === "Council" &&
+                `${auth.currentUser && "Mediasiya Şurası"}`}
+              {auth.currentUser.role === "Citizen" &&
+                `${
+                  auth.currentUser.person && auth.currentUser.person.firstName
+                }  ${
+                  auth.currentUser.person && auth.currentUser.person.lastName
+                }`}
+              {auth.currentUser.role === "Mediatr" &&
+                `${
+                  auth.currentUser.mediatr && auth.currentUser.mediatr.firstName
+                }  ${
+                  auth.currentUser.mediatr && auth.currentUser.mediatr.lastName
+                }`}
+              {auth.currentUser.role === "Office" &&
+                `${
+                  auth.currentUser.office && auth.currentUser.office.officeName
+                }`}
             </a>
           </li>
         </ul>
@@ -404,10 +422,7 @@ export default function Header() {
                       </svg>
                     )}
                     {auth.currentUser.role === "Council" &&
-                      `${
-                        auth.currentUser &&
-                        "Admin"
-                      }`}
+                      `${auth.currentUser && "Admin"}`}
                     {auth.currentUser.role === "Citizen" &&
                       `${
                         auth.currentUser.person &&

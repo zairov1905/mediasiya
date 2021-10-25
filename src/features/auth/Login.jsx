@@ -35,7 +35,7 @@ export default function Login() {
   }, []);
 
   if (authenticated) {
-    return <Redirect to="/apply" />;
+    return <Redirect to="/dashboard/apply" />;
     // return history.push("/dashboard");
   }
   return (
