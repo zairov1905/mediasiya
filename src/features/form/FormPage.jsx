@@ -1,4 +1,4 @@
-import { Form, Formik } from "formik";
+import { Form, Formik, setFieldValue } from "formik";
 import moment from "moment";
 import * as Yup from "yup";
 
@@ -8,6 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 import MySearchableSelect from "../../app/common/form/MySearchableSelect";
 import MyTextInput from "../../app/common/form/MyTextInput";
 import MyTextArea from "../../app/common/form/MyTextArea";
+import {
+  createMediatr,
+  getPerson,
+  loadDistrict,
+  loadInstitution,
+  loadOffice,
+  loadProfession,
+  loadSocialMedia,
+} from "./formActions";
 // import { Redirect } from "react-router";
 // import { Link } from "react-router-dom";
 // import { toast } from "react-toastify";
@@ -17,16 +26,16 @@ import MyTextArea from "../../app/common/form/MyTextArea";
 export default function FormPage(form) {
   const auth = useSelector((state) => state.auth);
   const async = useSelector((state) => state.async);
+  const forms = useSelector((state) => state.forms);
+
   const dispatch = useDispatch();
-  useEffect(() => {}, [dispatch]);
-  const initialValues = form
-    ? {
-        professionId: "",
-      }
-    : {
-        professionId: "",
-      };
-  const validationSchema = Yup.object({});
+  useEffect(() => {
+    dispatch(loadProfession());
+    dispatch(loadInstitution());
+    dispatch(loadDistrict());
+    dispatch(loadSocialMedia());
+    dispatch(loadOffice());
+  }, [dispatch]);
 
   const seriaTypes = [
     { label: "AA", value: "AA" },
@@ -36,21 +45,18 @@ export default function FormPage(form) {
 
   const [certificate, setCertificate] = useState([
     {
-      giver: "",
-      name: "",
-      date: "",
+      issuerInstitution: "",
+      certificateName: "",
+      certificationDate: "",
     },
   ]);
   const handleAddCertificate = () => {
     setCertificate([
       ...certificate,
       {
-        fullName: "",
-        advocateFullName: "",
-        organizationName: "",
-        address: "",
-        phone: "",
-        email: "",
+        issuerInstitution: "",
+        certificateName: "",
+        certificationDate: "",
       },
     ]);
   };
@@ -65,18 +71,18 @@ export default function FormPage(form) {
   //   education
   const [education, setEducation] = useState([
     {
-      giver: "",
-      name: "",
-      date: "",
+      collegeName: "",
+      majorName: "",
+      graduationDate: "",
     },
   ]);
   const handleAddEducation = () => {
     setEducation([
       ...education,
       {
-        fullName: "",
-        advocateFullName: "",
-        organizationName: "",
+        collegeName: "",
+        majorName: "",
+        graduationDate: "",
       },
     ]);
   };
@@ -88,6 +94,123 @@ export default function FormPage(form) {
       setEducation(values);
     }
   };
+  //   social
+
+  const [social, setSocial] = useState([
+    {
+      socialMediaId: "",
+      linkToPage: "",
+    },
+  ]);
+  const handleAddSocial = () => {
+    setSocial([
+      ...social,
+      {
+        socialMediaId: "",
+        linkToPage: "",
+      },
+    ]);
+  };
+  const handleRemoveSocial = () => {
+    if (social.length > 1) {
+      let lastIndex = social.length - 1;
+      let values = [...social];
+      values.splice(lastIndex, 1);
+      setSocial(values);
+    }
+  };
+  // profession loading ...
+  const professionOptions =
+    forms.professions &&
+    forms.professions.map((profession) => {
+      return {
+        value: parseInt(profession.id),
+        label: `${profession.professionName}`,
+      };
+    });
+
+  // profession loading ...
+  const institutionOptions =
+    forms.institutions &&
+    forms.institutions.map((institution) => {
+      return {
+        value: parseInt(institution.id),
+        label: `${institution.institutionName}`,
+      };
+    });
+  // district loading ...
+  const districtOptions =
+    forms.districts &&
+    forms.districts.map((district) => {
+      return {
+        value: parseInt(district.id),
+        label: `${district.districtName}`,
+      };
+    });
+  // Social media loading ...
+  const socialMediaOptions =
+    forms.socialMedias &&
+    forms.socialMedias.map((socialMedia) => {
+      return {
+        value: parseInt(socialMedia.id),
+        label: `${socialMedia.socialMediaName}`,
+      };
+    });
+  console.log(forms.socialMedias && forms.socialMedias, "social");
+  // Social media loading ...
+  const officeOptions =
+    forms.offices &&
+    forms.offices.map((office) => {
+      return {
+        value: parseInt(office.id),
+        label: `${office.officeName}`,
+      };
+    });
+  console.log(forms.socialMedias && forms.socialMedias, "social");
+
+  // lang knowledge loading ...
+
+  const languageKnowledgeOptions = [
+    { label: "Azərbaycan", value: "Azərbaycan" },
+    { label: "Rus", value: "Rus" },
+    { label: "İngilis", value: "İngilis" },
+  ];
+
+  // getPerson data
+  const getPersonData = async (docSeries, docNumber, pin) => {
+    await dispatch(getPerson({ docSeries, docNumber, pin }));
+  };
+  const initialValues = 
+  {
+    firstName: "",
+    lastName: "",
+    middleName: "",
+    dateOfBirth: "",
+    pin: "",
+    docSeries: "",
+    docNumber: "",
+    regAddress: "",
+    actingAddress: "",
+    membershipDate: "",
+    languageSkills: "",
+    voen: "",
+    registryNumber: "",
+    email: "",
+    phone: "",
+    personalPageLink: "",
+    otherWorkplace: "",
+    otherPosition: "",
+    officeId: "",
+    institutionId: "",
+    mediatrProfessions: [],
+    districtMediatrs: [],
+    mediatrsSocialMedias: social,
+    educations: education,
+    certificates: certificate
+  }
+
+  const validationSchema = Yup.object({});
+
   return (
     <React.Fragment>
       {/* BEGIN FORMPAGE CONTAINER */}
@@ -101,7 +224,34 @@ export default function FormPage(form) {
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, setErrors }) => {
           // console.log('ugurludur')
-          dispatch();
+          dispatch(createMediatr({
+            firstName:forms.person && forms.person.firstName ,
+            lastName:forms.person && forms.person.lastName,
+            middleName: forms.person && forms.person.middleName,
+            dateOfBirth: forms.person && forms.person.dateOfBirth,
+            image:forms.person && forms.person.image,
+            pin: values.pin,
+            docSeries: values.docSeries,
+            docNumber: values.docNumber,
+            regAddress: forms.person && forms.person.regAddress,
+            actingAddress: values.actingAddress,
+            membershipDate: values.membershipDate,
+            languageSkills: values.languageSkills,
+            voen: values.voen,
+            registryNumber: values.registryNumber,
+            email: values.email,
+            phone: values.phone,
+            personalPageLink: values.personalPageLink,
+            otherWorkplace: values.otherWorkplace,
+            otherPosition: values.otherPosition,
+            officeId: values.officeId,
+            institutionId: values.institutionId ,
+            mediatrProfessions: values.mediatrProfessions,
+            districtMediatrs: [values.districtMediatrs],
+            mediatrsSocialMedias: values.mediatrsSocialMedias,
+            educations: values.educations,
+            certificates: values.certificates
+          }));
           //   rejectApply(apply.id, {
           //     rejectText: values.reasonOfReject,
           //   })
@@ -110,7 +260,7 @@ export default function FormPage(form) {
           setSubmitting(false);
         }}
       >
-        {({ isSubmitting, isValid, dirty, errors }) => (
+        {({ isSubmitting, isValid, dirty, errors, values }) => (
           <Form className="text-left mt-4">
             <div className="helpdesk container">
               <div className="helpdesk layout-spacing">
@@ -118,7 +268,7 @@ export default function FormPage(form) {
                   <div className="row">
                     <div className="col-md-12 text-center">
                       <h4 className>
-                        Mediator məlumatların toplanması üçün sorğu
+                        Mediator məlumatlarının toplanması üçün sorğu
                       </h4>
                       <p className>Mediasiya Şurası</p>
                     </div>
@@ -170,32 +320,32 @@ export default function FormPage(form) {
                               <div className="row">
                                 <div className="col-md-2">
                                   <MySearchableSelect
-                                    id="1"
-                                    name="1"
+                                    id="docSeries"
+                                    name="docSeries"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
                                     options={seriaTypes}
                                     // className="form-control"
-                                    placeholder="ŞV seriyası"
-                                    label={"ŞV seriyası *"}
+                                    placeholder="Seriya"
+                                    label={"Ş/V seriyası *"}
                                   />
                                 </div>
                                 <div className="col-md-4">
                                   <MyTextInput
-                                    id="2"
-                                    name="2"
-                                    type="text"
+                                    id="docNumber"
+                                    name="docNumber"
+                                    type="docNumber"
                                     //   isDisabled={apply ? true : false}
                                     options={seriaTypes}
                                     className="form-control"
-                                    placeholder="ŞV nömrəsi"
-                                    label={"ŞV nömrəsi *"}
+                                    placeholder="Nömrə"
+                                    label={"Ş/V nömrəsi *"}
                                   />
                                 </div>
                                 <div className="col-md-4">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
+                                    id="pin"
+                                    name="pin"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
                                     options={seriaTypes}
@@ -206,7 +356,16 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-2 pt-1">
                                   <div>
-                                    <button className="w-100 btn btn-outline-primary btn-lg mt-4">
+                                    <button
+                                      onClick={() =>
+                                        getPersonData(
+                                          values.docSeries,
+                                          values.docNumber,
+                                          values.pin
+                                        )
+                                      }
+                                      className="w-100 btn btn-outline-primary btn-lg mt-4"
+                                    >
                                       Axtar
                                     </button>
                                   </div>
@@ -216,9 +375,13 @@ export default function FormPage(form) {
                               <div className="row mt-5">
                                 <div className="col-md-3">
                                   <MyTextInput
-                                    id="1"
-                                    name="1"
+                                    id="firstName"
+                                    name="firstName"
                                     type="text"
+                                    
+                                    value={
+                                      forms.person && forms.person.firstName
+                                    }
                                     readOnly
                                     //   isDisabled={apply ? true : false}
                                     options={seriaTypes}
@@ -229,9 +392,12 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-3">
                                   <MyTextInput
-                                    id="2"
-                                    name="2"
+                                    id="lastName"
+                                    name="lastName"
                                     type="text"
+                                    value={
+                                      forms.person && forms.person.lastName
+                                    }
                                     readOnly
                                     //   isDisabled={apply ? true : false}
                                     options={seriaTypes}
@@ -242,9 +408,12 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-3">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
+                                    id="middleName"
+                                    name="middleName"
                                     type="text"
+                                    value={
+                                      forms.person && forms.person.middleName
+                                    }
                                     readOnly
                                     //   isDisabled={apply ? true : false}
                                     options={seriaTypes}
@@ -255,9 +424,12 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-3 pt-1">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
-                                    type="text"
+                                    id="dateOfBirth"
+                                    name="dateOfBirth"
+                                    type="date"
+                                    value={
+                                      forms.person && forms.person.dateOfBirth
+                                    }
                                     readOnly
                                     //   isDisabled={apply ? true : false}
                                     options={seriaTypes}
@@ -270,18 +442,38 @@ export default function FormPage(form) {
                               <div className="row mt-5">
                                 <div className="col-md-12 mv-4 pt-1">
                                   <MyTextArea
-                                    id="3"
-                                    name="3"
+                                    id="regAddress"
+                                    name="regAddress"
                                     type="text"
+                                    value={
+                                      forms.person && forms.person.regAddress
+                                    }
                                     readOnly
                                     //   isDisabled={apply ? true : false}
                                     options={seriaTypes}
                                     className="form-control"
                                     placeholder="Qeydiyyat ünvanı"
-                                    label={"Doğum tarixi *"}
+                                    label={"Qeydiyyat ünvanı *"}
                                   />
                                 </div>
                               </div>
+                              {/* <div className="row mt-5 d-none">
+                                <div className="col-md-12 mv-4 pt-1">
+                                  <MyTextArea
+                                    id="regAddress"
+                                    name="regAddress"
+                                    type="text"
+                                    value={forms.person && forms.person.regAddress}
+
+                                    readOnly
+                                    //   isDisabled={apply ? true : false}
+                                    options={seriaTypes}
+                                    className="form-control"
+                                    placeholder="Qeydiyyat ünvanı"
+                                    label={"Qeydiyyat ünvanı *"}
+                                  />
+                                </div>
+                              </div> */}
                             </div>
                           </div>
                         </div>
@@ -327,11 +519,11 @@ export default function FormPage(form) {
                               <div className="row">
                                 <div className="col-md-12 mb-4">
                                   <MySearchableSelect
-                                    id="1"
-                                    name="1"
+                                    id="mediatrProfessions"
+                                    name="mediatrProfessions"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
-                                    options={seriaTypes}
+                                    options={professionOptions}
                                     isMulti
                                     // className="form-control"
                                     placeholder="İxtisas"
@@ -340,11 +532,11 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MySearchableSelect
-                                    id="1"
-                                    name="1"
+                                    id="institutionId"
+                                    name="institutionId"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
-                                    options={seriaTypes}
+                                    options={institutionOptions}
                                     // className="form-control"
                                     placeholder="Təlim keçdiyi qurum"
                                     label={"Təlim keçdiyi qurum *"}
@@ -352,11 +544,11 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MySearchableSelect
-                                    id="1"
-                                    name="1"
+                                    id="districtMediatrs"
+                                    name="districtMediatrs"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
-                                    options={seriaTypes}
+                                    options={districtOptions}
                                     // className="form-control"
                                     placeholder="Ərazi Rayonlar"
                                     label={"Ərazi Rayonlar *"}
@@ -364,23 +556,22 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MySearchableSelect
-                                    id="1"
-                                    name="1"
+                                    id="officeId"
+                                    name="officeId"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
-                                    options={seriaTypes}
+                                    options={officeOptions}
                                     // className="form-control"
-                                    placeholder="Təşkilat"
-                                    label={"Təşkilat *"}
+                                    placeholder="Mediasiya təşkilatı"
+                                    label={"Mediasiya təşkilatı"}
                                   />
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MyTextArea
-                                    id="2"
-                                    name="2"
+                                    id="actingAddress"
+                                    name="actingAddress"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
-                                    options={seriaTypes}
                                     className="form-control"
                                     placeholder="Fəliyyət göstərdiyi ünvan"
                                     label={"Fəaliyyət göstərdiyi ünvan *"}
@@ -389,8 +580,8 @@ export default function FormPage(form) {
 
                                 <div className="col-md-12 mb-4">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
+                                    id="membershipDate"
+                                    name="membershipDate"
                                     type="date"
                                     //   isDisabled={apply ? true : false}
                                     className="form-control"
@@ -400,8 +591,8 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
+                                    id="registryNumber"
+                                    name="registryNumber"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
                                     className="form-control"
@@ -411,8 +602,8 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
+                                    id="voen"
+                                    name="voen"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
                                     className="form-control"
@@ -520,37 +711,35 @@ export default function FormPage(form) {
                                     <div className="row">
                                       <div className="col-md-4 mb-4">
                                         <MyTextInput
-                                          id="3"
-                                          name="3"
+                                          id={`certificates[${index}].issuerInstitution`}
+                                          name={`certificates[${index}].issuerInstitution`}
                                           type="text"
                                           //   isDisabled={apply ? true : false}
                                           className="form-control"
                                           placeholder="Sertifikati verən qurum"
-                                          label={"Sertifikati verən qurum *"}
+                                          label={"Sertifikati verən qurum"}
                                         />
                                       </div>
                                       <div className="col-md-4 mb-4">
                                         <MyTextInput
-                                          id="3"
-                                          name="3"
+                                          id={`certificates[${index}].certificateName`}
+                                          name={`certificates[${index}].certificateName`}
                                           type="text"
                                           //   isDisabled={apply ? true : false}
                                           className="form-control"
                                           placeholder="Sertifikatın adı, növü"
-                                          label={"Sertifikatın adı, növü *"}
+                                          label={"Sertifikatın adı, növü"}
                                         />
                                       </div>
                                       <div className="col-md-4 mb-4">
                                         <MyTextInput
-                                          id="3"
-                                          name="3"
+                                          id={`certificates[${index}].certificationDate`}
+                                          name={`certificates[${index}].certificationDate`}
                                           type="date"
                                           //   isDisabled={apply ? true : false}
                                           className="form-control"
                                           placeholder="Sertifikatın verilmə tarixi"
-                                          label={
-                                            "Sertifikatın verilmə tarixi *"
-                                          }
+                                          label={"Sertifikatın verilmə tarixi"}
                                         />
                                       </div>
                                     </div>
@@ -559,16 +748,17 @@ export default function FormPage(form) {
                             </div>
                           </div>
                         </div>
+
                         <div className="card">
-                          <div className="card-header" id="hd-performance-1">
+                          <div className="card-header" id="hd-performance-3">
                             <div className="mb-0">
                               <div
-                                className
+                                className=" collapsed"
                                 data-toggle="collapse"
                                 role="navigation"
-                                data-target="#collapse-hd-performance-1"
+                                data-target="#collapse-hd-performance-3"
                                 aria-expanded="false"
-                                aria-controls="collapse-hd-performance-1"
+                                aria-controls="collapse-hd-performance-3"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -586,90 +776,59 @@ export default function FormPage(form) {
                                   <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                                   <line x1={12} y1={17} x2={12} y2={17} />
                                 </svg>
-                                Əlaqə
+                                Digər
                               </div>
                             </div>
                           </div>
                           <div
-                            id="collapse-hd-performance-1"
+                            id="collapse-hd-performance-3"
                             className="collapse"
-                            aria-labelledby="hd-performance-1"
+                            aria-labelledby="hd-performance-3"
                             data-parent="#hd-statistics"
                           >
                             <div className="card-body">
                               <div className="row">
                                 <div className="col-md-12 mb-4">
-                                  <MyTextInput
-                                    id="2"
-                                    name="2"
+                                  <MySearchableSelect
+                                    id="languageSkills"
+                                    name="languageSkills"
                                     type="text"
+                                    options={languageKnowledgeOptions}
+                                    // isMulti
                                     //   isDisabled={apply ? true : false}
-                                    options={seriaTypes}
-                                    className="form-control"
-                                    placeholder="Telefon"
-                                    label={"Telefon *"}
-                                  />
-                                </div>
-
-                                <div className="col-md-12 mb-4">
-                                  <MyTextInput
-                                    id="3"
-                                    name="3"
-                                    type="text"
-                                    //   isDisabled={apply ? true : false}
-                                    className="form-control"
-                                    placeholder="Email"
-                                    label={"Email *"}
+                                    placeholder="Dil bilikləri"
+                                    label={"Dil bilikləri *"}
                                   />
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
+                                    id="otherWorkplace"
+                                    name="otherWorkplace"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
                                     className="form-control"
-                                    placeholder="Whatsapp"
-                                    label={"Whatsapp *"}
+                                    placeholder="Mediatorluqla yanaşı hazırda işlədiyi yer"
+                                    label={
+                                      "Mediatorluqla yanaşı hazırda işlədiyi yer"
+                                    }
                                   />
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
+                                    id="otherPosition"
+                                    name="otherPosition"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
                                     className="form-control"
-                                    placeholder="Facebook"
-                                    label={"Facebook *"}
-                                  />
-                                </div>
-                                <div className="col-md-12 mb-4">
-                                  <MyTextInput
-                                    id="3"
-                                    name="3"
-                                    type="text"
-                                    //   isDisabled={apply ? true : false}
-                                    className="form-control"
-                                    placeholder="Instagram"
-                                    label={"Instagram *"}
-                                  />
-                                </div>
-                                <div className="col-md-12 mb-4">
-                                  <MyTextInput
-                                    id="3"
-                                    name="3"
-                                    type="text"
-                                    //   isDisabled={apply ? true : false}
-                                    className="form-control"
-                                    placeholder="İnternet səhifəsi"
-                                    label={"İnternet səhifəsi *"}
+                                    placeholder="Vəzifə"
+                                    label={"Vəzifə"}
                                   />
                                 </div>
                               </div>
                             </div>
                           </div>
                         </div>
+
                         <div className="card">
                           <div className="card-header" id="hd-performance-2">
                             <div className="mb-0">
@@ -765,8 +924,8 @@ export default function FormPage(form) {
                                     <div className="row">
                                       <div className="col-md-4 mb-4">
                                         <MyTextInput
-                                          id="3"
-                                          name="3"
+                                          id={`educations[${index}].collegeName`}
+                                          name={`educations[${index}].collegeName`}
                                           type="text"
                                           //   isDisabled={apply ? true : false}
                                           className="form-control"
@@ -776,8 +935,8 @@ export default function FormPage(form) {
                                       </div>
                                       <div className="col-md-4 mb-4">
                                         <MyTextInput
-                                          id="3"
-                                          name="3"
+                                          id={`educations[${index}].majorName`}
+                                          name={`educations[${index}].majorName`}
                                           type="text"
                                           //   isDisabled={apply ? true : false}
                                           className="form-control"
@@ -787,13 +946,13 @@ export default function FormPage(form) {
                                       </div>
                                       <div className="col-md-4 mb-4">
                                         <MyTextInput
-                                          id="3"
-                                          name="3"
+                                          id={`educations[${index}].graduationDate`}
+                                          name={`educations[${index}].graduationDate`}
                                           type="date"
                                           //   isDisabled={apply ? true : false}
                                           className="form-control"
                                           placeholder="il"
-                                          label={"İl *"}
+                                          label={"Bitirdiyi il *"}
                                         />
                                       </div>
                                     </div>
@@ -802,16 +961,17 @@ export default function FormPage(form) {
                             </div>
                           </div>
                         </div>
+
                         <div className="card">
-                          <div className="card-header" id="hd-performance-3">
+                          <div className="card-header" id="hd-performance-1">
                             <div className="mb-0">
                               <div
-                                className=" collapsed"
+                                className
                                 data-toggle="collapse"
                                 role="navigation"
-                                data-target="#collapse-hd-performance-3"
+                                data-target="#collapse-hd-performance-1"
                                 aria-expanded="false"
-                                aria-controls="collapse-hd-performance-3"
+                                aria-controls="collapse-hd-performance-1"
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -829,52 +989,138 @@ export default function FormPage(form) {
                                   <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
                                   <line x1={12} y1={17} x2={12} y2={17} />
                                 </svg>
-                                Digər
+                                Əlaqə
                               </div>
                             </div>
                           </div>
                           <div
-                            id="collapse-hd-performance-3"
+                            id="collapse-hd-performance-1"
                             className="collapse"
-                            aria-labelledby="hd-performance-3"
+                            aria-labelledby="hd-performance-1"
                             data-parent="#hd-statistics"
                           >
                             <div className="card-body">
                               <div className="row">
                                 <div className="col-md-12 mb-4">
-                                  <MySearchableSelect
-                                    id="3"
-                                    name="3"
+                                  <MyTextInput
+                                    id="phone"
+                                    name="phone"
                                     type="text"
-                                    isMulti
                                     //   isDisabled={apply ? true : false}
-                                    placeholder="Dil bilikləri"
-                                    label={"Dil bilikləri *"}
+                                    options={seriaTypes}
+                                    className="form-control"
+                                    placeholder="Telefon nömrəsi"
+                                    label={"Telefon nömrəsi *"}
+                                  />
+                                </div>
+
+                                <div className="col-md-12 mb-4">
+                                  <MyTextInput
+                                    id="email"
+                                    name="email"
+                                    type="text"
+                                    //   isDisabled={apply ? true : false}
+                                    className="form-control"
+                                    placeholder="Elektron poçt ünvanı"
+                                    label={"Elektron poçt ünvanı *"}
                                   />
                                 </div>
                                 <div className="col-md-12 mb-4">
                                   <MyTextInput
-                                    id="3"
-                                    name="3"
+                                    id="personalPageLink"
+                                    name="personalPageLink"
                                     type="text"
                                     //   isDisabled={apply ? true : false}
                                     className="form-control"
-                                    placeholder="İşlədiyi digər yer"
-                                    label={"İşlədiyi digər yer *"}
-                                  />
-                                </div>
-                                <div className="col-md-12 mb-4">
-                                  <MyTextInput
-                                    id="3"
-                                    name="3"
-                                    type="text"
-                                    //   isDisabled={apply ? true : false}
-                                    className="form-control"
-                                    placeholder="Vəzifə"
-                                    label={"Vəzifə *"}
+                                    placeholder="Rəsmi veb səhifəsi"
+                                    label={"Rəsmi veb səhifəsi"}
                                   />
                                 </div>
                               </div>
+                              <div className="row mt-4">
+                                <div className="col-md-2 offset-10 text-right">
+                                  <div className="icon-container">
+                                    <button
+                                      title="Sosial media əlavə et"
+                                      type="button"
+                                      className="close"
+                                      onClick={() => handleAddSocial()}
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width={24}
+                                        height={24}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="feather feather-plus-circle"
+                                      >
+                                        <circle cx={12} cy={12} r={10} />
+                                        <line x1={12} y1={8} x2={12} y2={16} />
+                                        <line x1={8} y1={12} x2={16} y2={12} />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveSocial()}
+                                      className="close"
+                                      title="Sosial media sil"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width={24}
+                                        height={24}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="feather feather-minus-circle"
+                                      >
+                                        <circle cx={12} cy={12} r={10} />
+                                        <line x1={8} y1={12} x2={16} y2={12} />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              {social &&
+                                social.map((soci, index) => (
+                                  <React.Fragment key={index}>
+                                    <div className="row">
+                                      <div className="col-md-6 mb-4">
+                                        <MySearchableSelect
+                                          id={`mediatrsSocialMedias[${index}].socialMediaId`}
+                                          name={`mediatrsSocialMedias[${index}].socialMediaId`}
+                                          type="text"
+                                          options={socialMediaOptions}
+                                          //   isDisabled={apply ? true : false}
+                                          // className="form-control"
+                                          placeholder="Social media hesabı"
+                                          label={"Social media hesabı *"}
+                                        />
+                                      </div>
+                                      <div className="col-md-6 mb-4">
+                                        <MyTextInput
+                                          id={`mediatrsSocialMedias[${index}].linkToPage`}
+                                          name={`mediatrsSocialMedias[${index}].linkToPage`}
+                                          type="text"
+                                          //   isDisabled={apply ? true : false}
+                                          className="form-control"
+                                          placeholder="Social media hesabının linki"
+                                          label={
+                                            "Social media hesabının linki *"
+                                          }
+                                        />
+                                      </div>
+                                    </div>
+                                  </React.Fragment>
+                                ))}
+                              {console.log(values)}
                             </div>
                           </div>
                         </div>
@@ -882,16 +1128,21 @@ export default function FormPage(form) {
                     </div>
                   </div>
                 </div>
+              <div className="row">
+                <div className="col-md-12">
+                <button
+                  disabled={!isValid || !dirty || isSubmitting}
+                  type="submit"
+                  // name="time"
+                  className="btn btn-primary float-right   btn-lg"
+                >
+                  Əlavə et
+                </button>
+                </div>
+              </div>
+
               </div>
             </div>
-            {/* <button
-                            disabled={!isValid || !dirty || isSubmitting}
-                            type="submit"
-                            // name="time"
-                            className="btn btn-danger text-right  btn-lg mt-3 "
-                          >
-                            İmtina et
-                          </button> */}
           </Form>
         )}
       </Formik>
