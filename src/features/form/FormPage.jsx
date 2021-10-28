@@ -1,4 +1,4 @@
-import { Form, Formik, setFieldValue } from "formik";
+import { Form, Formik } from "formik";
 import moment from "moment";
 import * as Yup from "yup";
 
@@ -17,6 +17,7 @@ import {
   loadProfession,
   loadSocialMedia,
 } from "./formActions";
+import Button from "../../app/common/modal/Button";
 // import { Redirect } from "react-router";
 // import { Link } from "react-router-dom";
 // import { toast } from "react-toastify";
@@ -26,6 +27,7 @@ import {
 export default function FormPage(form) {
   const auth = useSelector((state) => state.auth);
   const async = useSelector((state) => state.async);
+
   const forms = useSelector((state) => state.forms);
 
   const dispatch = useDispatch();
@@ -48,6 +50,7 @@ export default function FormPage(form) {
       issuerInstitution: "",
       certificateName: "",
       certificationDate: "",
+      imageData: "",
     },
   ]);
   const handleAddCertificate = () => {
@@ -57,6 +60,7 @@ export default function FormPage(form) {
         issuerInstitution: "",
         certificateName: "",
         certificationDate: "",
+        imageData: "",
       },
     ]);
   };
@@ -156,7 +160,6 @@ export default function FormPage(form) {
         label: `${socialMedia.socialMediaName}`,
       };
     });
-  console.log(forms.socialMedias && forms.socialMedias, "social");
   // Social media loading ...
   const officeOptions =
     forms.offices &&
@@ -166,7 +169,6 @@ export default function FormPage(form) {
         label: `${office.officeName}`,
       };
     });
-  console.log(forms.socialMedias && forms.socialMedias, "social");
 
   // lang knowledge loading ...
 
@@ -180,8 +182,7 @@ export default function FormPage(form) {
   const getPersonData = async (docSeries, docNumber, pin) => {
     await dispatch(getPerson({ docSeries, docNumber, pin }));
   };
-  const initialValues = 
-  {
+  const initialValues = {
     firstName: "",
     lastName: "",
     middleName: "",
@@ -206,11 +207,34 @@ export default function FormPage(form) {
     districtMediatrs: [],
     mediatrsSocialMedias: social,
     educations: education,
-    certificates: certificate
-  }
+    certificates: certificate,
+  };
 
   const validationSchema = Yup.object({});
 
+  // file upload
+  // file.size / 1024 / 1024 > 1
+  const [baseImageErr, setBaseImageErr] = useState("");
+
+  const convertBase64 = (file) => {
+    console.log(file.type, "type");
+     if (file.size / 1024 / 1024 > 1) {
+      setBaseImageErr("Faylın ölçüsü 1MB-dan böyük ola bilməz");
+    } else {
+      return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+
+        fileReader.onload = () => {
+          resolve(fileReader.result.split(",")[1]);
+        };
+
+        fileReader.onerror = (error) => {
+          reject(error);
+        };
+      });
+    }
+  };
   return (
     <React.Fragment>
       {/* BEGIN FORMPAGE CONTAINER */}
@@ -223,44 +247,51 @@ export default function FormPage(form) {
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, setErrors }) => {
-          // console.log('ugurludur')
-          dispatch(createMediatr({
-            firstName:forms.person && forms.person.firstName ,
-            lastName:forms.person && forms.person.lastName,
-            middleName: forms.person && forms.person.middleName,
-            dateOfBirth: forms.person && forms.person.dateOfBirth,
-            image:forms.person && forms.person.image,
-            pin: values.pin,
-            docSeries: values.docSeries,
-            docNumber: values.docNumber,
-            regAddress: forms.person && forms.person.regAddress,
-            actingAddress: values.actingAddress,
-            membershipDate: values.membershipDate,
-            languageSkills: values.languageSkills,
-            voen: values.voen,
-            registryNumber: values.registryNumber,
-            email: values.email,
-            phone: values.phone,
-            personalPageLink: values.personalPageLink,
-            otherWorkplace: values.otherWorkplace,
-            otherPosition: values.otherPosition,
-            officeId: values.officeId,
-            institutionId: values.institutionId ,
-            mediatrProfessions: values.mediatrProfessions,
-            districtMediatrs: [values.districtMediatrs],
-            mediatrsSocialMedias: values.mediatrsSocialMedias,
-            educations: values.educations,
-            certificates: values.certificates
-          }));
-          //   rejectApply(apply.id, {
-          //     rejectText: values.reasonOfReject,
-          //   })
+          const formData = new FormData();
+          // for (var key in values) {
+          //   formData.append(key, values[key]);
+          // }
+
+          dispatch(
+            createMediatr({
+              firstName: forms.person && forms.person.firstName,
+              lastName: forms.person && forms.person.lastName,
+              middleName: forms.person && forms.person.middleName,
+              dateOfBirth: forms.person && forms.person.dateOfBirth,
+
+              imagePath: forms.person && forms.person.imagePath,
+              pin: values.pin,
+              docSeries: values.docSeries,
+              docNumber: values.docNumber,
+              regAddress: forms.person && forms.person.regAddress,
+              actingAddress: values.actingAddress,
+              membershipDate: values.membershipDate,
+              languageSkills: values.languageSkills.toString(),
+              voen: values.voen,
+              registryNumber: values.registryNumber,
+              email: values.email,
+              phone: values.phone,
+              personalPageLink: values.personalPageLink,
+              otherWorkplace: values.otherWorkplace,
+              otherPosition: values.otherPosition,
+              officeId: values.officeId,
+              institutionId: values.institutionId,
+              mediatrProfessions: values.mediatrProfessions,
+              districtMediatrs: [values.districtMediatrs],
+              mediatrsSocialMedias: values.mediatrsSocialMedias,
+              educations: values.educations,
+              certificates: values.certificates,
+            })
+          );
+          // rejectApply(apply.id, {
+          //   rejectText: values.reasonOfReject,
+          // })
           // setModal(true);
           // dispatch(closeModal());
           setSubmitting(false);
         }}
       >
-        {({ isSubmitting, isValid, dirty, errors, values }) => (
+        {({ isSubmitting, isValid, dirty, errors, values, setFieldValue }) => (
           <Form className="text-left mt-4">
             <div className="helpdesk container">
               <div className="helpdesk layout-spacing">
@@ -268,7 +299,7 @@ export default function FormPage(form) {
                   <div className="row">
                     <div className="col-md-12 text-center">
                       <h4 className>
-                        Mediator məlumatlarının toplanması üçün sorğu
+                        Mediatorun reyestr məlumatları üçün sorğu
                       </h4>
                       <p className>Mediasiya Şurası</p>
                     </div>
@@ -356,8 +387,8 @@ export default function FormPage(form) {
                                 </div>
                                 <div className="col-md-2 pt-1">
                                   <div>
-                                    <button
-                                      onClick={() =>
+                                    <Button
+                                  onClick={() =>
                                         getPersonData(
                                           values.docSeries,
                                           values.docNumber,
@@ -366,8 +397,51 @@ export default function FormPage(form) {
                                       }
                                       className="w-100 btn btn-outline-primary btn-lg mt-4"
                                     >
+                                                                      {async.loading && (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={24}
+                                    height={24}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="feather feather-loader spin mr-2"
+                                  >
+                                    <line x1={12} y1={2} x2={12} y2={6} />
+                                    <line x1={12} y1={18} x2={12} y2={22} />
+                                    <line
+                                      x1="4.93"
+                                      y1="4.93"
+                                      x2="7.76"
+                                      y2="7.76"
+                                    />
+                                    <line
+                                      x1="16.24"
+                                      y1="16.24"
+                                      x2="19.07"
+                                      y2="19.07"
+                                    />
+                                    <line x1={2} y1={12} x2={6} y2={12} />
+                                    <line x1={18} y1={12} x2={22} y2={12} />
+                                    <line
+                                      x1="4.93"
+                                      y1="19.07"
+                                      x2="7.76"
+                                      y2="16.24"
+                                    />
+                                    <line
+                                      x1="16.24"
+                                      y1="7.76"
+                                      x2="19.07"
+                                      y2="4.93"
+                                    />
+                                  </svg>
+                                )}
                                       Axtar
-                                    </button>
+                                    </Button>
                                   </div>
                                 </div>
                               </div>
@@ -378,7 +452,6 @@ export default function FormPage(form) {
                                     id="firstName"
                                     name="firstName"
                                     type="text"
-                                    
                                     value={
                                       forms.person && forms.person.firstName
                                     }
@@ -526,8 +599,8 @@ export default function FormPage(form) {
                                     options={professionOptions}
                                     isMulti
                                     // className="form-control"
-                                    placeholder="İxtisas"
-                                    label={"İxtisas *"}
+                                    placeholder="İxtisaslaşma"
+                                    label={"İxtisaslaşma *"}
                                   />
                                 </div>
                                 <div className="col-md-12 mb-4">
@@ -554,7 +627,7 @@ export default function FormPage(form) {
                                     label={"Ərazi Rayonlar *"}
                                   />
                                 </div>
-                                <div className="col-md-12 mb-4">
+                                {/* <div className="col-md-12 mb-4">
                                   <MySearchableSelect
                                     id="officeId"
                                     name="officeId"
@@ -565,7 +638,7 @@ export default function FormPage(form) {
                                     placeholder="Mediasiya təşkilatı"
                                     label={"Mediasiya təşkilatı"}
                                   />
-                                </div>
+                                </div> */}
                                 <div className="col-md-12 mb-4">
                                   <MyTextArea
                                     id="actingAddress"
@@ -615,220 +688,6 @@ export default function FormPage(form) {
                             </div>
                           </div>
                         </div>
-                        <div className="card">
-                          <div className="card-header" id="hd-statistics-3">
-                            <div className="mb-0">
-                              <div
-                                className="collapsed"
-                                data-toggle="collapse"
-                                role="navigation"
-                                data-target="#collapse-hd-statistics-3"
-                                aria-expanded="false"
-                                aria-controls="collapse-hd-statistics-3"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width={24}
-                                  height={24}
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className="feather feather-help-circle"
-                                >
-                                  <circle cx={12} cy={12} r={10} />
-                                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                                  <line x1={12} y1={17} x2={12} y2={17} />
-                                </svg>
-                                Sertifikat barədə məlumatlar
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            id="collapse-hd-statistics-3"
-                            className="collapse"
-                            aria-labelledby="hd-statistics-3"
-                            data-parent="#hd-statistics"
-                            style={{}}
-                          >
-                            <div className="card-body">
-                              <div className="row mb-4">
-                                <div className="col-md-2 offset-10 text-right">
-                                  <div className="icon-container">
-                                    <button
-                                      title="Sertifikat əlavə et"
-                                      type="button"
-                                      className="close"
-                                      onClick={() => handleAddCertificate()}
-                                    >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width={24}
-                                        height={24}
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="feather feather-plus-circle"
-                                      >
-                                        <circle cx={12} cy={12} r={10} />
-                                        <line x1={12} y1={8} x2={12} y2={16} />
-                                        <line x1={8} y1={12} x2={16} y2={12} />
-                                      </svg>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRemoveCertificate()}
-                                      className="close"
-                                      title="Sertifikat sil"
-                                    >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width={24}
-                                        height={24}
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth={2}
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="feather feather-minus-circle"
-                                      >
-                                        <circle cx={12} cy={12} r={10} />
-                                        <line x1={8} y1={12} x2={16} y2={12} />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                              {certificate &&
-                                certificate.map((certi, index) => (
-                                  <React.Fragment key={index}>
-                                    <div className="row">
-                                      <div className="col-md-4 mb-4">
-                                        <MyTextInput
-                                          id={`certificates[${index}].issuerInstitution`}
-                                          name={`certificates[${index}].issuerInstitution`}
-                                          type="text"
-                                          //   isDisabled={apply ? true : false}
-                                          className="form-control"
-                                          placeholder="Sertifikati verən qurum"
-                                          label={"Sertifikati verən qurum"}
-                                        />
-                                      </div>
-                                      <div className="col-md-4 mb-4">
-                                        <MyTextInput
-                                          id={`certificates[${index}].certificateName`}
-                                          name={`certificates[${index}].certificateName`}
-                                          type="text"
-                                          //   isDisabled={apply ? true : false}
-                                          className="form-control"
-                                          placeholder="Sertifikatın adı, növü"
-                                          label={"Sertifikatın adı, növü"}
-                                        />
-                                      </div>
-                                      <div className="col-md-4 mb-4">
-                                        <MyTextInput
-                                          id={`certificates[${index}].certificationDate`}
-                                          name={`certificates[${index}].certificationDate`}
-                                          type="date"
-                                          //   isDisabled={apply ? true : false}
-                                          className="form-control"
-                                          placeholder="Sertifikatın verilmə tarixi"
-                                          label={"Sertifikatın verilmə tarixi"}
-                                        />
-                                      </div>
-                                    </div>
-                                  </React.Fragment>
-                                ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="card">
-                          <div className="card-header" id="hd-performance-3">
-                            <div className="mb-0">
-                              <div
-                                className=" collapsed"
-                                data-toggle="collapse"
-                                role="navigation"
-                                data-target="#collapse-hd-performance-3"
-                                aria-expanded="false"
-                                aria-controls="collapse-hd-performance-3"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width={24}
-                                  height={24}
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className="feather feather-help-circle"
-                                >
-                                  <circle cx={12} cy={12} r={10} />
-                                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                                  <line x1={12} y1={17} x2={12} y2={17} />
-                                </svg>
-                                Digər
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            id="collapse-hd-performance-3"
-                            className="collapse"
-                            aria-labelledby="hd-performance-3"
-                            data-parent="#hd-statistics"
-                          >
-                            <div className="card-body">
-                              <div className="row">
-                                <div className="col-md-12 mb-4">
-                                  <MySearchableSelect
-                                    id="languageSkills"
-                                    name="languageSkills"
-                                    type="text"
-                                    options={languageKnowledgeOptions}
-                                    // isMulti
-                                    //   isDisabled={apply ? true : false}
-                                    placeholder="Dil bilikləri"
-                                    label={"Dil bilikləri *"}
-                                  />
-                                </div>
-                                <div className="col-md-12 mb-4">
-                                  <MyTextInput
-                                    id="otherWorkplace"
-                                    name="otherWorkplace"
-                                    type="text"
-                                    //   isDisabled={apply ? true : false}
-                                    className="form-control"
-                                    placeholder="Mediatorluqla yanaşı hazırda işlədiyi yer"
-                                    label={
-                                      "Mediatorluqla yanaşı hazırda işlədiyi yer"
-                                    }
-                                  />
-                                </div>
-                                <div className="col-md-12 mb-4">
-                                  <MyTextInput
-                                    id="otherPosition"
-                                    name="otherPosition"
-                                    type="text"
-                                    //   isDisabled={apply ? true : false}
-                                    className="form-control"
-                                    placeholder="Vəzifə"
-                                    label={"Vəzifə"}
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
                         <div className="card">
                           <div className="card-header" id="hd-performance-2">
                             <div className="mb-0">
@@ -963,6 +822,250 @@ export default function FormPage(form) {
                         </div>
 
                         <div className="card">
+                          <div className="card-header" id="hd-statistics-3">
+                            <div className="mb-0">
+                              <div
+                                className="collapsed"
+                                data-toggle="collapse"
+                                role="navigation"
+                                data-target="#collapse-hd-statistics-3"
+                                aria-expanded="false"
+                                aria-controls="collapse-hd-statistics-3"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="feather feather-help-circle"
+                                >
+                                  <circle cx={12} cy={12} r={10} />
+                                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                                  <line x1={12} y1={17} x2={12} y2={17} />
+                                </svg>
+                                Sertifikat barədə məlumatlar
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            id="collapse-hd-statistics-3"
+                            className="collapse"
+                            aria-labelledby="hd-statistics-3"
+                            data-parent="#hd-statistics"
+                            style={{}}
+                          >
+                            <div className="card-body">
+                              <div className="row mb-4">
+                                <div className="col-md-2 offset-10 text-right">
+                                  <div className="icon-container">
+                                    <button
+                                      title="Sertifikat əlavə et"
+                                      type="button"
+                                      className="close"
+                                      onClick={() => handleAddCertificate()}
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width={24}
+                                        height={24}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="feather feather-plus-circle"
+                                      >
+                                        <circle cx={12} cy={12} r={10} />
+                                        <line x1={12} y1={8} x2={12} y2={16} />
+                                        <line x1={8} y1={12} x2={16} y2={12} />
+                                      </svg>
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveCertificate()}
+                                      className="close"
+                                      title="Sertifikat sil"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width={24}
+                                        height={24}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth={2}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="feather feather-minus-circle"
+                                      >
+                                        <circle cx={12} cy={12} r={10} />
+                                        <line x1={8} y1={12} x2={16} y2={12} />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              {certificate &&
+                                certificate.map((certi, index) => (
+                                  <React.Fragment key={index}>
+                                    <div className="row">
+                                      <div className="col-md-3 mb-4">
+                                        <MyTextInput
+                                          id={`certificates[${index}].issuerInstitution`}
+                                          name={`certificates[${index}].issuerInstitution`}
+                                          type="text"
+                                          //   isDisabled={apply ? true : false}
+                                          className="form-control"
+                                          placeholder="Sertifikati verən qurum"
+                                          label={"Sertifikati verən qurum"}
+                                        />
+                                      </div>
+                                      <div className="col-md-3 mb-4">
+                                        <MyTextInput
+                                          id={`certificates[${index}].certificateName`}
+                                          name={`certificates[${index}].certificateName`}
+                                          type="text"
+                                          //   isDisabled={apply ? true : false}
+                                          className="form-control"
+                                          placeholder="Sertifikatın adı, növü"
+                                          label={"Sertifikatın adı, növü"}
+                                        />
+                                      </div>
+                                      <div className="col-md-3 mb-4">
+                                        <MyTextInput
+                                          id={`certificates[${index}].certificationDate`}
+                                          name={`certificates[${index}].certificationDate`}
+                                          type="date"
+                                          //   isDisabled={apply ? true : false}
+                                          className="form-control"
+                                          placeholder="Verilmə tarixi"
+                                          label={"Verilmə tarixi"}
+                                        />
+                                      </div>
+                                      <div className="col-md-3 mb-4">
+                                        <label
+                                          htmlFor={`certificates[${index}].imageData`}
+                                        >
+                                          Sertifikatı yüklə (jpg,png,pdf)
+                                        </label>
+                                        <input
+                                          id={`certificates[${index}].imageData`}
+                                          name={`certificates[${index}].imageData`}
+                                          type="file"
+                                          accept="image/jpg,image/png,application/pdf"
+                                          onChange={async (e) => {
+                                            // uploadImage(e);
+                                            const base64 = await convertBase64(
+                                              e.target.files[0]
+                                            );
+                                            setFieldValue(
+                                              `certificates[${index}].imageData`,
+                                              base64
+                                            );
+                                          }}
+                                          //   isDisabled={apply ? true : false}
+                                          className="form-control"
+                                          placeholder="Sertifikat"
+                                          label={"Sertifikat"}
+                                        />
+                                        <div className="invalid-feedback">{baseImageErr && baseImageErr}</div>
+                                      </div>
+                                    </div>
+                                    {console.log(values.certificates)}
+                                  </React.Fragment>
+                                ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="card">
+                          <div className="card-header" id="hd-performance-3">
+                            <div className="mb-0">
+                              <div
+                                className=" collapsed"
+                                data-toggle="collapse"
+                                role="navigation"
+                                data-target="#collapse-hd-performance-3"
+                                aria-expanded="false"
+                                aria-controls="collapse-hd-performance-3"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width={24}
+                                  height={24}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth={2}
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className="feather feather-help-circle"
+                                >
+                                  <circle cx={12} cy={12} r={10} />
+                                  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                                  <line x1={12} y1={17} x2={12} y2={17} />
+                                </svg>
+                                Digər
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            id="collapse-hd-performance-3"
+                            className="collapse"
+                            aria-labelledby="hd-performance-3"
+                            data-parent="#hd-statistics"
+                          >
+                            <div className="card-body">
+                              <div className="row">
+                                <div className="col-md-12 mb-4">
+                                  <MySearchableSelect
+                                    id="languageSkills"
+                                    name="languageSkills"
+                                    type="text"
+                                    isMulti
+                                    options={languageKnowledgeOptions}
+                                    // isMulti
+                                    //   isDisabled={apply ? true : false}
+                                    placeholder="Dil bilikləri"
+                                    label={"Dil bilikləri *"}
+                                  />
+                                </div>
+                                <div className="col-md-12 mb-4">
+                                  <MyTextInput
+                                    id="otherWorkplace"
+                                    name="otherWorkplace"
+                                    type="text"
+                                    //   isDisabled={apply ? true : false}
+                                    className="form-control"
+                                    placeholder="Mediatorluqla yanaşı hazırda işlədiyi yer*"
+                                    label={
+                                      "Mediatorluqla yanaşı hazırda işlədiyi yer*"
+                                    }
+                                  />
+                                </div>
+                                <div className="col-md-12 mb-4">
+                                  <MyTextInput
+                                    id="otherPosition"
+                                    name="otherPosition"
+                                    type="text"
+                                    //   isDisabled={apply ? true : false}
+                                    className="form-control"
+                                    placeholder="Vəzifə"
+                                    label={"Vəzifə"}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="card">
                           <div className="card-header" id="hd-performance-1">
                             <div className="mb-0">
                               <div
@@ -1092,7 +1195,7 @@ export default function FormPage(form) {
                                 social.map((soci, index) => (
                                   <React.Fragment key={index}>
                                     <div className="row">
-                                      <div className="col-md-6 mb-4">
+                                      <div className="col-md-3 mb-4">
                                         <MySearchableSelect
                                           id={`mediatrsSocialMedias[${index}].socialMediaId`}
                                           name={`mediatrsSocialMedias[${index}].socialMediaId`}
@@ -1104,7 +1207,7 @@ export default function FormPage(form) {
                                           label={"Social media hesabı *"}
                                         />
                                       </div>
-                                      <div className="col-md-6 mb-4">
+                                      <div className="col-md-9 mb-4">
                                         <MyTextInput
                                           id={`mediatrsSocialMedias[${index}].linkToPage`}
                                           name={`mediatrsSocialMedias[${index}].linkToPage`}
@@ -1120,7 +1223,6 @@ export default function FormPage(form) {
                                     </div>
                                   </React.Fragment>
                                 ))}
-                              {console.log(values)}
                             </div>
                           </div>
                         </div>
@@ -1128,19 +1230,18 @@ export default function FormPage(form) {
                     </div>
                   </div>
                 </div>
-              <div className="row">
-                <div className="col-md-12">
-                <button
-                  disabled={!isValid || !dirty || isSubmitting}
-                  type="submit"
-                  // name="time"
-                  className="btn btn-primary float-right   btn-lg"
-                >
-                  Əlavə et
-                </button>
+                <div className="row">
+                  <div className="col-md-12">
+                    <button
+                      disabled={!isValid || !dirty || isSubmitting}
+                      type="submit"
+                      // name="time"
+                      className="btn btn-primary float-right   btn-lg"
+                    >
+                      Göndər
+                    </button>
+                  </div>
                 </div>
-              </div>
-
               </div>
             </div>
           </Form>

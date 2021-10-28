@@ -47,7 +47,7 @@ function App() {
               {/* BEGIN PAGE CONTENT */}
               <div id="content" className="main-content">
 
-                <Route exact path="dashboard/apply" component={ApplyPage} />
+                <Route exact path="/dashboard/apply" component={ApplyPage} />
 
                 <Footer />
               </div>

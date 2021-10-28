@@ -300,7 +300,7 @@ export function loadPrint(data) {
         const err = getState().async.error;
 
         if (loadedPrint) {
-          window.open(`http://85.132.27.90:8080/${loadedPrint}`);
+          window.open(`http://94.20.62.144:8080/${loadedPrint}`);
           // console.log(`http://172.16.2.45/${loadedPrint}`)
           // // return <Redirect to={`http://172.16.2.45/${print}`} />;
         } else {

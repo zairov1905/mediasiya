@@ -69,7 +69,7 @@ export default function Sidebar() {
 
           <li className="menu">
             <NavLink
-              to="/apply"
+              to="/dashboard/apply"
               activeStyle={{
                 background: "#bfc9d4",
                 boxShadow:
