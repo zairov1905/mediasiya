@@ -1,4 +1,5 @@
 import {
+  CREATE_MEDIATR,
   FETCH_DISTRICT,
   FETCH_INSTITUTION,
   FETCH_OFFICE,
@@ -14,13 +15,24 @@ const initialState = {
   socialMedias: [],
   offices: [],
   person: [],
+  mediatrs:[],
+  message:null
 };
 
 export default function formReducer(
   state = initialState,
-  { type, payload, totalCount }
+  { type, payload, totalCount, message }
 ) {
   switch (type) {
+    case CREATE_MEDIATR:
+      return {
+        ...state,
+        mediatrs: payload,
+        message:message,
+        totalCount: totalCount,
+
+      };
+
     case FETCH_PROFESSION:
       return {
         ...state,

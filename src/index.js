@@ -8,7 +8,7 @@ import configureStore from './app/store/configureStore';
 import reportWebVitals from './reportWebVitals';
 import axios from 'axios';
 
-axios.defaults.baseURL = "http://94.20.62.144:8080/api/";
+axios.defaults.baseURL = "http://muraciet.mediasiya.gov.az:8080/api/";
 
 const store =  configureStore();
 const rootEl = document.getElementById("root");

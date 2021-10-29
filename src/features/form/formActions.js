@@ -14,9 +14,9 @@ import {
   FETCH_PROFESSION,
   FETCH_SOCIAL_MEDIA,
 } from "./formConstants";
-export function createMediatr(formData) {
+export function createMediatr(history,formData) {
   return async function (dispatch) {
-    dispatch(asyncActionStart());
+    dispatch(asyncActionStart("createMediatr"));
     await axios
       .post(`/${"Mediatr/new"}`, formData,
       // {
@@ -24,14 +24,14 @@ export function createMediatr(formData) {
       // }
       )
       .then((data) => {
-        dispatch({ type: CREATE_MEDIATR, payload: data.data.data });
+        dispatch({ type: CREATE_MEDIATR, payload: data.data.data, message:data.data.message });
         dispatch(asyncActionFinish());
-        toast.success("Müraciətiniz uğurla qeydə alındı");
+        toast.success(data.data.message);
       })
-      // .catch((err) => {
-      //   dispatch(asyncActionError(err.message));
-      //   toast.info("Xəta baş verdi, yenidən cəhd edin.");
-      // });
+      .catch((err) => {
+        dispatch(asyncActionError(err.Message));
+        toast.info("Xəta baş verdi, yenidən cəhd edin.");
+      });
   };
 }
 export function loadProfession(data) {
@@ -80,7 +80,7 @@ export function loadDistrict(data) {
   return async function (dispatch) {
     dispatch(asyncActionStart());
     await axios
-      .get(`/${"Data/districts"}`, {
+      .get(`/${"Data/child-districts"}`, {
         params: { ...data },
       })
       .then((datas) => {
@@ -145,8 +145,9 @@ export function getPerson(getPerson) {
     await axios
       .post(`/${"Data/person/by-id-card"}`, getPerson)
       .then((data) => {
-         console.log(data.data.data,'imagePerson')
-        
+        if(data.data.Succeeded === false){
+        toast.info(data.data.Message);
+        }
         dispatch({ type: FETCH_PERSON, payload: data.data.data });
         dispatch(asyncActionFinish());
         // toast.success("Daxil etdiyiniz şəxsin məlumatları müvafiq xanalara dolduruldu.");

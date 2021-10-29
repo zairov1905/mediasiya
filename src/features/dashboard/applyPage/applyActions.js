@@ -31,8 +31,6 @@ export function loadApply(data, type) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas.data.data, " All");
-
         dispatch({
           type: FETCH_APPLY,
           payload: datas.data.data.data,
@@ -48,7 +46,6 @@ export function loadApply(data, type) {
   };
 }
 export function listenToApply(data) {
-  // console.log(data)
   return async function (dispatch) {
     dispatch(asyncActionStart("listenApply"));
     await axios
@@ -56,7 +53,6 @@ export function listenToApply(data) {
         params: { ...data },
       })
       .then((datas) => {
-        // console.log(datas.data.data, " 1 MURACIET");
         dispatch({
           type: LISTEN_APPLY,
           payload: datas.data.data,
@@ -71,7 +67,6 @@ export function listenToApply(data) {
   };
 }
 export function rejectApply(data, text) {
-  // console.log(data)
   return async function (dispatch) {
     dispatch(asyncActionStart("reject"));
     await axios
@@ -79,7 +74,6 @@ export function rejectApply(data, text) {
         // params: { body:text },
       })
       .then((datas) => {
-        // console.log(datas.data.data, " 1 MURACIET");
         dispatch({
           type: REJECT_APPLY,
           payload: datas.data.data,
@@ -108,7 +102,6 @@ export function approveApply(data) {
         params: { ...data },
       })
       .then((datas) => {
-        // console.log(datas.message, "1 Tesdiqle");
         dispatch({
           type: APPROVE_APPLY,
           payload: datas.data.data,
@@ -139,7 +132,6 @@ export function assignMediator(requestId, mediatrId) {
     await axios
       .get(url)
       .then((datas) => {
-        console.log(datas.data, "1 Tesdiqle");
         dispatch({
           type: ASSING_MEADIATR,
           payload: datas.data.data,
@@ -161,7 +153,7 @@ export function loadDistrict(data) {
   return async function (dispatch) {
     dispatch(asyncActionStart());
     await axios
-      .get(`/${"Data/districts"}`, {
+      .get(`/${"Data/child-districts"}`, {
         params: { ...data },
       })
       .then((datas) => {
@@ -243,7 +235,6 @@ export function loadMediatr(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas);
         dispatch({
           type: FETCH_MEDIATOR,
           payload: datas.data.data,
@@ -300,11 +291,9 @@ export function loadPrint(data) {
         const err = getState().async.error;
 
         if (loadedPrint) {
-          window.open(`http://94.20.62.144:8080/${loadedPrint}`);
-          // console.log(`http://172.16.2.45/${loadedPrint}`)
+          window.open(`http://muraciet.mediasiya.gov.az:8080/${loadedPrint}`);
           // // return <Redirect to={`http://172.16.2.45/${print}`} />;
         } else {
-          // console.log(error)
           toast.info(`${err}`);
         }
       })
