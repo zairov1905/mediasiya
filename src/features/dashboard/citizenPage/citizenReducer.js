@@ -4,13 +4,12 @@ import {
   FETCH_APPLY_FOR_CITIZEN,
   LISTEN_APPLY_FOR_CITIZEN,
   UPDATE_APPLY_FOR_CITIZEN,
-
 } from "./citizenConstants";
 
 const initialState = {
-  applys: [],
-  listenedApply: [],
-
+  applysOfCitizen: [],
+  listenApplyOfCitizen: [],
+  totalCount:null
 };
 
 export default function citizenReducer(
@@ -21,13 +20,14 @@ export default function citizenReducer(
     case CREATE_APPLY_FOR_CITIZEN:
       return {
         ...state,
-        applys: [...state.applys, payload],
+        applysOfCitizen: [payload, ...state.applysOfCitizen],
+        totalCount: state.totalCount + 1,
       };
     case UPDATE_APPLY_FOR_CITIZEN:
       return {
         ...state,
-        applys: [
-          ...state.applys.filter((apply) => apply.id !== payload.id),
+        applysOfCitizen: [
+          ...state.applysOfCitizen.filter((apply) => apply.id !== payload.id),
           payload,
         ],
       };
@@ -35,18 +35,20 @@ export default function citizenReducer(
     case DELETE_APPLY_FOR_CITIZEN:
       return {
         ...state,
-        applys: [...state.applys.filter((apply) => apply.id !== payload)],
+        applysOfCitizen: [
+          ...state.applysOfCitizen.filter((apply) => apply.id !== payload),
+        ],
       };
     case FETCH_APPLY_FOR_CITIZEN:
       return {
         ...state,
-        applys: payload,
+        applysOfCitizen: payload,
         totalCount: totalCount,
       };
     case LISTEN_APPLY_FOR_CITIZEN:
       return {
         ...state,
-        listenedApply: payload,
+        listenApplyOfCitizen: payload,
         totalCount: totalCount,
       };
     default:

@@ -2,11 +2,15 @@ import React from "react";
 import { useSelector } from "react-redux";
 import ApplyPageModal from "../../../features/dashboard/applyPage/ApplyPageModal";
 import SelectMediatorModal from "../../../features/dashboard/applyPage/SelectMediatorModal";
+import AddModalForCitizen from "../../../features/dashboard/citizenPage/AddModalForCitizen";
+import ViewModalForCitizen from "../../../features/dashboard/citizenPage/ViewModalForCitizen";
 
 export default function ModalManager() {
   const modalLookup = {
     ApplyPageModal,
-    SelectMediatorModal
+    SelectMediatorModal,
+    AddModalForCitizen,
+    ViewModalForCitizen
   };
   
   

@@ -11,7 +11,11 @@ import ModalManager from "../common/modal/ModalManager";
 import React from "react";
 import ApplyPage from "../../features/dashboard/applyPage/ApplyPage";
 import FormPage from "../../features/form/FormPage";
+import { useSelector } from "react-redux";
+import ApplyPageForCitizen from "../../features/dashboard/citizenPage/ApplyPageForCitizen";
 function App() {
+  const auth = useSelector((state) => state.auth);
+  
   // const { initialized } = useSelector((state) => state.async);
   // useScript("../../../public/assets/js/app.js")
   // useScript("../../../public/assets/js/custom.js")
@@ -21,6 +25,16 @@ function App() {
   //   </div></div></div>
   //  )
 
+    let role
+  switch (auth.currentUser && auth.currentUser.role) {
+    case "Citizen":
+      role = ApplyPageForCitizen
+      
+      break;
+  
+    default:
+      break;
+  }
   return (
     <React.Fragment>
       <ToastContainer position="bottom-right" />
@@ -48,7 +62,7 @@ function App() {
               {/* BEGIN PAGE CONTENT */}
               <div id="content" className="main-content">
 
-                <Route exact path="/dashboard/apply" component={ApplyPage} />
+                <Route exact path="/dashboard/apply" component={role} />
 
                 <Footer />
               </div>

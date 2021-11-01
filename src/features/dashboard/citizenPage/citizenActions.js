@@ -13,19 +13,19 @@ import {
   UPDATE_APPLY_FOR_CITIZEN,
 } from "./citizenConstants";
 const url = "customer";
-export function loadApply(data, type) {
-  return async function (dispatch, getState) {
-    let url = getState().auth.currentUser.role ? getState().auth.currentUser.role.toLowerCase():null;
+export function loadApply(data) {
+  return async function (dispatch) {
+    let url = "citizens"
     dispatch(asyncActionStart());
     await axios
-      .get(`/Request/${url}s/all`, {
+      .get(`/Request/${url}/all`, {
         params: { ...data },
       })
       .then((datas) => {
         dispatch({
           type: FETCH_APPLY_FOR_CITIZEN,
           payload: datas.data.data.data,
-          totalCount: datas.data.totalCount,
+          totalCount: datas.data.data.totalCount,
         });
         // dispatch(loadApply())
         dispatch(asyncActionFinish());
@@ -47,7 +47,7 @@ export function listenToApply(data) {
         dispatch({
           type: LISTEN_APPLY_FOR_CITIZEN,
           payload: datas.data.data,
-          totalCount: datas.data.totalCount,
+          totalCount: datas.data.data.totalCount,
         });
         dispatch(asyncActionFinish());
       })
@@ -65,10 +65,13 @@ export function createApply(createdData) {
         withCredentials: true,
       })
       .then((data) => {
-        dispatch({ type: CREATE_APPLY_FOR_CITIZEN, payload: data.data.data });
-        dispatch(loadApply());
-        dispatch(asyncActionFinish());
-        toast.success("Müraciətiniz uğurla qeydə alındı");
+        if (data.data.succeeded === true) {
+          dispatch({ type: CREATE_APPLY_FOR_CITIZEN, payload: data.data.data });
+          dispatch(asyncActionFinish());
+          toast.success(data.data.message);
+
+        }
+
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
