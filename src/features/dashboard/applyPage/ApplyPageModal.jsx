@@ -110,7 +110,7 @@ export default function ApplyPageModal({ apply }) {
   ];
   const genderOptions = [
     { label: "Kişi", value: parseInt(1) },
-    { label: "Qadın", value:parseInt (20) },
+    { label: "Qadın", value:parseInt (2) },
   ];
   const datesOptions = [
     { label: "9:00 - 9:30", value: "9:00 - 9:30" },

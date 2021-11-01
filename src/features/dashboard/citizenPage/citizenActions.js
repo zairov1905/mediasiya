@@ -38,12 +38,13 @@ export function loadApply(data) {
 }
 export function listenToApply(data) {
   return async function (dispatch) {
-    dispatch(asyncActionStart("listenApply"));
+    dispatch(asyncActionStart("listenToApply"));
     await axios
       .get(`/Request/${data}`, {
         params: { ...data },
       })
       .then((datas) => {
+        console.log(datas)
         dispatch({
           type: LISTEN_APPLY_FOR_CITIZEN,
           payload: datas.data.data,
