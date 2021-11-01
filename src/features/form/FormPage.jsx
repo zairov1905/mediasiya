@@ -219,7 +219,10 @@ export default function FormPage(form) {
   };
 
   const validationSchema = Yup.object({
-    pin: Yup.string().required("Bu xana boş qoyula bilməz"),
+    pin: Yup.string()
+      .min(5, "FİN düzgün daxil edilməyib")
+      .max(7, "FİN düzgün daxil edilməyib")
+      .required("Bu xana boş qoyula bilməz"),
     docSeries: Yup.string().required("Bu xana boş qoyula bilməz"),
     docNumber: Yup.string().required("Bu xana boş qoyula bilməz"),
     actingAddress: Yup.string().required("Bu xana boş qoyula bilməz"),
@@ -227,10 +230,15 @@ export default function FormPage(form) {
     languageSkills: Yup.array()
       .min(1, "Bu xana boş qoyula bilməz")
       .required("Bu xana boş qoyula bilməz"),
-    prefix:Yup.string().required("Bu xana boş qoyula bilməz"),
-    voen: Yup.string().required("Bu xana boş qoyula bilməz"),
+    prefix: Yup.string().required("Bu xana boş qoyula bilməz"),
+    voen: Yup.string()
+      .min(10, "VÖEN düzgün daxil edilməyib")
+      .max(10, "VÖEN düzgün daxil edilməyib")
+      .required("Bu xana boş qoyula bilməz"),
     registryNumber: Yup.string().required("Bu xana boş qoyula bilməz"),
-    email: Yup.string().email("E-mail formatı daxil edin").required("Bu xana boş qoyula bilməz"),
+    email: Yup.string()
+      .email("Elektron poçt ünvanı düzgün daxil edilməyib")
+      .required("Bu xana boş qoyula bilməz"),
     phone: Yup.string().required("Bu xana boş qoyula bilməz"),
     otherWorkplace: Yup.string().required("Bu xana boş qoyula bilməz"),
     otherPosition: Yup.string().required("Bu xana boş qoyula bilməz"),
@@ -288,7 +296,7 @@ export default function FormPage(form) {
               dateOfBirth: forms.person && forms.person.dateOfBirth,
 
               imagePath: forms.person && forms.person.imagePath,
-              pin: values.pin,
+              pin: values.pin.toUpperCase(),
               docSeries: values.docSeries,
               docNumber: values.docNumber,
               regAddress: forms.person && forms.person.regAddress,
@@ -407,6 +415,7 @@ export default function FormPage(form) {
                                   </div>
                                   <div className="col-md-4">
                                     <MyTextInput
+                                      style={{ textTransform: "uppercase" }}
                                       id="pin"
                                       name="pin"
                                       type="text"
@@ -706,10 +715,11 @@ export default function FormPage(form) {
                                     />
                                   </div>
                                   <div className="col-md-12 mb-4">
-                                    <MyTextInput
+                                    <MyTextInputWithMask
                                       id="registryNumber"
                                       name="registryNumber"
                                       type="text"
+                                      mask="M-99999"
                                       //   isDisabled={apply ? true : false}
                                       className="form-control"
                                       placeholder="Reyestr nömrəsi *"
@@ -717,7 +727,8 @@ export default function FormPage(form) {
                                     />
                                   </div>
                                   <div className="col-md-12 mb-4">
-                                    <MyTextInput
+                                    <MyTextInputWithMask
+                                      mask="9999999999"
                                       id="voen"
                                       name="voen"
                                       type="text"
