@@ -448,8 +448,10 @@ export default function AddModalForCitizen() {
                                       values.courtId
                                     );
                                   }}
+                                
                                   className="custom-control-input"
                                 />
+                                {console.log(values.districtIds)}
                                 <label
                                   className="custom-control-label"
                                   htmlFor="hRadio1"

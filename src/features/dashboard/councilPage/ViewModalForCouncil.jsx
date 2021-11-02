@@ -7,6 +7,7 @@ import MyTextInput from "../../../app/common/form/MyTextInput";
 import { Form, Formik } from "formik";
 import { listenToApply } from "./councilActions";
 import { closeModal } from "../../../app/common/modal/modalReducer";
+import MySearchableSelect from "../../../app/common/form/MySearchableSelect";
 import MyTextArea from "../../../app/common/form/MyTextArea";
 
 import ModalWrapper from "../../../app/common/modal/ModalWrapper";
@@ -15,8 +16,8 @@ export default function ViewModalForCouncil({ apply }) {
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
   const async = useSelector((state) => state.async);
-  const { listenApplyOfCouncil } = useSelector((state) => state.council);
-
+  const { listenedApplyForCouncil } = useSelector((state) => state.council);
+  
   useEffect(() => {
     if (modal) {
       $("#closeModal").click();
@@ -27,25 +28,24 @@ export default function ViewModalForCouncil({ apply }) {
     apply && (await dispatch(listenToApply(apply.id)));
   }, [dispatch]);
 
-  console.log(listenApplyOfCouncil.districts);
   const initialValues = {
     professionId:
-      listenApplyOfCouncil.profession &&
-      listenApplyOfCouncil.profession.professionName,
+      listenedApplyForCouncil.profession &&
+      listenedApplyForCouncil.profession.professionName,
     districtIds:
-      listenApplyOfCouncil.districts &&
-      listenApplyOfCouncil.districts.map(
+      listenedApplyForCouncil.districts &&
+      listenedApplyForCouncil.districts.map(
         (district) => ` ${district.districtName}`
       ),
-    courtId: listenApplyOfCouncil.court && listenApplyOfCouncil.court.courtName,
+    courtId: listenedApplyForCouncil.court && listenedApplyForCouncil.court.courtName,
 
-    // mediatrIds: listenApplyOfCouncil.court && listenApplyOfCouncil.court.map(court=> ` ${court.courtName}`  ),
+    // mediatrIds: listenedApplyForCouncil.court && listenedApplyForCouncil.court.map(court=> ` ${court.courtName}`  ),
     officeId: "",
-    sides: listenApplyOfCouncil.sides && listenApplyOfCouncil.sides,
-    conflictInfo:  listenApplyOfCouncil.conflictInfo && listenApplyOfCouncil.conflictInfo,
-    courtCaseInfo: listenApplyOfCouncil.courtCaseInfo && listenApplyOfCouncil.courtCaseInfo,
-    prefferedSessionTime: listenApplyOfCouncil.prefferedSessionTime && listenApplyOfCouncil.prefferedSessionTime,
-    requiredLangs: listenApplyOfCouncil.requiredLangs && listenApplyOfCouncil.requiredLangs,
+    sides: listenedApplyForCouncil.sides && listenedApplyForCouncil.sides,
+    conflictInfo:  listenedApplyForCouncil.conflictInfo && listenedApplyForCouncil.conflictInfo,
+    courtCaseInfo: listenedApplyForCouncil.courtCaseInfo && listenedApplyForCouncil.courtCaseInfo,
+    prefferedSessionTime: listenedApplyForCouncil.prefferedSessionTime && listenedApplyForCouncil.prefferedSessionTime,
+    requiredLangs: listenedApplyForCouncil.requiredLangs && listenedApplyForCouncil.requiredLangs,
     caseInAction: true,
     // mediatorNames: [],
   };
@@ -236,9 +236,9 @@ export default function ViewModalForCouncil({ apply }) {
                     >
                       <div className="card-body">
                         <ul className="list-group list-group-media">
-                          {listenApplyOfCouncil.mediatrs &&
-                            listenApplyOfCouncil.mediatrs.map((mediatr) => (
-                              <li className="list-group-item list-group-item-action">
+                          {listenedApplyForCouncil.mediatrs &&
+                            listenedApplyForCouncil.mediatrs.map((mediatr,index) => (
+                              <li key={index} className="list-group-item list-group-item-action">
                                 <div className="media">
                                   <div className="mr-3">
                                     <img
@@ -317,7 +317,7 @@ export default function ViewModalForCouncil({ apply }) {
                       data-parent="#iconsAccordion"
                     >
                       <div className="card-body">
-                        {!listenApplyOfCouncil.sides && (
+                        {!listenedApplyForCouncil.sides && (
                           <div className="row">
                             <div className="col-md-12">
                               <h2 className="text-center">
@@ -326,8 +326,8 @@ export default function ViewModalForCouncil({ apply }) {
                             </div>
                           </div>
                         )}
-                        {listenApplyOfCouncil.sides &&
-                          listenApplyOfCouncil.sides.map((side, index) => (
+                        {listenedApplyForCouncil.sides &&
+                          listenedApplyForCouncil.sides.map((side, index) => (
                             <React.Fragment key={index}>
                               <div className="row">
                                 <div className="col-xl-12 col-md-12 col-sm-12 col-12">

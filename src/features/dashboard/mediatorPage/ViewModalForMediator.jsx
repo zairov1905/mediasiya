@@ -250,8 +250,8 @@ export default function ViewModalForMediator({ apply }) {
                       <div className="card-body">
                         <ul className="list-group list-group-media">
                           {listenedApplyForMediator.mediatrs &&
-                            listenedApplyForMediator.mediatrs.map((mediatr) => (
-                              <li className="list-group-item list-group-item-action">
+                            listenedApplyForMediator.mediatrs.map((mediatr,index) => (
+                              <li key={index} className="list-group-item list-group-item-action">
                                 <div className="media">
                                   <div className="mr-3">
                                     <img

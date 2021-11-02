@@ -14,9 +14,10 @@ import FormPage from "../../features/form/FormPage";
 import { useSelector } from "react-redux";
 import ApplyPageForCitizen from "../../features/dashboard/citizenPage/ApplyPageForCitizen";
 import ApplyPageForMediator from "../../features/dashboard/mediatorPage/ApplyPageForMediator";
+import ApplyPageForCouncil from "../../features/dashboard/councilPage/ApplyPageForCouncil";
 function App() {
   const auth = useSelector((state) => state.auth);
-  
+
   // const { initialized } = useSelector((state) => state.async);
   // useScript("../../../public/assets/js/app.js")
   // useScript("../../../public/assets/js/custom.js")
@@ -26,7 +27,7 @@ function App() {
   //   </div></div></div>
   //  )
 
-    let role
+  let role;
   switch (auth.currentUser && auth.currentUser.role) {
     case "Citizen":
       role = ApplyPageForCitizen;
@@ -35,7 +36,8 @@ function App() {
       role = ApplyPageForMediator;
 
       break;
-  
+    case "Council":
+      role = ApplyPageForCouncil;
     default:
       break;
   }
@@ -47,8 +49,6 @@ function App() {
       <Route exact path="/" component={Login} />
       <Route exact path="/form" component={FormPage} />
 
-
-      
       <Route
         path={"/dashboard/(.+)"}
         render={() => (

@@ -7,10 +7,10 @@ import {
 } from "../../../app/async/asyncReducer";
 import {
   ASSIGN_MEDIATOR_FOR_COUNCIL,
-  FETCH_APPLY_FOR_MEDIATOR,
-  LISTEN_APPLY_FOR_MEDIATOR,
+  FETCH_APPLY_FOR_COUNCIL,
+  LISTEN_APPLY_FOR_COUNCIL,
 } from "./councilConstants";
-const url = "mediatrs";
+const url = "councils";
 export function loadApply(data, type) {
   return async function (dispatch, getState) {
     dispatch(asyncActionStart());
@@ -20,7 +20,7 @@ export function loadApply(data, type) {
       })
       .then((datas) => {
         dispatch({
-          type: FETCH_APPLY_FOR_MEDIATOR,
+          type: FETCH_APPLY_FOR_COUNCIL,
           payload: datas.data.data.data,
           totalCount: datas.data.data.totalCount,
         });
@@ -41,8 +41,9 @@ export function listenToApply(data) {
         params: { ...data },
       })
       .then((datas) => {
+        console.log(datas.data.data)
         dispatch({
-          type: LISTEN_APPLY_FOR_MEDIATOR,
+          type: LISTEN_APPLY_FOR_COUNCIL,
           payload: datas.data.data,
         });
         dispatch(asyncActionFinish());
@@ -53,15 +54,10 @@ export function listenToApply(data) {
       });
   };
 }
-export function assignMediator(requestId, mediatrId) {
+export function assignMediator(requestId) {
   return async function (dispatch) {
     dispatch(asyncActionStart("approve"));
-    let url;
-    if (!mediatrId) {
-      url = `/Request/assign-mediatr/${requestId}`;
-    } else {
-      url = `/Request/assign-mediatr/${requestId}/${mediatrId}`;
-    }
+    let url = `/Request/assign-mediatr/${requestId}`;
     await axios
       .get(url)
       .then((datas) => {
@@ -69,14 +65,12 @@ export function assignMediator(requestId, mediatrId) {
           type: ASSIGN_MEDIATOR_FOR_COUNCIL,
           payload: datas.data.data,
         });
-        toast.success(datas.data.totalCount);
-        dispatch(loadApply());
 
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
-        toast.info(err.message);
+        toast.info(err.Message);
       });
   };
 }
