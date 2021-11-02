@@ -30,7 +30,7 @@ export default function Sidebar() {
                 onClick={() => {
                   dispatch(
                     openModal({
-                      modalType: "ApplyPageModal",
+                      modalType: "ViewModalForCitizen",
                       modalProps: null,
                     })
                   );

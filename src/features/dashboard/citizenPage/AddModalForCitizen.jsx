@@ -12,8 +12,6 @@ import {
   // loadMediatr,
   // loadOffice,
   // loadProfession,
-
-
 } from "./citizenActions";
 import { closeModal } from "../../../app/common/modal/modalReducer";
 import MySearchableSelect from "../../../app/common/form/MySearchableSelect";
@@ -22,7 +20,14 @@ import MyTextArea from "../../../app/common/form/MyTextArea";
 import ModalWrapper from "../../../app/common/modal/ModalWrapper";
 import Button from "../../../app/common/modal/Button";
 import MyCheckbox from "../../../app/common/form/MyCheckbox";
-import { loadCourt, loadDistrict, loadMediatr, loadOffice, loadProfession } from "../applyPage/applyActions";
+import {
+  loadCourt,
+  loadDistrict,
+  loadMediatr,
+  loadOffice,
+  loadProfession,
+} from "../applyPage/applyActions";
+import MyTextInputWithMask from "../../../app/common/form/MyTextInputWithMask";
 export default function AddModalForCitizen() {
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
@@ -30,7 +35,6 @@ export default function AddModalForCitizen() {
 
   const async = useSelector((state) => state.async);
   const applys = useSelector((state) => state.applys);
-
 
   useEffect(() => {
     if (modal) {
@@ -101,7 +105,6 @@ export default function AddModalForCitizen() {
     { label: "17:00 - 17:30", value: "17:00 - 17:30" },
   ];
 
-
   // ADD sides
   const [sides, setSides] = useState([
     {
@@ -122,8 +125,13 @@ export default function AddModalForCitizen() {
     setSides([
       ...sides,
       {
-        fullName: "",
-        advocateFullName: "",
+        sideFirstName: "",
+        sideLastName: "",
+        sideMiddleName: "",
+        sideGender: "",
+        advocateFirstName: "",
+        advocateLastName: "",
+        advocateMiddleName: "",
         organizationName: "",
         address: "",
         phone: "",
@@ -154,7 +162,38 @@ export default function AddModalForCitizen() {
     caseInAction: true,
     mediatorNames: [],
   };
-  const validationSchema = Yup.object({});
+  const validationSchema = Yup.object({
+    professionId: Yup.string().required("Bu xana boş qoyula bilməz"),
+    districtIds: Yup.array()
+      .min(1, "Bu xana boş qoyula bilməz")
+      .required("Bu xana boş qoyula bilməz"),
+    courtId: Yup.string().required("Bu xana boş qoyula bilməz"),
+
+    // mediatrIds: [],
+    // officeId: "",
+    sides: Yup.array()
+      .of(
+        Yup.object().shape({
+          sideFirstName: Yup.string().required("Bu xana boş qoyula bilməz"),
+          sideLastName: Yup.string().required("Bu xana boş qoyula bilməz"),
+          sideMiddleName: Yup.string().required("Bu xana boş qoyula bilməz"),
+          sideGender: Yup.string().required("Bu xana boş qoyula bilməz"),
+          address:Yup.string().required("Bu xana boş qoyula bilməz"),
+          phone: Yup.string().required("Bu xana boş qoyula bilməz"),
+          email:Yup.string().email("Elektron poçt ünvanı düzgün daxil edilməyib"),
+
+
+
+        })
+      )
+      .required("Bu xana boş qoyula bilməz"),
+    conflictInfo: Yup.string().required("Bu xana boş qoyula bilməz"),
+    courtCaseInfo: Yup.string().required("Bu xana boş qoyula bilməz"),
+    // prefferedSessionTime: "",
+    // requiredLangs: "",
+    // caseInAction: true,
+    // mediatorNames: [],
+  });
   const onChangeProfId = async (profId, courtId) => {
     dispatch(loadMediatr({ professionId: profId, courtId: courtId }));
   };
@@ -376,51 +415,50 @@ export default function AddModalForCitizen() {
                       <div className="card-body">
                         <div className="row"></div>
                         <div className="row mb-4">
- 
-                            <div className="col-md-12">
-                              <div className="form-check mb-2">
-                                <div className="custom-control custom-radio classic-radio-info">
-                                  <input
-                                    type="radio"
-                                    id="hRadio2"
-                                    name="classicRadio"
-                                    onClick={() => setCheck("office")}
-                                    className="custom-control-input"
-                                  />
-                                  <label
-                                    className="custom-control-label"
-                                    htmlFor="hRadio2"
-                                  >
-                                    Mediasiya təşkilatları
-                                  </label>
-                                </div>
-                              </div>
-                              <div className="form-check mb-2">
-                                <div className="custom-control custom-radio classic-radio-info">
-                                  <input
-                                    type="radio"
-                                    id="hRadio1"
-                                    name="classicRadio"
-                                    onClick={() => {
-                                      setCheck("mediator");
-                                      onChangeProfId(
-                                        values.professionId,
-                                        values.courtId
-                                      );
-                                    }}
-                                    className="custom-control-input"
-                                  />
-                                  <label
-                                    className="custom-control-label"
-                                    htmlFor="hRadio1"
-                                  >
-                                    Fərdi qaydada fəaliyyət göstərən mediatorlar
-                                  </label>
-                                </div>
+                          <div className="col-md-12">
+                            <div className="form-check mb-2">
+                              <div className="custom-control custom-radio classic-radio-info">
+                                <input
+                                  type="radio"
+                                  id="hRadio2"
+                                  name="classicRadio"
+                                  onClick={() => setCheck("office")}
+                                  className="custom-control-input"
+                                />
+                                <label
+                                  className="custom-control-label"
+                                  htmlFor="hRadio2"
+                                >
+                                  Mediasiya təşkilatları
+                                </label>
                               </div>
                             </div>
+                            <div className="form-check mb-2">
+                              <div className="custom-control custom-radio classic-radio-info">
+                                <input
+                                  type="radio"
+                                  id="hRadio1"
+                                  name="classicRadio"
+                                  onClick={() => {
+                                    setCheck("mediator");
+                                    onChangeProfId(
+                                      values.professionId,
+                                      values.courtId
+                                    );
+                                  }}
+                                  className="custom-control-input"
+                                />
+                                <label
+                                  className="custom-control-label"
+                                  htmlFor="hRadio1"
+                                >
+                                  Fərdi qaydada fəaliyyət göstərən mediatorlar
+                                </label>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        {check === "office"  && (
+                        {check === "office" && (
                           <div className="row mb-4">
                             <div className="col-md-12">
                               <MySearchableSelect
@@ -524,7 +562,6 @@ export default function AddModalForCitizen() {
                                   ))}
                               </div>
                             </div>
-
                           </div>
                         )}
                       </div>
@@ -814,9 +851,11 @@ export default function AddModalForCitizen() {
                                       </div>
                                       <div className="row mb-4">
                                         <div className="col-md-6">
-                                          <MyTextInput
+                                          <MyTextInputWithMask
                                             id={`sides[${index}].phone`}
                                             name={`sides[${index}].phone`}
+                                            mask="999 999 99 99"
+
                                             type="text"
                                             className="form-control"
                                             label="Telefon"
