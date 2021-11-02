@@ -5,36 +5,21 @@ import * as Yup from "yup";
 // import ScriptTag from 'react-script-tag';
 import MyTextInput from "../../../app/common/form/MyTextInput";
 import { Form, Formik } from "formik";
-import {
-  createApply,
-  // loadCourt,
-  // loadDistrict,
-  // loadMediatr,
-  // loadOffice,
-  // loadProfession,
-} from "./citizenActions";
+import { listenToApply, approveApply, rejectApply } from "./mediatorActions";
 import { closeModal } from "../../../app/common/modal/modalReducer";
 import MySearchableSelect from "../../../app/common/form/MySearchableSelect";
 import MyTextArea from "../../../app/common/form/MyTextArea";
 
 import ModalWrapper from "../../../app/common/modal/ModalWrapper";
 import Button from "../../../app/common/modal/Button";
-import MyCheckbox from "../../../app/common/form/MyCheckbox";
-import {
-  loadCourt,
-  loadDistrict,
-  loadMediatr,
-  loadOffice,
-  loadProfession,
-} from "../applyPage/applyActions";
-import MyTextInputWithMask from "../../../app/common/form/MyTextInputWithMask";
-export default function AddModalForCitizen() {
+import { toast } from "react-toastify";
+
+export default function ViewModalForMediator({ apply }) {
   const dispatch = useDispatch();
   const [modal, setModal] = useState(false);
-  const [check, setCheck] = useState();
-
+  const [rejectForm, setRejectForm] = useState(false);
   const async = useSelector((state) => state.async);
-  const applys = useSelector((state) => state.applys);
+  const { listenedApplyForMediator } = useSelector((state) => state.mediator);
 
   useEffect(() => {
     if (modal) {
@@ -43,161 +28,41 @@ export default function AddModalForCitizen() {
   });
 
   useEffect(async () => {
-    dispatch(loadDistrict());
-    dispatch(loadCourt());
-    dispatch(loadProfession());
-    dispatch(loadMediatr());
-    dispatch(loadOffice());
+    apply && (await dispatch(listenToApply(apply.id)));
   }, [dispatch]);
 
-  const districtsOptions =
-    applys.districts &&
-    applys.districts.map((district) => {
-      return {
-        value: parseInt(district.id),
-        label: `${district.districtName}`,
-      };
-    });
-  const courtsOptions =
-    applys.courts &&
-    applys.courts.map((court) => {
-      return {
-        value: parseInt(court.id),
-        label: `${court.courtName}`,
-      };
-    });
-  const professionOptions =
-    applys.professions &&
-    applys.professions.map((profession) => {
-      return {
-        value: parseInt(profession.id),
-        label: `${profession.professionName}`,
-      };
-    });
-
-  const officeOptions =
-    applys.offices &&
-    applys.offices.map((office) => {
-      return {
-        value: parseInt(office.id),
-        label: `${office.officeName}`,
-      };
-    });
-
-  const languageKnowledgeOptions = [
-    { label: "Azərbaycan", value: "Azərbaycan" },
-    { label: "Rus", value: "Rus" },
-    { label: "İngilis", value: "İngilis" },
-  ];
-  const genderOptions = [
-    { label: "Kişi", value: parseInt(1) },
-    { label: "Qadın", value: parseInt(20) },
-  ];
-  const datesOptions = [
-    { label: "9:00 - 9:30", value: "9:00 - 9:30" },
-    { label: "10:00 - 10:30", value: "10:00 - 10:30" },
-    { label: "11:00 - 11:30", value: "11:00 - 11:30" },
-    { label: "12:00 - 12:30", value: "12:00 - 12:30" },
-    { label: "13:00 - 13:30", value: "13:00 - 13:30" },
-    { label: "14:00 - 14:30", value: "14:00 - 14:30" },
-    { label: "15:00 - 15:30", value: "15:00 - 15:30" },
-    { label: "16:00 - 16:30", value: "16:00 - 16:30" },
-    { label: "17:00 - 17:30", value: "17:00 - 17:30" },
-  ];
-
-  // ADD sides
-  const [sides, setSides] = useState([
-    {
-      sideFirstName: "",
-      sideLastName: "",
-      sideMiddleName: "",
-      sideGender: "",
-      advocateFirstName: "",
-      advocateLastName: "",
-      advocateMiddleName: "",
-      organizationName: "",
-      address: "",
-      phone: "",
-      email: "",
-    },
-  ]);
-  const handleAddSide = () => {
-    setSides([
-      ...sides,
-      {
-        sideFirstName: "",
-        sideLastName: "",
-        sideMiddleName: "",
-        sideGender: "",
-        advocateFirstName: "",
-        advocateLastName: "",
-        advocateMiddleName: "",
-        organizationName: "",
-        address: "",
-        phone: "",
-        email: "",
-      },
-    ]);
-  };
-  const handleRemoveSide = () => {
-    if (sides.length > 1) {
-      let lastIndex = sides.length - 1;
-      let values = [...sides];
-      values.splice(lastIndex, 1);
-      setSides(values);
-    }
-  };
-
   const initialValues = {
-    professionId: "",
-    districtIds: [],
-    mediatrIds: [],
+    professionId:
+      listenedApplyForMediator.profession &&
+      listenedApplyForMediator.profession.professionName,
+    districtIds:
+      listenedApplyForMediator.districts &&
+      listenedApplyForMediator.districts.map(
+        (district) => ` ${district.districtName}`
+      ),
+    courtId:
+      listenedApplyForMediator.court &&
+      listenedApplyForMediator.court.courtName,
+
+    // mediatrIds: listenedApplyForMediator.court && listenedApplyForMediator.court.map(court=> ` ${court.courtName}`  ),
     officeId: "",
-    courtId: "",
-    sides: sides,
-    conflictInfo: "",
-    courtCaseInfo: "",
-    prefferedSessionTime: "",
-    requiredLangs: "",
+    sides: listenedApplyForMediator.sides && listenedApplyForMediator.sides,
+    conflictInfo:
+      listenedApplyForMediator.conflictInfo &&
+      listenedApplyForMediator.conflictInfo,
+    courtCaseInfo:
+      listenedApplyForMediator.courtCaseInfo &&
+      listenedApplyForMediator.courtCaseInfo,
+    prefferedSessionTime:
+      listenedApplyForMediator.prefferedSessionTime &&
+      listenedApplyForMediator.prefferedSessionTime,
+    requiredLangs:
+      listenedApplyForMediator.requiredLangs &&
+      listenedApplyForMediator.requiredLangs,
     caseInAction: true,
     // mediatorNames: [],
   };
-  const validationSchema = Yup.object({
-    professionId: Yup.string().required("Bu xana boş qoyula bilməz"),
-    districtIds: Yup.array()
-      .min(1, "Bu xana boş qoyula bilməz")
-      .required("Bu xana boş qoyula bilməz"),
-    courtId: Yup.string().required("Bu xana boş qoyula bilməz"),
-
-    mediatrIds: Yup.array()
-      .max(3, "Bu xana boş qoyula bilməz")
-      .required("Bu xana boş qoyula bilməz"),
-    // officeId: "",
-    sides: Yup.array()
-      .of(
-        Yup.object().shape({
-          sideFirstName: Yup.string().required("Bu xana boş qoyula bilməz"),
-          sideLastName: Yup.string().required("Bu xana boş qoyula bilməz"),
-          sideMiddleName: Yup.string().required("Bu xana boş qoyula bilməz"),
-          sideGender: Yup.string().required("Bu xana boş qoyula bilməz"),
-          address: Yup.string().required("Bu xana boş qoyula bilməz"),
-          phone: Yup.string().required("Bu xana boş qoyula bilməz"),
-          email: Yup.string().email(
-            "Elektron poçt ünvanı düzgün daxil edilməyib"
-          ),
-        })
-      )
-      .required("Bu xana boş qoyula bilməz"),
-    conflictInfo: Yup.string().required("Bu xana boş qoyula bilməz"),
-    courtCaseInfo: Yup.string().required("Bu xana boş qoyula bilməz"),
-    // prefferedSessionTime: "",
-    // requiredLangs: "",
-    // caseInAction: true,
-    // mediatorNames: [],
-  });
-  const onChangeProfId = async (profId, courtId) => {
-    dispatch(loadMediatr({ professionId: profId, courtId: courtId }));
-  };
+  const validationSchema = Yup.object({});
 
   useEffect(() => {
     var toggler = document.getElementsByClassName("caret");
@@ -210,10 +75,9 @@ export default function AddModalForCitizen() {
       });
     }
   }, []);
-  const [mediatorName, setMediatorName] = useState([]);
   return (
-    <ModalWrapper size="modal-xl" header={"Mediatora müraciət - yeni"}>
-      {async.kind === "listenApply" && async.loading ? (
+    <ModalWrapper size="modal-xl" header={"Daxil olan müraciət"}>
+      {async.kind === "listenToApply" ? (
         <div className="loader text-center">
           {" "}
           <div className="loader-content">
@@ -225,35 +89,8 @@ export default function AddModalForCitizen() {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={async (values, { setSubmitting, setErrors }) => {
-              try {
-                await dispatch(
-                  createApply({
-                    professionId: values.professionId,
-                    districtIds: values.districtIds,
-                    mediatrIds: values.mediatrIds,
-                    officeId: values.officeId,
-                    courtId: values.courtId,
-                    sides: values.sides,
-                    conflictInfo: values.conflictInfo,
-                    courtCaseInfo: values.courtCaseInfo,
-                    prefferedSessionTime:
-                      values.prefferedSessionTime.toString(),
-                    requiredLangs: values.requiredLangs.toString(),
-                    caseInAction: values.caseInAction,
-                  })
-                );
-                setSubmitting(false);
-                setModal(true);
-                dispatch(closeModal());
-              } catch (error) {
-                setErrors({ auth: error.message });
-                // console.log(error);
-                setSubmitting(false);
-              }
-            }}
           >
-            {({ isSubmitting, isValid, dirty, errors, values }) => (
+            {({ values }) => (
               <Form id="emp">
                 <div id="iconsAccordion" className="accordion-icons">
                   <div className="card">
@@ -314,42 +151,41 @@ export default function AddModalForCitizen() {
                       <div className="card-body">
                         <div className="row mb-4">
                           <div className="col-md-12">
-                            <MySearchableSelect
+                            <MyTextInput
                               id="professionId"
                               name="professionId"
                               type="text"
-                              options={professionOptions}
                               placeholder="İxtisas seçin"
+                              className="form-control"
                               label={"Mediatorun ixtisası *"}
                             />
                           </div>
                         </div>
                         <div className="row mb-4">
                           <div className="col-md-12">
-                            <MySearchableSelect
+                            <MyTextInput
                               id="districtIds"
                               name="districtIds"
                               type="text"
-                              options={districtsOptions}
                               isMulti
-                              // className="form-control"
+                              className="form-control"
                               placeholder="Məkan seçin"
                               label={
-                                "Mediasiyanın keçirilməsi üçün üstünlük verilən yer*"
+                                "Mediasiyanın keçirilməsi üçün üstünlük verilən yer *"
                               }
                             />
                           </div>
                         </div>
                         <div className="row mb-4">
                           <div className="col-md-12">
-                            <MySearchableSelect
+                            <MyTextInput
                               id="courtId"
                               name="courtId"
                               type="text"
-                              options={courtsOptions}
+                              className="form-control"
                               placeholder="Məhkəmə seçin"
                               label={
-                                "Mübahisə həll olunmazsa mübahisənin baxılacağı yer*"
+                                "Mübahisə həll olunmazsa mübahisənin baxılacağı yer *"
                               }
                             />
                           </div>
@@ -385,10 +221,7 @@ export default function AddModalForCitizen() {
                               <circle cx={12} cy={7} r={4} />
                             </svg>
                           </div>
-                          Mediator seçimi:{" "}
-                          {mediatorName && mediatorName.length <= 3
-                            ? mediatorName.join(", ")
-                            : "Maksiumum 3 mediator seçilə bilər"}
+                          Mediator seçimi
                           <div className="icons">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -415,163 +248,28 @@ export default function AddModalForCitizen() {
                       data-parent="#iconsAccordion"
                     >
                       <div className="card-body">
-                        <div className="row"></div>
-                        <div className="row mb-4">
-                          <div className="col-md-12">
-                            <div className="form-check mb-2">
-                              <div className="custom-control custom-radio classic-radio-info">
-                                <input
-                                  type="radio"
-                                  id="hRadio2"
-                                  name="classicRadio"
-                                  onClick={() => setCheck("office")}
-                                  className="custom-control-input"
-                                />
-                                <label
-                                  className="custom-control-label"
-                                  htmlFor="hRadio2"
-                                >
-                                  Mediasiya təşkilatları
-                                </label>
-                              </div>
-                            </div>
-                            <div className="form-check mb-2">
-                              <div className="custom-control custom-radio classic-radio-info">
-                                <input
-                                  type="radio"
-                                  id="hRadio1"
-                                  name="classicRadio"
-                                  onClick={() => {
-                                    setCheck("mediator");
-                                    onChangeProfId(
-                                      values.professionId,
-                                      values.courtId
-                                    );
-                                  }}
-                                  className="custom-control-input"
-                                />
-                                <label
-                                  className="custom-control-label"
-                                  htmlFor="hRadio1"
-                                >
-                                  Fərdi qaydada fəaliyyət göstərən mediatorlar
-                                </label>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        {check === "office" && (
-                          <div className="row mb-4">
-                            <div className="col-md-12">
-                              <MySearchableSelect
-                                id="officeId"
-                                name="officeId"
-                                type="text"
-                                options={officeOptions}
-                                isMulti={check === "office" && false}
-                                // className="form-control"
-                                placeholder="Mediator təşkilatı seçin"
-                                label={"Mediator təşkilatları*"}
-                              />
-                            </div>
-                          </div>
-                        )}
-                        {check === "mediator" && (
-                          <div className="row mb-4">
-                            <div className="col-md-12">
-                              <div id="toggleAccordion">
-                                {applys &&
-                                  applys.mediatrs.map((tree, index) => (
-                                    <div className="card">
-                                      <div className="card-header" id="...">
-                                        <section className="mb-0 mt-0">
-                                          <div
-                                            role="menu"
-                                            className="collapsed"
-                                            data-toggle="collapse"
-                                            data-target={`#defaultAccordion${index}`}
-                                            aria-expanded="true"
-                                            aria-controls={`#defaultAccordion${index}`}
-                                          >
-                                            {tree.districtName}
-                                            <div className="icons">
-                                              <svg> ... </svg>
-                                            </div>
-                                          </div>
-                                        </section>
-                                      </div>
-                                      <div
-                                        id={`defaultAccordion${index}`}
-                                        className="collapse"
-                                        aria-labelledby="..."
-                                        data-parent="#toggleAccordion"
-                                      >
-                                        <div className="card-body">
-                                          <div className="row">
-                                            {tree.mediatrs.map((name) => (
-                                              <div className="col-md-12">
-                                                <MyCheckbox
-                                                  name="mediatrIds"
-                                                  disabled={
-                                                    mediatorName.length > 2 &&
-                                                    !mediatorName.includes(
-                                                      `${name.firstName} ${name.lastName}`
-                                                    )
-                                                  }
-                                                  value={name.mediatrId}
-                                                  label={`${name.firstName} ${name.lastName}`}
-                                                  onClick={(e) => {
-                                                    if (
-                                                      e.target.checked ===
-                                                        true &&
-                                                      !mediatorName.includes(
-                                                        `${name.firstName} ${name.lastName}`
-                                                      )
-                                                    ) {
-                                                      setMediatorName(
-                                                        (state) => [
-                                                          ...state,
-                                                          `${name.firstName} ${name.lastName}`,
-                                                        ]
-                                                      );
-                                                    } else if (
-                                                      e.target.checked ===
-                                                        false &&
-                                                      mediatorName.includes(
-                                                        `${name.firstName} ${name.lastName}`
-                                                      )
-                                                    ) {
-                                                      setMediatorName(
-                                                        (state) => [
-                                                          ...state.filter(
-                                                            (medik) =>
-                                                              medik !==
-                                                              `${name.firstName} ${name.lastName}`
-                                                          ),
-                                                        ]
-                                                      );
-                                                      console.log(
-                                                        values.mediatrIds.find(
-                                                          (name) =>
-                                                            name ===
-                                                            e.target.value
-                                                        ),
-                                                        "medname"
-                                                      );
-                                                    }
-                                                  }}
-                                                />
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  ))}
-                              </div>
-                            </div>
-                          </div>
-                        )}
+                        <ul className="list-group list-group-media">
+                          {listenedApplyForMediator.mediatrs &&
+                            listenedApplyForMediator.mediatrs.map((mediatr) => (
+                              <li className="list-group-item list-group-item-action">
+                                <div className="media">
+                                  <div className="mr-3">
+                                    <img
+                                      alt="avatar"
+                                      src="/assets/img/90x90.jpg"
+                                      className="img-fluid rounded-circle"
+                                    />
+                                  </div>
+                                  <div className="media-body">
+                                    <h6 className="tx-inverse">{`${mediatr.firstName} ${mediatr.lastName}`}</h6>
+                                    <p className="mg-b-0">
+                                      {mediatr.registryNumber}
+                                    </p>
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                        </ul>
                       </div>
                     </div>
                   </div>
@@ -632,59 +330,7 @@ export default function AddModalForCitizen() {
                       data-parent="#iconsAccordion"
                     >
                       <div className="card-body">
-                        <div className="row mb-4">
-                          <div className="col-md-2 offset-10 text-right">
-                            <div className="icon-container">
-                              <button
-                                title="Tərəf əlavə et"
-                                type="button"
-                                className="close"
-                                onClick={() => handleAddSide()}
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width={24}
-                                  height={24}
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className="feather feather-plus-circle"
-                                >
-                                  <circle cx={12} cy={12} r={10} />
-                                  <line x1={12} y1={8} x2={12} y2={16} />
-                                  <line x1={8} y1={12} x2={16} y2={12} />
-                                </svg>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveSide()}
-                                className="close"
-                                title="Tərəfi sil"
-                              >
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width={24}
-                                  height={24}
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth={2}
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  className="feather feather-minus-circle"
-                                >
-                                  <circle cx={12} cy={12} r={10} />
-                                  <line x1={8} y1={12} x2={16} y2={12} />
-                                </svg>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-
-                        {!sides && (
+                        {!listenedApplyForMediator.sides && (
                           <div className="row">
                             <div className="col-md-12">
                               <h2 className="text-center">
@@ -693,8 +339,8 @@ export default function AddModalForCitizen() {
                             </div>
                           </div>
                         )}
-                        {sides &&
-                          sides.map((side, index) => (
+                        {listenedApplyForMediator.sides &&
+                          listenedApplyForMediator.sides.map((side, index) => (
                             <React.Fragment key={index}>
                               <div className="row">
                                 <div className="col-xl-12 col-md-12 col-sm-12 col-12">
@@ -721,33 +367,16 @@ export default function AddModalForCitizen() {
                                     </div>
                                     <h5 className="info-heading">
                                       Tərəf :
-                                      {`${index + 2} - ${
-                                        values.sides[index]
-                                          ? `
-                                            ${
-                                              values.sides[index].sideLastName
-                                                ? values.sides[index]
-                                                    .sideLastName
-                                                : ""
-                                            } 
-                                            ${
-                                              values.sides[index].sideFirstName
-                                                ? values.sides[index]
-                                                    .sideFirstName
-                                                : ""
-                                            } ${
-                                              values.sides[index].sideMiddleName
-                                                ? values.sides[index]
-                                                    .sideMiddleName
-                                                : ""
-                                            }`
-                                          : ""
-                                      }`}{" "}
+                                      {` ${index + 1} - 
+                                            ${side.sideLastName} 
+                                            ${side.sideFirstName} ${
+                                        side.sideMiddleName
+                                      }`}
                                     </h5>
                                     {/* {console.log(values,'cins')} */}
                                     <p className="info-text">
                                       <div className="row mb-4">
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                           <MyTextInput
                                             id={`sides[${index}].sideLastName`}
                                             name={`sides[${index}].sideLastName`}
@@ -757,7 +386,7 @@ export default function AddModalForCitizen() {
                                             label={"Qarşı tərəfin soyadı *"}
                                           />
                                         </div>
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                           <MyTextInput
                                             id={`sides[${index}].sideFirstName`}
                                             name={`sides[${index}].sideFirstName`}
@@ -767,7 +396,7 @@ export default function AddModalForCitizen() {
                                             label={"Qarşı tərəfin adı *"}
                                           />
                                         </div>
-                                        <div className="col-md-3">
+                                        <div className="col-md-4">
                                           <MyTextInput
                                             id={`sides[${index}].sideMiddleName`}
                                             name={`sides[${index}].sideMiddleName`}
@@ -775,26 +404,6 @@ export default function AddModalForCitizen() {
                                             className="form-control"
                                             placeholder="Ata adın daxil edin"
                                             label={"Qarşı tərəfin ata adı *"}
-                                          />
-                                        </div>
-                                        <div className="col-md-3">
-                                          <MySearchableSelect
-                                            id={`sides[${index}].sideGender`}
-                                            name={`sides[${index}].sideGender`}
-                                            type="text"
-                                            // className="form-control"
-                                            // defaultValue={
-                                            //   apply && {
-                                            //     label:
-                                            //       sides[index] &&
-                                            //       sides[index].sideGender === 1
-                                            //         ? "Kişi"
-                                            //         : "Qadın",
-                                            //   }
-                                            // }
-                                            options={genderOptions}
-                                            placeholder="Cinsin daxil edin"
-                                            label={"Qarşı tərəf cinsi *"}
                                           />
                                         </div>
                                       </div>
@@ -852,20 +461,19 @@ export default function AddModalForCitizen() {
                                             name={`sides[${index}].address`}
                                             type="text"
                                             className="form-control"
-                                            label="Ünvan *"
+                                            label="Ünvan*"
                                             placeholder={"Ünval daxil edin"}
                                           />
                                         </div>
                                       </div>
                                       <div className="row mb-4">
                                         <div className="col-md-6">
-                                          <MyTextInputWithMask
+                                          <MyTextInput
                                             id={`sides[${index}].phone`}
                                             name={`sides[${index}].phone`}
-                                            mask="999 999 99 99"
                                             type="text"
                                             className="form-control"
-                                            label="Telefon *"
+                                            label="Telefon*"
                                             placeholder={
                                               "Telefon nömrəsi daxil edin"
                                             }
@@ -877,8 +485,8 @@ export default function AddModalForCitizen() {
                                             name={`sides[${index}].email`}
                                             type="text"
                                             className="form-control"
-                                            label="E-mail *"
-                                            placeholder={"E-mail daxil edin"}
+                                            label="E-mail*"
+                                            placeholder={"e-mail daxil edin"}
                                           />
                                         </div>
                                       </div>
@@ -996,29 +604,24 @@ export default function AddModalForCitizen() {
                         </div>
                         <div className="row mb-4">
                           <div className="col-md-6">
-                            <MySearchableSelect
+                            <MyTextInput
                               id="prefferedSessionTime"
                               name="prefferedSessionTime"
                               type="text"
                               isMulti
-                              options={datesOptions}
-                              // className="form-control"
+                              className="form-control"
                               label="Mediasiya sessiyalarının keçirilməsi üçün üstünlük verilən vaxt*"
                               placeholder={"Sizə uyğun vaxtı daxil edin"}
                             />
                           </div>
                           <div className="col-md-6">
-                            <MySearchableSelect
+                            <MyTextInput
                               id="requiredLangs"
                               name="requiredLangs"
                               type="text"
                               isMulti
-                              options={languageKnowledgeOptions}
-                              // className="form-control"
+                              className="form-control"
                               label="Mediatordan tələb olunan dil biliyi*"
-                              placeholder={
-                                "Mediatordan tələb etdiyiniz dil biliyi"
-                              }
                               placeholder={
                                 "Mediatordan tələb etdiyiniz dil biliyi"
                               }
@@ -1029,40 +632,6 @@ export default function AddModalForCitizen() {
                     </div>
                   </div>
                 </div>
-
-                <Button
-                  // style={{ position: "fixed", bottom: "11.8%", right: "21vw" }}
-                  disabled={!isValid || !dirty || isSubmitting}
-                  type="submit"
-                  // name="time"
-                  className="btn btn-primary float-right  btn-lg mt-2 mb-4"
-                >
-                  {isSubmitting && (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width={24}
-                      height={24}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="feather feather-loader spin mr-2"
-                    >
-                      <line x1={12} y1={2} x2={12} y2={6} />
-                      <line x1={12} y1={18} x2={12} y2={22} />
-                      <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
-                      <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
-                      <line x1={2} y1={12} x2={6} y2={12} />
-                      <line x1={18} y1={12} x2={22} y2={12} />
-                      <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
-                      <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
-                    </svg>
-                  )}
-                  Göndər
-                </Button>
-
                 <button
                   style={{ display: "none" }}
                   id="closeModal"
@@ -1077,6 +646,203 @@ export default function AddModalForCitizen() {
               </Form>
             )}
           </Formik>
+          {apply && apply.status.id === 1 && (
+            <div className="row">
+              {!rejectForm && (
+                <div className="col-md-12">
+                  <div className="button-setting">
+                    <Button
+                      onClick={() => {
+                        setRejectForm(true);
+                        toast.info(
+                          "İmtina etmək üçün səbəb daxil edilməlidir."
+                        );
+                      }}
+                      className="btn btn-danger float-right  btn-lg mr-1 ml-2 mt-2 mb-4"
+                    >
+                      İmtina et
+                    </Button>
+
+                    <Formik
+                      initialValues={{ id: apply.id }}
+                      validationSchema={Yup.object({
+                        id: Yup.number().required(
+                          "Bu sahə mütləq doldurulmalıdır."
+                        ),
+                      })}
+                      onSubmit={(values, { setSubmitting, setErrors }) => {
+                        // console.log('ugurludur')
+                        dispatch(approveApply(apply.id));
+                        setModal(true);
+                        dispatch(closeModal());
+                        setSubmitting(false);
+                      }}
+                    >
+                      {({ isSubmitting, isValid, dirty, errors }) => (
+                        <Form className="text-left mt-4">
+                          <div className="form">
+                            <MyTextArea
+                              id="id"
+                              name="id"
+                              type="text"
+                              className="form-control"
+                              value={apply.id}
+                              style={{ display: "none" }}
+                              // placeholder="İmtina səbəbini daxil edin"
+                              // label="İmtina səbəbi"
+                            />
+
+                            <div
+                              style={{ float: "right" }}
+                              className="d-sm-flex text-right justify-content-between"
+                            >
+                              <div className="">
+                                <button
+                                  disabled={isSubmitting}
+                                  type="submit"
+                                  // name="time"
+                                  className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4 "
+                                >
+                                  {async.kind === "approve" && (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width={24}
+                                      height={24}
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="feather feather-loader spin mr-2"
+                                    >
+                                      <line x1={12} y1={2} x2={12} y2={6} />
+                                      <line x1={12} y1={18} x2={12} y2={22} />
+                                      <line
+                                        x1="4.93"
+                                        y1="4.93"
+                                        x2="7.76"
+                                        y2="7.76"
+                                      />
+                                      <line
+                                        x1="16.24"
+                                        y1="16.24"
+                                        x2="19.07"
+                                        y2="19.07"
+                                      />
+                                      <line x1={2} y1={12} x2={6} y2={12} />
+                                      <line x1={18} y1={12} x2={22} y2={12} />
+                                      <line
+                                        x1="4.93"
+                                        y1="19.07"
+                                        x2="7.76"
+                                        y2="16.24"
+                                      />
+                                      <line
+                                        x1="16.24"
+                                        y1="7.76"
+                                        x2="19.07"
+                                        y2="4.93"
+                                      />
+                                    </svg>
+                                  )}
+                                  Qəbul et
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </Form>
+                      )}
+                    </Formik>
+                    {/* <Button
+                        onClick={() => {
+                        }}
+                        className="btn btn-success float-right  btn-lg mt-2 ml-2 mt-2 mb-4"
+                      >
+                        {" "}
+                        Qəbul et
+                      </Button>
+                      <button
+                        style={{ display: "none" }}
+                        id="closeModal"
+                        onClick={() => {
+                          dispatch(closeModal());
+                        }}
+                        className="btn btn-lg float-right mt-3 mr-2"
+                        data-dismiss="modal"
+                      >
+                        <i className="flaticon-cancel-12" /> Ləğv et
+                      </button> */}
+                  </div>
+                </div>
+              )}
+              <div className="col-md-12">
+                {rejectForm === true && (
+                  <div className="row">
+                    <div className="col-md-12">
+                      <Formik
+                        initialValues={{ username: "", password: "" }}
+                        validationSchema={Yup.object({
+                          reasonOfReject: Yup.string().required(
+                            "Bu sahə mütləq doldurulmalıdır."
+                          ),
+                        })}
+                        onSubmit={(values, { setSubmitting, setErrors }) => {
+                          // console.log('ugurludur')
+                          dispatch(
+                            rejectApply(apply.id, {
+                              rejectText: values.reasonOfReject,
+                            })
+                          );
+                          setModal(true);
+                          dispatch(closeModal());
+                          setSubmitting(false);
+                        }}
+                      >
+                        {({ isSubmitting, isValid, dirty, errors }) => (
+                          <Form className="text-left mt-4">
+                            <div className="form">
+                              <div
+                                id="username-field"
+                                className="field-wrapper input"
+                              >
+                                <MyTextArea
+                                  id="reasonOfReject"
+                                  name="reasonOfReject"
+                                  type="text"
+                                  className="form-control"
+                                  placeholder="İmtina səbəbini daxil edin"
+                                  label="İmtina səbəbi"
+                                />
+                              </div>
+
+                              <div
+                                style={{ float: "right" }}
+                                className="d-sm-flex text-right justify-content-between"
+                              >
+                                <div className="">
+                                  <button
+                                    disabled={
+                                      !isValid || !dirty || isSubmitting
+                                    }
+                                    type="submit"
+                                    // name="time"
+                                    className="btn btn-danger text-right  btn-lg mt-3 "
+                                  >
+                                    İmtina et
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </Form>
+                        )}
+                      </Formik>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </React.Fragment>
       )}
     </ModalWrapper>

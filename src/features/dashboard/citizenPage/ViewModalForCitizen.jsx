@@ -159,7 +159,7 @@ export default function ViewModalForCitizen({ apply }) {
                               className="form-control"
                               placeholder="Məkan seçin"
                               label={
-                                "Mediasiyanın keçirilməsi üçün üstünlük verilən yer*"
+                                "Mediasiyanın keçirilməsi üçün üstünlük verilən yer *"
                               }
                             />
                           </div>
@@ -173,7 +173,7 @@ export default function ViewModalForCitizen({ apply }) {
                               className="form-control"
                               placeholder="Məhkəmə seçin"
                               label={
-                                "Mübahisə həll olunmazsa mübahisənin baxılacağı yer*"
+                                "Mübahisə həll olunmazsa mübahisənin baxılacağı yer *"
                               }
                             />
                           </div>
@@ -378,7 +378,7 @@ export default function ViewModalForCitizen({ apply }) {
 
                                             className="form-control"
                                             placeholder="Soyadın daxil edin"
-                                            label={"Qarşı tərəfin soyadı*"}
+                                            label={"Qarşı tərəfin soyadı *"}
                                           />
                                         </div>
                                         <div className="col-md-4">
@@ -388,7 +388,7 @@ export default function ViewModalForCitizen({ apply }) {
                                             type="text"
                                             className="form-control"
                                             placeholder="Adın daxil edin"
-                                            label={"Qarşı tərəfin adı*"}
+                                            label={"Qarşı tərəfin adı *"}
                                           />
                                         </div>
                                         <div className="col-md-4">
@@ -398,7 +398,7 @@ export default function ViewModalForCitizen({ apply }) {
                                             type="text"
                                             className="form-control"
                                             placeholder="Ata adın daxil edin"
-                                            label={"Qarşı tərəfin ata adı*"}
+                                            label={"Qarşı tərəfin ata adı *"}
                                           />
                                         </div>
                                       </div>
@@ -410,7 +410,7 @@ export default function ViewModalForCitizen({ apply }) {
                                             type="text"
                                             className="form-control"
                                             placeholder="Adın daxil edin"
-                                            label={"Nümayəndənin adı*"}
+                                            label={"Nümayəndənin adı"}
                                           />
                                         </div>
                                         <div className="col-md-4">
@@ -420,7 +420,7 @@ export default function ViewModalForCitizen({ apply }) {
                                             type="text"
                                             className="form-control"
                                             placeholder="Soyadın daxil edin"
-                                            label={"Nümayəndənin soyadı*"}
+                                            label={"Nümayəndənin soyadı"}
                                           />
                                         </div>
                                         <div className="col-md-4">
@@ -430,7 +430,7 @@ export default function ViewModalForCitizen({ apply }) {
                                             type="text"
                                             className="form-control"
                                             placeholder="Ata adın daxil edin"
-                                            label={"Nümayəndənin ata adı*"}
+                                            label={"Nümayəndənin ata adı"}
                                           />
                                         </div>
                                       </div>
@@ -444,7 +444,7 @@ export default function ViewModalForCitizen({ apply }) {
                                             className="form-control"
                                             label="Hüquq şirkəti"
                                             placeholder={
-                                              "Hüquq şirkət adı daxil edin*"
+                                              "Hüquq şirkət adı daxil edin"
                                             }
                                           />
                                         </div>
@@ -456,8 +456,8 @@ export default function ViewModalForCitizen({ apply }) {
                                             name={`sides[${index}].address`}
                                             type="text"
                                             className="form-control"
-                                            label="Ünvan"
-                                            placeholder={"Ünval daxil edin*"}
+                                            label="Ünvan *"
+                                            placeholder={"Ünval daxil edin"}
                                           />
                                         </div>
                                       </div>
@@ -468,9 +468,9 @@ export default function ViewModalForCitizen({ apply }) {
                                             name={`sides[${index}].phone`}
                                             type="text"
                                             className="form-control"
-                                            label="Telefon"
+                                            label="Telefon *"
                                             placeholder={
-                                              "Telefon nömrəsi daxil edin*"
+                                              "Telefon nömrəsi daxil edin"
                                             }
                                           />
                                         </div>
@@ -481,7 +481,7 @@ export default function ViewModalForCitizen({ apply }) {
                                             type="text"
                                             className="form-control"
                                             label="E-mail"
-                                            placeholder={"e-mail daxil edin*"}
+                                            placeholder={"E-mail daxil edin"}
                                           />
                                         </div>
                                       </div>
@@ -558,7 +558,7 @@ export default function ViewModalForCitizen({ apply }) {
                               name="conflictInfo"
                               type="text"
                               className="form-control"
-                              label="Mübahisənin qısa məzmunu və mediasiyadan gözlənilən nəticələr*"
+                              label="Mübahisənin qısa məzmunu və mediasiyadan gözlənilən nəticələr *"
                               placeholder={"Qısa məlumat daxil edin"}
                             />
                           </div>
@@ -590,7 +590,7 @@ export default function ViewModalForCitizen({ apply }) {
                               name="courtCaseInfo"
                               type="text"
                               className="form-control"
-                              label="Məhkəmə və iş barədə mulamatlar*"
+                              label="Məhkəmə və iş barədə mulamatlar *"
                               placeholder={
                                 "Məhkəmə və iş barədə məlumat daxil edin"
                               }
@@ -605,7 +605,7 @@ export default function ViewModalForCitizen({ apply }) {
                               type="text"
                               isMulti
                               className="form-control"
-                              label="Mediasiya sessiyalarının keçirilməsi üçün üstünlük verilən vaxt*"
+                              label="Mediasiya sessiyalarının keçirilməsi üçün üstünlük verilən vaxt *"
                               placeholder={"Sizə uyğun vaxtı daxil edin"}
                             />
                           </div>
@@ -616,13 +616,11 @@ export default function ViewModalForCitizen({ apply }) {
                               type="text"
                               isMulti
                               className="form-control"
-                              label="Mediatordan tələb olunan dil biliyi*"
+                              label="Mediatordan tələb olunan dil biliyi *"
                               placeholder={
                                 "Mediatordan tələb etdiyiniz dil biliyi"
                               }
-                              placeholder={
-                                "Mediatordan tələb etdiyiniz dil biliyi"
-                              }
+   
                             />
                           </div>
                         </div>

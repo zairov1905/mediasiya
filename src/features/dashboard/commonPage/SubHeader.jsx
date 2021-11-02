@@ -6,24 +6,13 @@ export default function SubHeader() {
   console.log(location);
   let currentLocation;
   switch (location.pathname) {
-    case "/apply":
-      currentLocation = "Müraciətlər";
+    case "/dashboard/apply":
+      currentLocation = "Müraciət";
       break;
-    case "/doc":
-      currentLocation = "Daxil olan sənədlər";
-      break;
-    case "/information":
-      currentLocation = "Xəbərdarlıq və məlumatlandırma";
-      break;
-    case "/operation":
-      currentLocation = "Əməliyyatlər";
-      break;
-    case "/legislation":
-      currentLocation = "Qanunvericilik";
-      break;
+    case "/employees":
 
     default:
-      return "Ana səhifə";
+      break;
   }
   return (
     <div className="sub-header-container">

@@ -6,11 +6,10 @@ import {
   asyncActionStart,
 } from "../../../app/async/asyncReducer";
 import {
+  ASSIGN_MEDIATOR_FOR_COUNCIL,
   FETCH_APPLY_FOR_MEDIATOR,
   LISTEN_APPLY_FOR_MEDIATOR,
-  REJECT_APPLY_FOR_MEDIATOR,
-  APPROVE_APPLY_FOR_MEDIATOR,
-} from "./mediatorConstants";
+} from "./councilConstants";
 const url = "mediatrs";
 export function loadApply(data, type) {
   return async function (dispatch, getState) {
@@ -54,55 +53,30 @@ export function listenToApply(data) {
       });
   };
 }
-export function rejectApply(data, text) {
+export function assignMediator(requestId, mediatrId) {
   return async function (dispatch) {
-    dispatch(asyncActionStart("reject"));
-    await axios
-      .post(`/Request/reject/${data}`, {
-        // params: { body:text },
-      })
-      .then((datas) => {
-        if (datas.data.succeeded === true) {
-          toast.success(datas.data.message);
-
-          dispatch({
-            type: REJECT_APPLY_FOR_MEDIATOR,
-            payload: datas.data.data,
-          });
-        }
-
-        dispatch(asyncActionFinish());
-      })
-      .catch((err) => {
-        dispatch(asyncActionError(err.message));
-        toast.info("Xəta baş verdi");
-      });
-  };
-}
-export function approveApply(data) {
-  return async function (dispatch) {
-    console.log(data);
-
     dispatch(asyncActionStart("approve"));
+    let url;
+    if (!mediatrId) {
+      url = `/Request/assign-mediatr/${requestId}`;
+    } else {
+      url = `/Request/assign-mediatr/${requestId}/${mediatrId}`;
+    }
     await axios
-      .get(`/Request/approve/${data}`, {
-        params: { ...data },
-      })
+      .get(url)
       .then((datas) => {
-        if (datas.data.succeeded === true) {
-          toast.success(datas.data.message);
-
-          dispatch({
-            type: APPROVE_APPLY_FOR_MEDIATOR,
-            payload: datas.data.data,
-          });
-        }
+        dispatch({
+          type: ASSIGN_MEDIATOR_FOR_COUNCIL,
+          payload: datas.data.data,
+        });
+        toast.success(datas.data.totalCount);
+        dispatch(loadApply());
 
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
-        toast.info("Xəta baş verdi");
+        toast.info(err.message);
       });
   };
 }

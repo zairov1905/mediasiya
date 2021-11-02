@@ -8,8 +8,6 @@ import {
 const initialState = {
   applysOfMediator: [],
   listenedApplyForMediator: [],
-  rejectedApply: [],
-  approvedApply: [],
 };
 
 export default function mediatorReducer(
@@ -20,28 +18,34 @@ export default function mediatorReducer(
     case FETCH_APPLY_FOR_MEDIATOR:
       return {
         ...state,
-        applys: payload,
+        applysOfMediator: payload,
         totalCount: totalCount,
       };
     case LISTEN_APPLY_FOR_MEDIATOR:
       return {
         ...state,
-        listenedApply: payload,
+        listenedApplyForMediator: payload,
         totalCount: totalCount,
       };
     case REJECT_APPLY_FOR_MEDIATOR:
       return {
         ...state,
-        rejectedApply: payload,
-        totalCount: totalCount,
+        applysOfMediator: [
+          payload, ...state.applysOfMediator.filter(
+            (apply) => apply.id !== payload.id
+          ),
+        ],
       };
     case APPROVE_APPLY_FOR_MEDIATOR:
       return {
         ...state,
-        approvedApply: payload,
-        totalCount: totalCount,
+        applysOfMediator: [
+          payload, ...state.applysOfMediator.filter(
+            (apply) => apply.id !== payload.id
+          ),
+        ],
       };
-      default:
+    default:
       return state;
   }
 }

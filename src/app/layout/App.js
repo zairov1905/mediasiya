@@ -13,6 +13,7 @@ import ApplyPage from "../../features/dashboard/applyPage/ApplyPage";
 import FormPage from "../../features/form/FormPage";
 import { useSelector } from "react-redux";
 import ApplyPageForCitizen from "../../features/dashboard/citizenPage/ApplyPageForCitizen";
+import ApplyPageForMediator from "../../features/dashboard/mediatorPage/ApplyPageForMediator";
 function App() {
   const auth = useSelector((state) => state.auth);
   
@@ -28,8 +29,11 @@ function App() {
     let role
   switch (auth.currentUser && auth.currentUser.role) {
     case "Citizen":
-      role = ApplyPageForCitizen
-      
+      role = ApplyPageForCitizen;
+      break;
+    case "Mediatr":
+      role = ApplyPageForMediator;
+
       break;
   
     default:
@@ -61,9 +65,7 @@ function App() {
 
               {/* BEGIN PAGE CONTENT */}
               <div id="content" className="main-content">
-
                 <Route exact path="/dashboard/apply" component={role} />
-
                 <Footer />
               </div>
 
