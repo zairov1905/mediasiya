@@ -3,14 +3,13 @@ import $ from "jquery";
 import { useDispatch, useSelector } from "react-redux";
 import * as Yup from "yup";
 // import ScriptTag from 'react-script-tag';
-import MyTextInput from "../../../app/common/form/MyTextInput";
+import MyTextInput from "../../../../../app/common/form/MyTextInput";
 import { Form, Formik } from "formik";
 import { listenToApply } from "./citizenActions";
-import { closeModal } from "../../../app/common/modal/modalReducer";
-import MySearchableSelect from "../../../app/common/form/MySearchableSelect";
-import MyTextArea from "../../../app/common/form/MyTextArea";
+import { closeModal } from "../../../../../app/common/modal/modalReducer";
+import MyTextArea from "../../../../../app/common/form/MyTextArea";
 
-import ModalWrapper from "../../../app/common/modal/ModalWrapper";
+import ModalWrapper from "../../../../../app/common/modal/ModalWrapper";
 
 export default function ViewModalForCitizen({ apply }) {
   const dispatch = useDispatch();

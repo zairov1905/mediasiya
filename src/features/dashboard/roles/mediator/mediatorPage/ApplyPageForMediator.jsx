@@ -2,55 +2,27 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { openModal } from "../../../app/common/modal/modalReducer";
-import { loadPrint } from "../applyPage/applyActions";
+import { openModal } from "../../../../../app/common/modal/modalReducer";
 
-import {
-  loadApply,
-} from "./citizenActions";
-export default function ApplyPageForCitizen() {
+import { loadApply } from "./mediatorActions";
+import { loadPrint } from "../../../applyPage/applyActions";
+
+export default function ApplyPageForMediator() {
   const auth = useSelector((state) => state.auth);
   const async = useSelector((state) => state.async);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(loadApply());
-  }, [dispatch]);
+  }, dispatch);
   const [perPage, setPerPage] = useState(10);
   const [PageNumber, setPageNumber] = useState(1);
-  const { applysOfCitizen, totalCount } = useSelector((state) => state.citizen);
+  const { applysOfMediator, totalCount } = useSelector((state) => state.mediator);
   const print = useSelector((state) => state.applys.prints);
   const [hover, sethover] = useState(false);
   const [target, setTarget] = useState({ id: null, name: null });
 
-  const data = applysOfCitizen;
-  const buttonStyleAdd = {
-    padding: "9px",
-    background: "#ffffff",
-    // fontSize: "0.8em",
-    borderRadius: "5px",
-    cursor: "pointer",
-    // marginRight: "35px",
-    boxShadow: "0px 2px 4px rgb(126 142 177 / 64%)",
-    // width: "400px",
-    // height: "41px",
-    color: "#1b55e2",
-    fill: "rgba(232, 186, 183, 0.239)",
-  };
-  const buttonStyle = {
-    padding: "9px",
-    background: "#ffffff",
-    borderRadius: "5px",
-    cursor: "pointer",
-    marginRight: "35px",
-    boxShadow: "0px 2px 4px rgb(126 142 177 / 12%)",
-    width: "43px",
-    height: "41px",
-    color: "#fe0040",
-    fill: "rgba(232, 186, 183, 0.239)",
-  };
+  const data = applysOfMediator;
   const buttonStyle1 = {
     //   '&:hover':{
     //     background:'#sdsdss'
@@ -82,55 +54,6 @@ export default function ApplyPageForCitizen() {
     setPerPage(newPerPage);
   };
 
-  const actions = (
-    <span
-      type="button"
-      data-toggle="modal"
-      data-target="#exampleModal"
-      data-name="add"
-      onClick={() => {
-        dispatch(
-          openModal({
-            modalType: "AddModalForCitizen",
-            modalProps: null,
-          })
-        );
-      }}
-      onMouseEnter={(e) => {
-        sethover(true);
-        setTarget({
-          ...target,
-          name: e.target.getAttribute("data-name"),
-        });
-      }}
-      onMouseLeave={() => {
-        sethover(false);
-        setTarget(null);
-      }}
-      style={{
-        ...buttonStyleAdd,
-        ...(hover && target.name === "add" && buttonHover),
-      }}
-    >
-      Mediatora müraciət
-      <svg
-        // type="button"
-        xmlns="http://www.w3.org/2000/svg"
-        width={24}
-        height={24}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="feather feather-plus icon-container"
-      >
-        <line x1={12} y1={5} x2={12} y2={19} />
-        <line x1={5} y1={12} x2={19} y2={12} />
-      </svg>
-    </span>
-  );
 
   const columns = [
     {
@@ -141,20 +64,15 @@ export default function ApplyPageForCitizen() {
     },
 
     {
-      name: "Mediator / Mediasiya təşkilatı",
+      name:
+        auth.currentUser && auth.currentUser.mediatr
+          ? "Müraciət edən şəxs"
+          : "Mediator / Mediasiya təşkilatı",
       cell: (apply) => {
-        // for user
-        if (apply.selectedMediatr) {
-          return `${apply.selectedMediatr.firstName} ${apply.selectedMediatr.lastName}`;
-        } else if (apply.mediatrs.length > 0) {
-          let medArr = [];
-          apply.mediatrs.forEach((item) => {
-            medArr.push(`${item.firstName} ${item.lastName}`);
-          });
-          return <p>{medArr.join(", ")}</p>;
-        } else if (apply.office) {
-          return <p>{apply.office.officeName}</p>;
-        } else {
+        // for mediator
+        if (auth.currentUser.mediatr && apply.person) {
+          return `${apply.person.firstName} ${apply.person.lastName} ${apply.person.middleName}`;
+        } else if (!apply.selectedMediatr > 0 && auth.currentUser.office) {
           return <p>Mediator təyin edilməyib</p>;
         }
       },
@@ -186,7 +104,7 @@ export default function ApplyPageForCitizen() {
             onClick={() => {
               dispatch(
                 openModal({
-                  modalType: "ViewModalForCitizen",
+                  modalType: "ViewModalForMediator",
                   modalProps: { apply },
                 })
               );
@@ -316,7 +234,7 @@ export default function ApplyPageForCitizen() {
               <DataTable
                 // className="dataTables_wrapper container-fluid dt-bootstrap4 table-responsive"
                 // selectableRows
-                title={"Müraciətlərim"}
+                title={"Daxil olan müraciətlər"}
                 columns={columns}
                 data={data}
                 pagination
@@ -327,9 +245,6 @@ export default function ApplyPageForCitizen() {
                 onChangePage={handlePageChange}
                 highlightOnHover
                 Clicked
-                actions={
-                  actions
-                }
               />
             </div>
           </div>

@@ -4,7 +4,7 @@ import {
   asyncActionError,
   asyncActionFinish,
   asyncActionStart,
-} from "../../../app/async/asyncReducer";
+} from "../../../../../app/async/asyncReducer";
 import {
   CREATE_APPLY_FOR_CITIZEN,
   DELETE_APPLY_FOR_CITIZEN,

@@ -2,10 +2,10 @@ import React from "react";
 import { useSelector } from "react-redux";
 import ApplyPageModal from "../../../features/dashboard/applyPage/ApplyPageModal";
 import SelectMediatorModal from "../../../features/dashboard/applyPage/SelectMediatorModal";
-import AddModalForCitizen from "../../../features/dashboard/citizenPage/AddModalForCitizen";
-import ViewModalForCitizen from "../../../features/dashboard/citizenPage/ViewModalForCitizen";
-import ViewModalForCouncil from "../../../features/dashboard/councilPage/ViewModalForCouncil";
-import ViewModalForMediator from "../../../features/dashboard/mediatorPage/ViewModalForMediator";
+import AddModalForCitizen from "../../../features/dashboard/roles/citizen/citizenPage/AddModalForCitizen";
+import ViewModalForCitizen from "../../../features/dashboard/roles/citizen/citizenPage/ViewModalForCitizen";
+import ViewModalForCouncil from "../../../features/dashboard/roles/council/councilPage/ViewModalForCouncil";
+import ViewModalForMediator from "../../../features/dashboard/roles/mediator/mediatorPage/ViewModalForMediator";
 
 export default function ModalManager() {
   const modalLookup = {

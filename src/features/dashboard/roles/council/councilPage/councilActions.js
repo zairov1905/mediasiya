@@ -4,14 +4,13 @@ import {
   asyncActionError,
   asyncActionFinish,
   asyncActionStart,
-} from "../../../app/async/asyncReducer";
+} from "../../../../../app/async/asyncReducer";
 import {
-  FETCH_APPLY_FOR_MEDIATOR,
-  LISTEN_APPLY_FOR_MEDIATOR,
-  REJECT_APPLY_FOR_MEDIATOR,
-  APPROVE_APPLY_FOR_MEDIATOR,
-} from "./mediatorConstants";
-const url = "mediatrs";
+  ASSIGN_MEDIATOR_FOR_COUNCIL,
+  FETCH_APPLY_FOR_COUNCIL,
+  LISTEN_APPLY_FOR_COUNCIL,
+} from "./councilConstants";
+const url = "councils";
 export function loadApply(data, type) {
   return async function (dispatch, getState) {
     dispatch(asyncActionStart());
@@ -21,7 +20,7 @@ export function loadApply(data, type) {
       })
       .then((datas) => {
         dispatch({
-          type: FETCH_APPLY_FOR_MEDIATOR,
+          type: FETCH_APPLY_FOR_COUNCIL,
           payload: datas.data.data.data,
           totalCount: datas.data.data.totalCount,
         });
@@ -42,8 +41,9 @@ export function listenToApply(data) {
         params: { ...data },
       })
       .then((datas) => {
+        console.log(datas.data.data)
         dispatch({
-          type: LISTEN_APPLY_FOR_MEDIATOR,
+          type: LISTEN_APPLY_FOR_COUNCIL,
           payload: datas.data.data,
         });
         dispatch(asyncActionFinish());
@@ -54,55 +54,23 @@ export function listenToApply(data) {
       });
   };
 }
-export function rejectApply(data, text) {
+export function assignMediator(requestId) {
   return async function (dispatch) {
-    dispatch(asyncActionStart("reject"));
-    await axios
-      .post(`/Request/reject/${data}`, {
-        // params: { body:text },
-      })
-      .then((datas) => {
-        if (datas.data.succeeded === true) {
-          toast.success(datas.data.message);
-
-          dispatch({
-            type: REJECT_APPLY_FOR_MEDIATOR,
-            payload: datas.data.data,
-          });
-        }
-
-        dispatch(asyncActionFinish());
-      })
-      .catch((err) => {
-        dispatch(asyncActionError(err.message));
-        toast.info("Xəta baş verdi");
-      });
-  };
-}
-export function approveApply(data) {
-  return async function (dispatch) {
-    console.log(data);
-
     dispatch(asyncActionStart("approve"));
+    let url = `/Request/assign-mediatr/${requestId}`;
     await axios
-      .get(`/Request/approve/${data}`, {
-        params: { ...data },
-      })
+      .get(url)
       .then((datas) => {
-        if (datas.data.succeeded === true) {
-          toast.success(datas.data.message);
-
-          dispatch({
-            type: APPROVE_APPLY_FOR_MEDIATOR,
-            payload: datas.data.data,
-          });
-        }
+        dispatch({
+          type: ASSIGN_MEDIATOR_FOR_COUNCIL,
+          payload: datas.data.data,
+        });
 
         dispatch(asyncActionFinish());
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
-        toast.info("Xəta baş verdi");
+        toast.info(err.Message);
       });
   };
 }

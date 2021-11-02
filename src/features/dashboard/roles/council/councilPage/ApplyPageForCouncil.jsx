@@ -2,11 +2,9 @@ import moment from "moment";
 import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { useDispatch, useSelector } from "react-redux";
-import { Redirect } from "react-router";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { openModal } from "../../../app/common/modal/modalReducer";
-import { loadPrint } from "../applyPage/applyActions";
+import { openModal } from "../../../../../app/common/modal/modalReducer";
+import { loadPrint } from "../../../applyPage/applyActions";
 
 import { assignMediator, loadApply } from "./councilActions";
 export default function ApplyPageForCouncil() {

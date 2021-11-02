@@ -12,9 +12,9 @@ import React from "react";
 import ApplyPage from "../../features/dashboard/applyPage/ApplyPage";
 import FormPage from "../../features/form/FormPage";
 import { useSelector } from "react-redux";
-import ApplyPageForCitizen from "../../features/dashboard/citizenPage/ApplyPageForCitizen";
-import ApplyPageForMediator from "../../features/dashboard/mediatorPage/ApplyPageForMediator";
-import ApplyPageForCouncil from "../../features/dashboard/councilPage/ApplyPageForCouncil";
+import ApplyPageForCitizen from "../../features/dashboard/roles/citizen/citizenPage/ApplyPageForCitizen";
+import ApplyPageForMediator from "../../features/dashboard/roles/mediator/mediatorPage/ApplyPageForMediator";
+import ApplyPageForCouncil from "../../features/dashboard/roles/council/councilPage/ApplyPageForCouncil";
 function App() {
   const auth = useSelector((state) => state.auth);
 
