@@ -7,6 +7,7 @@ import {
 const initialState = {
   applysOfCouncil: [],
   listenedApplyForCouncil: [],
+  totalCount:null
 };
 
 export default function councilReducer(

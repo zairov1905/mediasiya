@@ -5,6 +5,7 @@ import SelectMediatorModal from "../../../features/dashboard/applyPage/SelectMed
 import AddModalForCitizen from "../../../features/dashboard/roles/citizen/citizenPage/AddModalForCitizen";
 import ViewModalForCitizen from "../../../features/dashboard/roles/citizen/citizenPage/ViewModalForCitizen";
 import ViewModalForCouncil from "../../../features/dashboard/roles/council/councilPage/ViewModalForCouncil";
+import ViewMediatorModalForCouncil from "../../../features/dashboard/roles/council/mediatorsPage/ViewMediatorModalForCouncil";
 import ViewModalForMediator from "../../../features/dashboard/roles/mediator/mediatorPage/ViewModalForMediator";
 
 export default function ModalManager() {
@@ -14,7 +15,8 @@ export default function ModalManager() {
     AddModalForCitizen,
     ViewModalForCitizen,
     ViewModalForMediator,
-    ViewModalForCouncil
+    ViewModalForCouncil,
+    ViewMediatorModalForCouncil
   };
   
   

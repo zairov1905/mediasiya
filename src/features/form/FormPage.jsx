@@ -889,7 +889,6 @@ export default function FormPage(form) {
                               </div>
                             </div>
                           </div>
-
                           <div className="card">
                             <div className="card-header" id="hd-statistics-3">
                               <div className="mb-0">
@@ -1071,7 +1070,6 @@ export default function FormPage(form) {
                               </div>
                             </div>
                           </div>
-
                           <div className="card">
                             <div className="card-header" id="hd-performance-3">
                               <div className="mb-0">
@@ -1152,7 +1150,6 @@ export default function FormPage(form) {
                               </div>
                             </div>
                           </div>
-
                           <div className="card">
                             <div className="card-header" id="hd-performance-1">
                               <div className="mb-0">

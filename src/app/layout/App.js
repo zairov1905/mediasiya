@@ -1,5 +1,5 @@
 // import "./App.css";
-import { Route } from "react-router";
+import { Redirect, Route } from "react-router";
 import Login from "../../features/auth/Login";
 import Header from "../../features/dashboard/commonPage/Header";
 import Sidebar from "../../features/dashboard/commonPage/Sidebar";
@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import ApplyPageForCitizen from "../../features/dashboard/roles/citizen/citizenPage/ApplyPageForCitizen";
 import ApplyPageForMediator from "../../features/dashboard/roles/mediator/mediatorPage/ApplyPageForMediator";
 import ApplyPageForCouncil from "../../features/dashboard/roles/council/councilPage/ApplyPageForCouncil";
+import MediatorForCouncilPage from "../../features/dashboard/roles/council/mediatorsPage/MediatorForCouncilPage";
 function App() {
   const auth = useSelector((state) => state.auth);
 
@@ -45,9 +46,10 @@ function App() {
     <React.Fragment>
       <ToastContainer position="bottom-right" />
       <ModalManager />
-
+      {/* <Route name="filesWithPath_link" path="files/*" handler={Files} /> */}
       <Route exact path="/" component={Login} />
       <Route exact path="/form" component={FormPage} />
+      <Route name="filesWithPath_link" path="/*" handler={Login} />
 
       <Route
         path={"/dashboard/(.+)"}
@@ -66,6 +68,10 @@ function App() {
               {/* BEGIN PAGE CONTENT */}
               <div id="content" className="main-content">
                 <Route exact path="/dashboard/apply" component={role} />
+                {
+                
+                auth.currentUser && auth.currentUser.role==="Council" && <Route exact path="/dashboard/mediators" component={MediatorForCouncilPage} />
+                }
                 <Footer />
               </div>
 
