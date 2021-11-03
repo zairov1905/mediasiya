@@ -82,63 +82,63 @@ export default function MediatorForCouncilPage() {
       selector: "districts",
     },
 
-    // {
-    //   name: "",
-    //   cell: (mediator) => (
-    //     <div className="action-btn">
-    //       <svg
-    //         type="button"
-    //         data-toggle="modal"
-    //         data-target="#exampleModal"
-    //         data-name="edit"
-    //         onClick={() => {
-    //           dispatch(
-    //             openModal({
-    //               modalType: "ViewMediatorModalForCouncil",
-    //               modalProps: { mediator },
-    //             })
-    //           );
-    //         }}
-    //         id={mediator.id}
-    //         onMouseEnter={(e) => {
-    //           sethover(true);
-    //           setTarget({
-    //             ...target,
-    //             id: e.target.id,
-    //             name: e.target.getAttribute("data-name"),
-    //           });
-    //           // console.log(e.target.getAttribute('data-name'))
-    //         }}
-    //         onMouseLeave={() => {
-    //           sethover(false);
-    //           setTarget();
-    //         }}
-    //         style={{
-    //           ...buttonStyle1,
-    //           ...(hover &&
-    //             target.id === `${mediator.id}` &&
-    //             target.name === "edit" &&
-    //             buttonHover),
-    //         }}
-    //         className="icon-hover btn btn-rounded btn-primary mb-2 mr-4"
-    //         viewBox="0 0 24 24"
-    //         width={24}
-    //         height={24}
-    //         stroke="currentColor"
-    //         strokeWidth={2}
-    //         fill="none"
-    //         strokeLinecap="round"
-    //         strokeLinejoin="round"
-    //         className="css-i6dzq1"
-    //       >
-    //         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-    //         <circle cx={12} cy={12} r={3} />
-    //       </svg>
+    {
+      name: "",
+      cell: (mediator) => (
+        <div className="action-btn">
+          <svg
+            type="button"
+            data-toggle="modal"
+            data-target="#exampleModal"
+            data-name="edit"
+            onClick={() => {
+              dispatch(
+                openModal({
+                  modalType: "ViewMediatorModalForCouncil",
+                  modalProps: { mediator },
+                })
+              );
+            }}
+            id={mediator.id}
+            onMouseEnter={(e) => {
+              sethover(true);
+              setTarget({
+                ...target,
+                id: e.target.id,
+                name: e.target.getAttribute("data-name"),
+              });
+              // console.log(e.target.getAttribute('data-name'))
+            }}
+            onMouseLeave={() => {
+              sethover(false);
+              setTarget();
+            }}
+            style={{
+              ...buttonStyle1,
+              ...(hover &&
+                target.id === `${mediator.id}` &&
+                target.name === "edit" &&
+                buttonHover),
+            }}
+            className="icon-hover btn btn-rounded btn-primary mb-2 mr-4"
+            viewBox="0 0 24 24"
+            width={24}
+            height={24}
+            stroke="currentColor"
+            strokeWidth={2}
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="css-i6dzq1"
+          >
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx={12} cy={12} r={3} />
+          </svg>
 
 
-    //     </div>
-    //   ),
-    // },
+        </div>
+      ),
+    },
   ];
 
   return (
