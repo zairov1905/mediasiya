@@ -9,13 +9,14 @@ import {
   CREATE_APPLY_FOR_CITIZEN,
   DELETE_APPLY_FOR_CITIZEN,
   FETCH_APPLY_FOR_CITIZEN,
+  FETCH_MEDIATOR_FOR_CITIZEN,
   LISTEN_APPLY_FOR_CITIZEN,
   UPDATE_APPLY_FOR_CITIZEN,
 } from "./citizenConstants";
 const url = "customer";
 export function loadApply(data) {
   return async function (dispatch) {
-    let url = "citizens"
+    let url = "citizens";
     dispatch(asyncActionStart());
     await axios
       .get(`/Request/${url}/all`, {
@@ -44,7 +45,7 @@ export function listenToApply(data) {
         params: { ...data },
       })
       .then((datas) => {
-        console.log(datas)
+        console.log(datas);
         dispatch({
           type: LISTEN_APPLY_FOR_CITIZEN,
           payload: datas.data.data,
@@ -70,9 +71,7 @@ export function createApply(createdData) {
           dispatch({ type: CREATE_APPLY_FOR_CITIZEN, payload: data.data.data });
           dispatch(asyncActionFinish());
           toast.success(data.data.message);
-
         }
-
       })
       .catch((err) => {
         dispatch(asyncActionError(err.message));
@@ -113,6 +112,26 @@ export function deleteApply(deletedDataId) {
       .catch((err) => {
         dispatch(asyncActionError(err.message));
         toast.info("Xəta baş verdi, yenidən cəht edin.");
+      });
+  };
+}
+export function loadMediatr(data) {
+  return async function (dispatch) {
+    const url = `Data/district-mediatrs`;
+    dispatch(asyncActionStart());
+    await axios
+      .post(url, data)
+      .then((datas) => {
+        dispatch({
+          type: FETCH_MEDIATOR_FOR_CITIZEN,
+          payload: datas.data.data,
+          totalCount: datas.data.totalCount,
+        });
+        dispatch(asyncActionFinish());
+      })
+      .catch((err) => {
+        dispatch(asyncActionError(err.message));
+        toast.info("Xəta baş verdi");
       });
   };
 }

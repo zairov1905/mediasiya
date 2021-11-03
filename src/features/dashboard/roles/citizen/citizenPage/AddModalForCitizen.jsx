@@ -9,7 +9,7 @@ import {
   createApply,
   // loadCourt,
   // loadDistrict,
-  // loadMediatr,
+  loadMediatr,
   // loadOffice,
   // loadProfession,
 } from "./citizenActions";
@@ -23,7 +23,6 @@ import MyCheckbox from "../../../../../app/common/form/MyCheckbox";
 import {
   loadCourt,
   loadDistrict,
-  loadMediatr,
   loadOffice,
   loadProfession,
 } from "../../../applyPage/applyActions";
@@ -35,6 +34,7 @@ export default function AddModalForCitizen() {
 
   const async = useSelector((state) => state.async);
   const applys = useSelector((state) => state.applys);
+  const citizen = useSelector((state) => state.citizen);
 
   useEffect(() => {
     if (modal) {
@@ -46,7 +46,6 @@ export default function AddModalForCitizen() {
     dispatch(loadDistrict());
     dispatch(loadCourt());
     dispatch(loadProfession());
-    dispatch(loadMediatr());
     dispatch(loadOffice());
   }, [dispatch]);
 
@@ -166,6 +165,7 @@ export default function AddModalForCitizen() {
     professionId: Yup.string().required("Bu xana boş qoyula bilməz"),
     districtIds: Yup.array()
       .min(1, "Bu xana boş qoyula bilməz")
+      .max(3, "Maksimum 3 ərazi seçilə bilər")
       .required("Bu xana boş qoyula bilməz"),
     courtId: Yup.string().required("Bu xana boş qoyula bilməz"),
 
@@ -195,8 +195,14 @@ export default function AddModalForCitizen() {
     // caseInAction: true,
     // mediatorNames: [],
   });
-  const onChangeProfId = async (profId, courtId) => {
-    dispatch(loadMediatr({ professionId: profId, courtId: courtId }));
+  const onChangeProfId = async (profId, courtId, districtIds) => {
+    dispatch(
+      loadMediatr({
+        professionId: profId,
+        courtId: courtId,
+        districtIds: districtIds,
+      })
+    );
   };
 
   useEffect(() => {
@@ -445,10 +451,10 @@ export default function AddModalForCitizen() {
                                     setCheck("mediator");
                                     onChangeProfId(
                                       values.professionId,
-                                      values.courtId
+                                      values.courtId,
+                                      values.districtIds
                                     );
                                   }}
-                                
                                   className="custom-control-input"
                                 />
                                 <label
@@ -481,94 +487,96 @@ export default function AddModalForCitizen() {
                           <div className="row mb-4">
                             <div className="col-md-12">
                               <div id="toggleAccordion">
-                                {applys &&
-                                  applys.mediatrs.map((tree, index) => (
-                                    <div className="card">
-                                      <div className="card-header" id="...">
-                                        <section className="mb-0 mt-0">
-                                          <div
-                                            role="menu"
-                                            className="collapsed"
-                                            data-toggle="collapse"
-                                            data-target={`#defaultAccordion${index}`}
-                                            aria-expanded="true"
-                                            aria-controls={`#defaultAccordion${index}`}
-                                          >
-                                            {tree.districtName}
-                                            <div className="icons">
-                                              <svg> ... </svg>
+                                {citizen &&
+                                  citizen.mediatorsForCitizen.map(
+                                    (tree, index) => (
+                                      <div className="card">
+                                        <div className="card-header" id="...">
+                                          <section className="mb-0 mt-0">
+                                            <div
+                                              role="menu"
+                                              className="collapsed"
+                                              data-toggle="collapse"
+                                              data-target={`#defaultAccordion${index}`}
+                                              aria-expanded="true"
+                                              aria-controls={`#defaultAccordion${index}`}
+                                            >
+                                              {tree.districtName}
+                                              <div className="icons">
+                                                <svg> ... </svg>
+                                              </div>
                                             </div>
-                                          </div>
-                                        </section>
-                                      </div>
-                                      <div
-                                        id={`defaultAccordion${index}`}
-                                        className="collapse"
-                                        aria-labelledby="..."
-                                        data-parent="#toggleAccordion"
-                                      >
-                                        <div className="card-body">
-                                          <div className="row">
-                                            {tree.mediatrs.map((name) => (
-                                              <div className="col-md-12">
-                                                <MyCheckbox
-                                                  name="mediatrIds"
-                                                  disabled={
-                                                    mediatorName.length > 2 &&
-                                                    !mediatorName.includes(
-                                                      `${name.firstName} ${name.lastName}`
-                                                    )
-                                                  }
-                                                  value={name.mediatrId}
-                                                  label={`${name.firstName} ${name.lastName}`}
-                                                  onClick={(e) => {
-                                                    if (
-                                                      e.target.checked ===
-                                                        true &&
+                                          </section>
+                                        </div>
+                                        <div
+                                          id={`defaultAccordion${index}`}
+                                          className="collapse"
+                                          aria-labelledby="..."
+                                          data-parent="#toggleAccordion"
+                                        >
+                                          <div className="card-body">
+                                            <div className="row">
+                                              {tree.mediatrs.map((name) => (
+                                                <div className="col-md-12">
+                                                  <MyCheckbox
+                                                    name="mediatrIds"
+                                                    disabled={
+                                                      mediatorName.length > 2 &&
                                                       !mediatorName.includes(
                                                         `${name.firstName} ${name.lastName}`
                                                       )
-                                                    ) {
-                                                      setMediatorName(
-                                                        (state) => [
-                                                          ...state,
-                                                          `${name.firstName} ${name.lastName}`,
-                                                        ]
-                                                      );
-                                                    } else if (
-                                                      e.target.checked ===
-                                                        false &&
-                                                      mediatorName.includes(
-                                                        `${name.firstName} ${name.lastName}`
-                                                      )
-                                                    ) {
-                                                      setMediatorName(
-                                                        (state) => [
-                                                          ...state.filter(
-                                                            (medik) =>
-                                                              medik !==
-                                                              `${name.firstName} ${name.lastName}`
-                                                          ),
-                                                        ]
-                                                      );
-                                                      console.log(
-                                                        values.mediatrIds.find(
-                                                          (name) =>
-                                                            name ===
-                                                            e.target.value
-                                                        ),
-                                                        "medname"
-                                                      );
                                                     }
-                                                  }}
-                                                />
-                                              </div>
-                                            ))}
+                                                    value={name.mediatrId}
+                                                    label={`${name.firstName} ${name.lastName}`}
+                                                    onClick={(e) => {
+                                                      if (
+                                                        e.target.checked ===
+                                                          true &&
+                                                        !mediatorName.includes(
+                                                          `${name.firstName} ${name.lastName}`
+                                                        )
+                                                      ) {
+                                                        setMediatorName(
+                                                          (state) => [
+                                                            ...state,
+                                                            `${name.firstName} ${name.lastName}`,
+                                                          ]
+                                                        );
+                                                      } else if (
+                                                        e.target.checked ===
+                                                          false &&
+                                                        mediatorName.includes(
+                                                          `${name.firstName} ${name.lastName}`
+                                                        )
+                                                      ) {
+                                                        setMediatorName(
+                                                          (state) => [
+                                                            ...state.filter(
+                                                              (medik) =>
+                                                                medik !==
+                                                                `${name.firstName} ${name.lastName}`
+                                                            ),
+                                                          ]
+                                                        );
+                                                        console.log(
+                                                          values.mediatrIds.find(
+                                                            (name) =>
+                                                              name ===
+                                                              e.target.value
+                                                          ),
+                                                          "medname"
+                                                        );
+                                                      }
+                                                    }}
+                                                  />
+                                                </div>
+                                              ))}
+                                            </div>
                                           </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  ))}
+                                    )
+                                  )}
                               </div>
                             </div>
                           </div>

@@ -2,6 +2,7 @@ import {
   CREATE_APPLY_FOR_CITIZEN,
   DELETE_APPLY_FOR_CITIZEN,
   FETCH_APPLY_FOR_CITIZEN,
+  FETCH_MEDIATOR_FOR_CITIZEN,
   LISTEN_APPLY_FOR_CITIZEN,
   UPDATE_APPLY_FOR_CITIZEN,
 } from "./citizenConstants";
@@ -9,7 +10,8 @@ import {
 const initialState = {
   applysOfCitizen: [],
   listenApplyOfCitizen: [],
-  totalCount:null
+  mediatorsForCitizen:[],
+  totalCount: null,
 };
 
 export default function citizenReducer(
@@ -49,6 +51,12 @@ export default function citizenReducer(
       return {
         ...state,
         listenApplyOfCitizen: payload,
+        totalCount: totalCount,
+      };
+    case FETCH_MEDIATOR_FOR_CITIZEN:
+      return {
+        ...state,
+        mediatorsForCitizen: payload,
         totalCount: totalCount,
       };
     default:
