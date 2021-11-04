@@ -155,8 +155,11 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                     <line x1={3} y1={10} x2={21} y2={10} />
                                   </svg>
                                   {listenedMediator &&
-                                    `${listenedMediator.dateOfBirth} `}
+                                    `${moment(
+                                      listenedMediator.membershipDate
+                                    ).format("DD-MM-YYYY")} `}
                                 </li>
+
                                 <li className="contacts-block__item">
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -177,25 +180,23 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                     `${listenedMediator.actingAddress} `}
                                 </li>
                                 <li className="contacts-block__item">
-                                  <a href="mailto:example@mail.com">
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      width={24}
-                                      height={24}
-                                      viewBox="0 0 24 24"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      strokeWidth={2}
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      className="feather feather-mail"
-                                    >
-                                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                      <polyline points="22,6 12,13 2,6" />
-                                    </svg>
-                                    {listenedMediator &&
-                                      `${listenedMediator.email} `}
-                                  </a>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={24}
+                                    height={24}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="feather feather-mail"
+                                  >
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
+                                  </svg>
+                                  {listenedMediator &&
+                                    `${listenedMediator.email} `}
                                 </li>
                                 <li className="contacts-block__item">
                                   <svg
@@ -216,68 +217,210 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                     `+994${listenedMediator.phone} `}
                                 </li>
                                 <li className="contacts-block__item">
-                                  <ul className="list-inline">
-                                    <li className="list-inline-item">
-                                      <div className="social-icon">
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width={24}
-                                          height={24}
-                                          viewBox="0 0 24 24"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          strokeWidth={2}
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          className="feather feather-facebook"
-                                        >
-                                          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                                        </svg>
-                                      </div>
-                                    </li>
-                                    <li className="list-inline-item">
-                                      <div className="social-icon">
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width={24}
-                                          height={24}
-                                          viewBox="0 0 24 24"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          strokeWidth={2}
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          className="feather feather-twitter"
-                                        >
-                                          <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
-                                        </svg>
-                                      </div>
-                                    </li>
-                                    <li className="list-inline-item">
-                                      <div className="social-icon">
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width={24}
-                                          height={24}
-                                          viewBox="0 0 24 24"
-                                          fill="none"
-                                          stroke="currentColor"
-                                          strokeWidth={2}
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                          className="feather feather-linkedin"
-                                        >
-                                          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                                          <rect
-                                            x={2}
-                                            y={9}
-                                            width={4}
-                                            height={12}
-                                          />
-                                          <circle cx={4} cy={4} r={2} />
-                                        </svg>
-                                      </div>
-                                    </li>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={24}
+                                    height={24}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="feather feather-dollar-sign"
+                                  >
+                                    <line x1={12} y1={1} x2={12} y2={23} />
+                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                  </svg>
+
+                                  {listenedMediator &&
+                                    `${listenedMediator.voen} `}
+                                </li>
+                                <li className="contacts-block__item">
+                                  <ul className="list-inline text-center">
+                                    {listenedMediator.mediatrsSocialMedias &&
+                                      listenedMediator.mediatrsSocialMedias.map(
+                                        (social) => {
+                                          switch (social.socialMediaName) {
+                                            case "Facebook":
+                                              return (
+                                                <li className="list-inline-item">
+                                                  <div className="social-icon">
+                                                    <a
+                                                      target="_blank"
+                                                      href={social.linkToPage}
+                                                    >
+                                                      <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width={24}
+                                                        height={24}
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth={2}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="feather feather-facebook"
+                                                      >
+                                                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                                                      </svg>
+                                                    </a>
+                                                  </div>
+                                                </li>
+                                              );
+                                            case "Instagram":
+                                              return (
+                                                <li className="list-inline-item">
+                                                  <div className="social-icon">
+                                                    <a
+                                                      target="_blank"
+                                                      href={social.linkToPage}
+                                                    >
+                                                      <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width={24}
+                                                        height={24}
+                                                        viewBox="0 0 24 24"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        strokeWidth={2}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="feather feather-instagram"
+                                                      >
+                                                        <rect
+                                                          x={2}
+                                                          y={2}
+                                                          width={20}
+                                                          height={20}
+                                                          rx={5}
+                                                          ry={5}
+                                                        />
+                                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                                                        <line
+                                                          x1="17.5"
+                                                          y1="6.5"
+                                                          x2="17.51"
+                                                          y2="6.5"
+                                                        />
+                                                      </svg>
+                                                    </a>
+                                                  </div>
+                                                </li>
+                                              );
+                                            case "Twitter":
+                                              return (
+                                                <li className="list-inline-item">
+                                                  <div className="social-icon">
+                                                    <a
+                                                      target="_blank"
+                                                      href={social.linkToPage}
+                                                    >
+                                                      <svg
+                                                        viewBox="0 0 24 24"
+                                                        width={24}
+                                                        height={24}
+                                                        stroke="currentColor"
+                                                        strokeWidth={2}
+                                                        fill="none"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="css-i6dzq1"
+                                                      >
+                                                        <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
+                                                      </svg>
+                                                    </a>
+                                                  </div>
+                                                </li>
+                                              );
+                                            case "Linkedin":
+                                              return (
+                                                <li className="list-inline-item">
+                                                  <div className="social-icon">
+                                                    <a
+                                                      target="_blank"
+                                                      href={social.linkToPage}
+                                                    >
+                                                      <svg
+                                                        viewBox="0 0 24 24"
+                                                        width={24}
+                                                        height={24}
+                                                        stroke="currentColor"
+                                                        strokeWidth={2}
+                                                        fill="none"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="css-i6dzq1"
+                                                      >
+                                                        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                                                        <rect
+                                                          x={2}
+                                                          y={9}
+                                                          width={4}
+                                                          height={12}
+                                                        />
+                                                        <circle
+                                                          cx={4}
+                                                          cy={4}
+                                                          r={2}
+                                                        />
+                                                      </svg>
+                                                    </a>
+                                                  </div>
+                                                </li>
+                                              );
+                                              case "Digər":
+                                                return (
+                                                  <li className="list-inline-item">
+                                                    <div className="social-icon">
+                                                      <a
+                                                        target="_blank"
+                                                        href={social.linkToPage}
+                                                      >
+                                                        <svg
+                                                          viewBox="0 0 24 24"
+                                                          width={24}
+                                                          height={24}
+                                                          stroke="currentColor"
+                                                          strokeWidth={2}
+                                                          fill="none"
+                                                          strokeLinecap="round"
+                                                          strokeLinejoin="round"
+                                                          className="css-i6dzq1"
+                                                        >
+                                                          <rect
+                                                            x={3}
+                                                            y={3}
+                                                            width={18}
+                                                            height={18}
+                                                            rx={2}
+                                                            ry={2}
+                                                          />
+                                                          <line
+                                                            x1={3}
+                                                            y1={9}
+                                                            x2={21}
+                                                            y2={9}
+                                                          />
+                                                          <line
+                                                            x1={9}
+                                                            y1={21}
+                                                            x2={9}
+                                                            y2={9}
+                                                          />
+                                                        </svg>
+                                                      </a>
+                                                    </div>
+                                                  </li>
+                                                );
+
+                                            default: return (
+                                              <p className="text-center">Social media hesabı yoxdur</p>
+                                            )
+
+                                          }
+                                        }
+                                      )}
                                   </ul>
                                 </li>
                               </ul>
@@ -349,22 +492,26 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                         <div className="widget-content widget-content-area">
                           <h3 className>İxtisasları</h3>
                           {listenedMediator.mediatrProfessions &&
-                            listenedMediator.mediatrProfessions.map((mediatrProfession) => (
-                              <div className="progress br-30">
-                                <div
-                                  className="progress-bar bg-primary"
-                                  role="progressbar"
-                                  style={{ width: "100%" }}
-                                  aria-valuenow={25}
-                                  aria-valuemin={0}
-                                  aria-valuemax={100}
-                                >
-                                  <div className="progress-title">
-                                    <span>{mediatrProfession.professionName}</span>
+                            listenedMediator.mediatrProfessions.map(
+                              (mediatrProfession) => (
+                                <div className="progress br-30">
+                                  <div
+                                    className="progress-bar bg-primary"
+                                    role="progressbar"
+                                    style={{ width: "100%" }}
+                                    aria-valuenow={25}
+                                    aria-valuemin={0}
+                                    aria-valuemax={100}
+                                  >
+                                    <div className="progress-title">
+                                      <span>
+                                        {mediatrProfession.professionName}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            ))}
+                              )
+                            )}
                         </div>
                       </div>
                       <div className="bio layout-spacing ">

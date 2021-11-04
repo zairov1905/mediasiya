@@ -55,25 +55,26 @@ export default function MediatorForCouncilPage() {
   const columns = [
 
     {
-      name: "Ad",
+      name: "Soyad, ad, ata adı ",
       selector: "firstName",
+      cell:(mediator)=>(
+        <p>
+          {
+            `${mediator.lastName} ${mediator.firstName}  ${mediator.middleName} `
+          }
+        </p>
+        
+
+      )
+      
     },
     {
-      name: "Soyad",
-      selector: "lastName",
-      // maxWidth: "164px",
-    },
-    {
-      name: "Ata adı",
-      selector: "middleName",
-    },
-    {
-      name: "PİN",
+      name: "FİN",
       selector: "pin",
       // maxWidth: "164px",
     },
     {
-      name: "Reyestr Nömrəsi",
+      name: "Reyestr nömrəsi",
       selector: "registryNumber",
       // maxWidth: "164px",
     },
@@ -83,7 +84,7 @@ export default function MediatorForCouncilPage() {
     },
 
     {
-      name: "",
+      name: "Ətraflı",
       cell: (mediator) => (
         <div className="action-btn">
           <svg
