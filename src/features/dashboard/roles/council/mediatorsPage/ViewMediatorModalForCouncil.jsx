@@ -32,18 +32,6 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
     // mediatorNames: [],
   };
   const validationSchema = Yup.object({});
-
-  useEffect(() => {
-    var toggler = document.getElementsByClassName("caret");
-    var i;
-
-    for (i = 0; i < toggler.length; i++) {
-      toggler[i].addEventListener("click", function () {
-        this.parentElement.querySelector(".nested").classList.toggle("active");
-        this.classList.toggle("caret-down");
-      });
-    }
-  }, []);
   return (
     <ModalWrapper size="modal-xl" header={"Mediator"}>
       {async.kind === "listenToMediator" ? (
@@ -68,7 +56,7 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                       <div className="user-profile layout-spacing">
                         <div className="widget-content widget-content-area">
                           <div className="d-flex justify-content-between">
-                            <h3 className>Profil</h3>
+                            <h3>Şəxsi məlumatlar</h3>
                             <a
                               href="user_account_setting.html"
                               className="mt-2 edit-profile"
@@ -99,15 +87,18 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                               }`}
                               alt="avatar"
                             />
-                            <p className>
+                            <p>
                               {listenedMediator &&
-                                `${listenedMediator.firstName} ${listenedMediator.lastName}`}
+                                `${listenedMediator.lastName} ${listenedMediator.firstName} ${listenedMediator.middleName}`}
                             </p>
                           </div>
                           <div className="user-info-list">
-                            <div className>
+                            <div>
                               <ul className="contacts-block list-unstyled">
-                                <li className="contacts-block__item">
+                                <li
+                                  title="Şəxsiyyət vəsiqəsinin seriya və nömrəsi"
+                                  className="contacts-block__item"
+                                >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width={24}
@@ -118,18 +109,47 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                     strokeWidth={2}
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
-                                    className="feather feather-coffee"
+                                    className="feather feather-credit-card"
                                   >
-                                    <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
-                                    <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
-                                    <line x1={6} y1={1} x2={6} y2={4} />
-                                    <line x1={10} y1={1} x2={10} y2={4} />
-                                    <line x1={14} y1={1} x2={14} y2={4} />
-                                  </svg>{" "}
+                                    <rect
+                                      x={1}
+                                      y={4}
+                                      width={22}
+                                      height={16}
+                                      rx={2}
+                                      ry={2}
+                                    />
+                                    <line x1={1} y1={10} x2={23} y2={10} />
+                                  </svg>
                                   {listenedMediator &&
-                                    `${listenedMediator.registryNumber} `}
+                                    `${listenedMediator.docSeries}${listenedMediator.docNumber}`}
                                 </li>
-                                <li className="contacts-block__item">
+                                <li
+                                  title="Fərdi identifikasiya nömrəsi"
+                                  className="contacts-block__item"
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width={24}
+                                    height={24}
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth={2}
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="feather feather-user"
+                                  >
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx={12} cy={7} r={4} />
+                                  </svg>
+                                  {listenedMediator &&
+                                    `${listenedMediator.pin}`}
+                                </li>
+                                <li
+                                  title="Doğum tarixi"
+                                  className="contacts-block__item"
+                                >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width={24}
@@ -156,11 +176,14 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                   </svg>
                                   {listenedMediator &&
                                     `${moment(
-                                      listenedMediator.membershipDate
+                                      listenedMediator.dateOfBirth
                                     ).format("DD-MM-YYYY")} `}
                                 </li>
 
-                                <li className="contacts-block__item">
+                                <li
+                                  title="Qeydiyyat ünvanı"
+                                  className="contacts-block__item"
+                                >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width={24}
@@ -177,9 +200,12 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                     <circle cx={12} cy={10} r={3} />
                                   </svg>
                                   {listenedMediator &&
-                                    `${listenedMediator.actingAddress} `}
+                                    `${listenedMediator.regAddress} `}
                                 </li>
-                                <li className="contacts-block__item">
+                                <li
+                                  title="Elektron poçt ünvanı"
+                                  className="contacts-block__item"
+                                >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width={24}
@@ -198,7 +224,10 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                   {listenedMediator &&
                                     `${listenedMediator.email} `}
                                 </li>
-                                <li className="contacts-block__item">
+                                <li
+                                  title="Mobil nömrəsi"
+                                  className="contacts-block__item"
+                                >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width={24}
@@ -217,30 +246,14 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                     `+994${listenedMediator.phone} `}
                                 </li>
                                 <li className="contacts-block__item">
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width={24}
-                                    height={24}
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth={2}
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="feather feather-dollar-sign"
-                                  >
-                                    <line x1={12} y1={1} x2={12} y2={23} />
-                                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                                  </svg>
-
-                                  {listenedMediator &&
-                                    `${listenedMediator.voen} `}
-                                </li>
-                                <li className="contacts-block__item">
                                   <ul className="list-inline text-center">
                                     {listenedMediator.mediatrsSocialMedias &&
-                                      listenedMediator.mediatrsSocialMedias.map(
-                                        (social) => {
+                                      listenedMediator.mediatrsSocialMedias
+                                        .filter(
+                                          (social) =>
+                                            social.linkToPage.length > 25
+                                        )
+                                        .map((social) => {
                                           switch (social.socialMediaName) {
                                             case "Facebook":
                                               return (
@@ -369,58 +382,59 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                                   </div>
                                                 </li>
                                               );
-                                              case "Digər":
-                                                return (
-                                                  <li className="list-inline-item">
-                                                    <div className="social-icon">
-                                                      <a
-                                                        target="_blank"
-                                                        href={social.linkToPage}
+                                            case "Digər":
+                                              return (
+                                                <li className="list-inline-item">
+                                                  <div className="social-icon">
+                                                    <a
+                                                      target="_blank"
+                                                      href={social.linkToPage}
+                                                    >
+                                                      <svg
+                                                        viewBox="0 0 24 24"
+                                                        width={24}
+                                                        height={24}
+                                                        stroke="currentColor"
+                                                        strokeWidth={2}
+                                                        fill="none"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        className="css-i6dzq1"
                                                       >
-                                                        <svg
-                                                          viewBox="0 0 24 24"
-                                                          width={24}
-                                                          height={24}
-                                                          stroke="currentColor"
-                                                          strokeWidth={2}
-                                                          fill="none"
-                                                          strokeLinecap="round"
-                                                          strokeLinejoin="round"
-                                                          className="css-i6dzq1"
-                                                        >
-                                                          <rect
-                                                            x={3}
-                                                            y={3}
-                                                            width={18}
-                                                            height={18}
-                                                            rx={2}
-                                                            ry={2}
-                                                          />
-                                                          <line
-                                                            x1={3}
-                                                            y1={9}
-                                                            x2={21}
-                                                            y2={9}
-                                                          />
-                                                          <line
-                                                            x1={9}
-                                                            y1={21}
-                                                            x2={9}
-                                                            y2={9}
-                                                          />
-                                                        </svg>
-                                                      </a>
-                                                    </div>
-                                                  </li>
-                                                );
+                                                        <rect
+                                                          x={3}
+                                                          y={3}
+                                                          width={18}
+                                                          height={18}
+                                                          rx={2}
+                                                          ry={2}
+                                                        />
+                                                        <line
+                                                          x1={3}
+                                                          y1={9}
+                                                          x2={21}
+                                                          y2={9}
+                                                        />
+                                                        <line
+                                                          x1={9}
+                                                          y1={21}
+                                                          x2={9}
+                                                          y2={9}
+                                                        />
+                                                      </svg>
+                                                    </a>
+                                                  </div>
+                                                </li>
+                                              );
 
-                                            default: return (
-                                              <p className="text-center">Social media hesabı yoxdur</p>
-                                            )
-
+                                            default:
+                                              return (
+                                                <p className="text-center">
+                                                  Social media hesabı yoxdur
+                                                </p>
+                                              );
                                           }
-                                        }
-                                      )}
+                                        })}
                                   </ul>
                                 </li>
                               </ul>
@@ -430,22 +444,21 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                       </div>
                       <div className="education layout-spacing ">
                         <div className="widget-content widget-content-area">
-                          <h3 className>Təhsili</h3>
+                          <h3>Təhsil məlumatları</h3>
                           <div className="timeline-alter">
                             {listenedMediator.educations &&
-                              listenedMediator.educations.map((edu) => (
-                                <div className="item-timeline">
+                              listenedMediator.educations.map((edu, index) => (
+                                <div key={index} className="item-timeline">
                                   <div className="t-meta-date">
-                                    <p className>
-                                      {moment(edu.graduationDate).format(
-                                        "DD-MM-YYYY"
-                                      )}
+                                    <p>
+                                      {`${moment(edu.graduationDate).format(
+                                        "YYYY"
+                                      )}`} 
                                     </p>
                                   </div>
                                   <div
                                     className="t-dot"
                                     data-original-title
-                                    title
                                   ></div>
                                   <div className="t-text">
                                     <p>{edu.collegeName}</p>
@@ -458,14 +471,14 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                       </div>
                       <div className="work-experience layout-spacing ">
                         <div className="widget-content widget-content-area">
-                          <h3 className>Sertifikatları</h3>
+                          <h3>Sertifikatlar</h3>
                           <div className="timeline-alter">
                             {listenedMediator.certificates &&
                               listenedMediator.certificates.map(
-                                (certificate) => (
-                                  <div className="item-timeline">
+                                (certificate, index) => (
+                                  <div key={index} className="item-timeline">
                                     <div className="t-meta-date">
-                                      <p className>
+                                      <p>
                                         {moment(
                                           certificate.certificationDate
                                         ).format("DD-MM-YYYY")}
@@ -474,7 +487,6 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                     <div
                                       className="t-dot"
                                       data-original-title
-                                      title
                                     ></div>
                                     <div className="t-text">
                                       <p>{certificate.issuerInstitution}</p>
@@ -490,11 +502,11 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                     <div className="col-xl-8 col-lg-6 col-md-7 col-sm-12 layout-top-spacing">
                       <div className="skills layout-spacing ">
                         <div className="widget-content widget-content-area">
-                          <h3 className>İxtisasları</h3>
+                          <h3>İxtisaslar</h3>
                           {listenedMediator.mediatrProfessions &&
                             listenedMediator.mediatrProfessions.map(
-                              (mediatrProfession) => (
-                                <div className="progress br-30">
+                              (mediatrProfession, index) => (
+                                <div key={index} className="progress br-30">
                                   <div
                                     className="progress-bar bg-primary"
                                     role="progressbar"
@@ -516,75 +528,127 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                       </div>
                       <div className="bio layout-spacing ">
                         <div className="widget-content widget-content-area">
-                          <h3 className>Bio</h3>
-                          <p>
-                            I'm Web Developer from California. I code and design
-                            websites worldwide. Mauris varius tellus vitae
-                            tristique sagittis. Sed aliquet, est nec auctor
-                            aliquet, orci ex vestibulum ex, non pharetra lacus
-                            erat ac nulla.
-                          </p>
-                          <p>
-                            Sed vulputate, ligula eget mollis auctor, lectus
-                            elit feugiat urna, eget euismod turpis lectus sed
-                            ex. Orci varius natoque penatibus et magnis dis
-                            parturient montes, nascetur ridiculus mus. Nunc ut
-                            velit finibus, scelerisque sapien vitae, pharetra
-                            est. Nunc accumsan ligula vehicula scelerisque
-                            vulputate.
-                          </p>
+                          <h3 className="mb-1">Fəaliyyətinə dair məlumatlar</h3>
                           <div className="bio-skill-box">
                             <div className="row">
-                              <div className="col-12 col-xl-6 col-lg-12 mb-xl-5 mb-5 ">
-                                <div className="d-flex b-skills">
-                                  <div></div>
-                                  <div className>
-                                    <h5>Sass Applications</h5>
-                                    <p>
-                                      Duis aute irure dolor in reprehenderit in
-                                      voluptate velit esse eu fugiat nulla
-                                      pariatur.
-                                    </p>
-                                  </div>
+                              <div className="col-12 col-xl-12 col-lg-12 mb-xl-12">
+                                <div className="table-responsive">
+                                  <table className="table table-hover">
+                                    {/* <thead>
+                                      <tr>
+                                        <th>Təlim keçdiyi qurum</th>
+                                        <th>
+                                          Fəaliyyət göstərdiyi şəhər/rayon
+                                        </th>
+                                        <th>Fəaliyyət göstərdiyi ünvan</th>
+                                        <th>Üzvlüyə qəbul edildiyi tarix</th>
+                                        <th>Reyestr nömrəsi</th>
+                                        <th>VÖEN</th>
+                                      </tr>
+                                    </thead> */}
+                                    <tbody>
+                                      <tr>
+                                        <td className="text-info text-bold">
+                                          Təlim keçdiyi qurum
+                                        </td>
+                                        <td>
+                                          {listenedMediator.institutionName}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="text-info">
+                                          Fəaliyyət göstərdiyi şəhər/rayon
+                                        </td>
+                                        <td>
+                                          {" "}
+                                          {listenedMediator.districts &&
+                                            listenedMediator.districts.join(
+                                              ", "
+                                            )}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="text-info">
+                                          Fəaliyyət göstərdiyi ünvan
+                                        </td>
+                                        <td>
+                                          {listenedMediator.actingAddress}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="text-info">
+                                          Üzvlüyə qəbul edildiyi tarix
+                                        </td>
+                                        <td>
+                                          {moment(
+                                            listenedMediator.membershipDate
+                                          ).format("DD-MM-YYYY")}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="text-info">
+                                          Reyestr nömrəsi
+                                        </td>
+                                        <td>
+                                          {listenedMediator.registryNumber}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="text-info">VÖEN</td>
+                                        <td>{listenedMediator.voen}</td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
                                 </div>
                               </div>
-                              <div className="col-12 col-xl-6 col-lg-12 mb-xl-5 mb-5 ">
-                                <div className="d-flex b-skills">
-                                  <div></div>
-                                  <div className>
-                                    <h5>Github Countributer</h5>
-                                    <p>
-                                      Ut enim ad minim veniam, quis nostrud
-                                      exercitation aliquip ex ea commodo
-                                      consequat.
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-xl-6 col-lg-12 mb-xl-0 mb-5 ">
-                                <div className="d-flex b-skills">
-                                  <div></div>
-                                  <div className>
-                                    <h5>Photograhpy</h5>
-                                    <p>
-                                      Excepteur sint occaecat cupidatat non
-                                      proident, sunt in culpa qui officia anim
-                                      id est laborum.
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="col-12 col-xl-6 col-lg-12 mb-xl-0 mb-0 ">
-                                <div className="d-flex b-skills">
-                                  <div></div>
-                                  <div className>
-                                    <h5>Mobile Apps</h5>
-                                    <p>
-                                      Lorem ipsum dolor sit amet, consectetur
-                                      adipisicing elit, sed do et dolore magna
-                                      aliqua.
-                                    </p>
-                                  </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bio layout-spacing ">
+                        <div className="widget-content widget-content-area">
+                          <h3 className="mb-1">Digər</h3>
+                          <div className="bio-skill-box">
+                            <div className="row">
+                              <div className="col-12 col-xl-12 col-lg-12 mb-xl-12">
+                                <div className="table-responsive">
+                                  <table className="table table-bordered table-hover table-striped mb-4">
+                                    {/* <thead>
+                                      <tr>
+                                        <th>Dil bilikləri</th>
+                                        <th>
+                                          Mediatorluqla yanaşı hazırda işlədiyi
+                                          yer
+                                        </th>
+                                        <th>Vəzifə</th>
+                                      </tr>
+                                    </thead> */}
+                                    <tbody>
+                                      <tr>
+                                        <td className="text-info">
+                                          Dil bilikləri
+                                        </td>
+                                        <td>
+                                          {listenedMediator.languageSkills}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="text-info">
+                                          Mediatorluqla yanaşı hazırda işlədiyi
+                                          yer
+                                        </td>
+                                        <td>
+                                          {listenedMediator.otherWorkplace}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="text-info">Vəzifə</td>
+                                        <td>
+                                          {listenedMediator.otherPosition}
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
                                 </div>
                               </div>
                             </div>

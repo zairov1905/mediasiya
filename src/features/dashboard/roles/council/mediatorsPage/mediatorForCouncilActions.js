@@ -42,7 +42,6 @@ export function listenToMediator(data) {
         dispatch({
           type: LISTEN_MEDIATOR_FOR_COUNCIL,
           payload: datas.data.data,
-          totalCount: datas.data.data.totalCount,
         });
         dispatch(asyncActionFinish());
       })

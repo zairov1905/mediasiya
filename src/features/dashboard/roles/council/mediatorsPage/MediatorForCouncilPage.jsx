@@ -15,7 +15,9 @@ export default function MediatorForCouncilPage() {
   }, dispatch);
   const [perPage, setPerPage] = useState(10);
   const [PageNumber, setPageNumber] = useState(1);
-  const { mediators, totalCount } = useSelector((state) => state.mediatorForCouncil);
+  const { mediators, totalCount } = useSelector(
+    (state) => state.mediatorForCouncil
+  );
   const [hover, sethover] = useState(false);
   const [target, setTarget] = useState({ id: null, name: null });
 
@@ -53,34 +55,29 @@ export default function MediatorForCouncilPage() {
   };
 
   const columns = [
-
     {
       name: "Soyad, ad, ata adı ",
-      selector: "firstName",
-      cell:(mediator)=>(
+      cell: (mediator) => (
         <p>
-          {
-            `${mediator.lastName} ${mediator.firstName}  ${mediator.middleName} `
-          }
+          {`${mediator.lastName} ${mediator.firstName} ${mediator.middleName}`}
         </p>
-        
-
-      )
-      
+      ),
     },
     {
       name: "FİN",
-      selector: "pin",
+      // selector: "registryNumber",
       // maxWidth: "164px",
+      cell: (mediator) => <p>{`${mediator.pin}`}</p>,
     },
     {
       name: "Reyestr nömrəsi",
-      selector: "registryNumber",
+      // selector: "registryNumber",
       // maxWidth: "164px",
+      cell: (mediator) => <p>{`${mediator.registryNumber}`}</p>,
     },
     {
       name: "Ərazi",
-      selector: "districts",
+      cell: (mediator) => <p>{`${mediator.districts}`}</p>,
     },
 
     {
@@ -135,8 +132,6 @@ export default function MediatorForCouncilPage() {
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
             <circle cx={12} cy={12} r={3} />
           </svg>
-
-
         </div>
       ),
     },

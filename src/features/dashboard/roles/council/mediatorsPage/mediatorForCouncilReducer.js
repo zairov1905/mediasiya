@@ -24,7 +24,6 @@ export default function mediatorForCouncilReducer(
       return {
         ...state,
         listenedMediator: payload,
-        totalCount: totalCount,
       };
     default:
       return state;
