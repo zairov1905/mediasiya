@@ -7,10 +7,12 @@ export default function SubHeader() {
   let currentLocation;
   switch (location.pathname) {
     case "/dashboard/apply":
-      currentLocation = "Müraciət";
+      currentLocation = "Müraciətlər";
       break;
-    case "/employees":
+    case "/dashboard/mediators":
 
+    currentLocation="Mediatorlar"
+    break;
     default:
       break;
   }

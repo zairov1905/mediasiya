@@ -253,9 +253,11 @@ export default function ViewModalForMediator({ apply }) {
                               <li key={index} className="list-group-item list-group-item-action">
                                 <div className="media">
                                   <div className="mr-3">
-                                    <img
+                                  <img
                                       alt="avatar"
-                                      src="/assets/img/90x90.jpg"
+                                      src={mediatr.imagePath ? `http://muraciet.mediasiya.gov.az:8080/${
+                                        mediatr.imagePath
+                                      }` : "/assets/img/90x90.jpg"}
                                       className="img-fluid rounded-circle"
                                     />
                                   </div>

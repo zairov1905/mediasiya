@@ -607,12 +607,12 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                       </div>
                       <div className="bio layout-spacing ">
                         <div className="widget-content widget-content-area">
-                          <h3 className="mb-1">Digər</h3>
+                          <h3 className="mb-1">Digər məlumatlar</h3>
                           <div className="bio-skill-box">
                             <div className="row">
                               <div className="col-12 col-xl-12 col-lg-12 mb-xl-12">
                                 <div className="table-responsive">
-                                  <table className="table table-bordered table-hover table-striped mb-4">
+                                  <table className="table table-hover  mb-4">
                                     {/* <thead>
                                       <tr>
                                         <th>Dil bilikləri</th>
@@ -626,14 +626,6 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                     <tbody>
                                       <tr>
                                         <td className="text-info">
-                                          Dil bilikləri
-                                        </td>
-                                        <td>
-                                          {listenedMediator.languageSkills}
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td className="text-info">
                                           Mediatorluqla yanaşı hazırda işlədiyi
                                           yer
                                         </td>
@@ -645,6 +637,14 @@ export default function ViewMediatorModalForCouncil({ mediator }) {
                                         <td className="text-info">Vəzifə</td>
                                         <td>
                                           {listenedMediator.otherPosition}
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td className="text-info">
+                                          Dil bilikləri
+                                        </td>
+                                        <td>
+                                          {listenedMediator.languageSkills}
                                         </td>
                                       </tr>
                                     </tbody>

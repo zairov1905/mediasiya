@@ -49,7 +49,7 @@ function App() {
       {/* <Route name="filesWithPath_link" path="files/*" handler={Files} /> */}
       <Route exact path="/" component={Login} />
       <Route exact path="/form" component={FormPage} />
-      <Route name="filesWithPath_link" path="/*" handler={Login} />
+      <Route component={Login} />
 
       <Route
         path={"/dashboard/(.+)"}

@@ -137,15 +137,15 @@ export default function Sidebar() {
           )}
           <li className="menu">
             <NavLink
-              to="/doc"
+              to="/dashboard/apply"
               aria-expanded="false"
               className="dropdown-toggle"
-              activeStyle={{
-                background: "#bfc9d4",
-                boxShadow:
-                  "0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%)",
-                borderRadius: " 6px",
-              }}
+              // activeStyle={{
+              //   background: "#bfc9d4",
+              //   boxShadow:
+              //     "0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%)",
+              //   borderRadius: " 6px",
+              // }}
             >
               <div>
                 <svg
@@ -171,15 +171,15 @@ export default function Sidebar() {
           </li>
           <li className="menu">
             <NavLink
-              to="/information"
+              to="/dashboard/apply/"
               aria-expanded="false"
               className="dropdown-toggle"
-              activeStyle={{
-                background: "#bfc9d4",
-                boxShadow:
-                  "0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%)",
-                borderRadius: " 6px",
-              }}
+              // activeStyle={{
+              //   background: "#bfc9d4",
+              //   boxShadow:
+              //     "0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%)",
+              //   borderRadius: " 6px",
+              // }}
             >
               <div>
                 <svg
@@ -207,15 +207,15 @@ export default function Sidebar() {
           </li>
           <li className="menu">
             <NavLink
-              to="/legislation"
+              to="/dashboard/apply/"
               aria-expanded="false"
               className="dropdown-toggle"
-              activeStyle={{
-                background: "#bfc9d4",
-                boxShadow:
-                  "0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%)",
-                borderRadius: " 6px",
-              }}
+              // activeStyle={{
+              //   background: "#bfc9d4",
+              //   boxShadow:
+              //     "0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%)",
+              //   borderRadius: " 6px",
+              // }}
             >
               <div>
                 <svg

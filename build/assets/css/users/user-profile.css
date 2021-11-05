@@ -85,7 +85,7 @@
       fill: rgba(0, 23, 55, 0.08); }
     .user-profile .widget-content-area .user-info-list ul.contacts-block li:hover svg {
       color: #1b55e2;
-      fill: rgba(232, 186, 183, 0.239); }
+      fill: rgba(27, 85, 226, 0.239216); }
     .user-profile .widget-content-area .user-info-list ul.contacts-block ul.list-inline {
       margin: 27px auto; }
       .user-profile .widget-content-area .user-info-list ul.contacts-block ul.list-inline div.social-icon {
@@ -119,7 +119,7 @@
       position: absolute;
       content: "";
       height: 2px;
-      width: 47px;
+      width: 55px;
       background: #1b55e2;
       border-radius: 50%;
       bottom: -2px;
@@ -166,7 +166,7 @@
       position: absolute;
       content: "";
       height: 2px;
-      width: 30px;
+      width: 55px;
       background: #1b55e2;
       border-radius: 50%;
       bottom: -2px;
@@ -215,7 +215,7 @@
       position: absolute;
       content: "";
       height: 2px;
-      width: 97px;
+      width: 55px;
       background: #1b55e2;
       border-radius: 50%;
       bottom: -2px;
@@ -310,7 +310,7 @@
       position: absolute;
       content: "";
       height: 2px;
-      width: 173px;
+      width: 55px;
       background: #1b55e2;
       border-radius: 50%;
       bottom: -2px;

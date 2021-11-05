@@ -243,7 +243,9 @@ export default function ViewModalForCitizen({ apply }) {
                                   <div className="mr-3">
                                     <img
                                       alt="avatar"
-                                      src="/assets/img/90x90.jpg"
+                                      src={mediatr.imagePath ? `http://muraciet.mediasiya.gov.az:8080/${
+                                        mediatr.imagePath
+                                      }` : "/assets/img/90x90.jpg"}
                                       className="img-fluid rounded-circle"
                                     />
                                   </div>
